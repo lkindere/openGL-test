@@ -19,8 +19,8 @@ int height = 1000;
 int width = 1000;
 const char* title = "Title";
 
-float vertices[] = {-0.5f, -0.5f,  0.0f,   0.5f,   0.5f, 0.5f, 0.5f, -0.5f,
-                    0.0f,  0.6f,   0.6f,   0.6f,   0.0f, 0.5f, 0.0f, 0.7f,
+float vertices[] = {-0.5f, -0.5f,  0.5f,   0.5f,   0.5f, 0.5f, 0.5f, -0.5f,
+                    0.5f,  0.6f,   0.6f,   0.6f,   0.0f, 0.5f, 0.0f, 0.7f,
                     0.7f,  0.7f,   -0.25f, -0.25f, 0.0f, 0.8f, 0.8f, 0.8f,
                     0.25f, -0.25f, 0.0f,   0.9f,   0.9f, 0.9f, 0.0f, 0.25f,
                     0.0f,  1.0f,   1.0f,   1.0f};
@@ -68,6 +68,23 @@ int main(void) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
         shader.activate();
+
+        glm::mat4 model(1.0f);
+        glm::mat4 view(1.0f);
+        glm::mat4 proj(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
+        proj = glm::perspective(glm::radians(45.0f), (float)width / height,
+                                0.1f, 100.0f);
+
+        int modelLoc = glGetUniformLocation(shader.getID(), "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLoc = glGetUniformLocation(shader.getID(), "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projLoc = glGetUniformLocation(shader.getID(), "proj");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
         glUniform1f(uniID, 0.5f);
         vao.bind();
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
