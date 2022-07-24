@@ -7,23 +7,19 @@ project(test)
 add_executable(${PROJECT_NAME}
 	main.cpp
 	callbacks.cpp
-	Shaders.cpp
-	VBO.cpp
-	EBO.cpp
-	VAO.cpp
 )
 
-add_subdirectory(
-	glfw
-	glm
-)
+add_subdirectory(glfw)
+add_subdirectory(glm)
+add_subdirectory(Objects)
 
 add_definitions(-DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC glfw/include
 	PUBLIC glfw/deps
-	PUBLIC glm/
+	PUBLIC glm
+	PUBLIC Objects
 )
 
 target_link_directories(${PROJECT_NAME}
@@ -33,4 +29,5 @@ target_link_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
 	glfw
+	Objects
 )

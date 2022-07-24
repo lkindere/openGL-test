@@ -3,11 +3,11 @@
 #include <fstream>
 #include <sstream>
 
-#include "glad/gl.h"
+#include <glad/gl.h>
 
-class Shaders {
+class Shader {
    public:
-    Shaders(const char* vertPath, const char* fragPath);
+    Shader(const char* vertPath, const char* fragPath);
     void activate();
     void destroy();
     GLuint getID();

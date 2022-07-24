@@ -1,10 +1,10 @@
-#include "Shaders.hpp"
+#include "Shader.hpp"
 
 #ifdef DEBUG
 #include <iostream>
 #endif
 
-Shaders::Shaders(const char* vertPath, const char* fragPath) {
+Shader::Shader(const char* vertPath, const char* fragPath) {
     // Read and convert to usable format
     std::ifstream vertStream(vertPath), fragStream(fragPath);
     std::stringstream vertData, fragData;
@@ -40,6 +40,6 @@ Shaders::Shaders(const char* vertPath, const char* fragPath) {
     glLinkProgram(ID);
 }
 
-void Shaders::activate() { glUseProgram(ID); }
-void Shaders::destroy() { glDeleteProgram(ID); }
-GLuint Shaders::getID() { return ID; }
+void Shader::activate() { glUseProgram(ID); }
+void Shader::destroy() { glDeleteProgram(ID); }
+GLuint Shader::getID() { return ID; }

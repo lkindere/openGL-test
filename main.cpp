@@ -4,8 +4,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#include "Camera.hpp"
 #include "EBO.hpp"
-#include "Shaders.hpp"
+#include "Shader.hpp"
 #include "VAO.hpp"
 #include "VBO.hpp"
 #include "callbacks.hpp"
@@ -19,23 +20,28 @@ int height = 1000;
 int width = 1000;
 const char* title = "Title";
 
-float vertices[] = {-0.5f, -0.5f,  0.5f,   0.5f,   0.5f, 0.5f, 0.5f, -0.5f,
-                    0.5f,  0.6f,   0.6f,   0.6f,   0.0f, 0.5f, 0.0f, 0.7f,
-                    0.7f,  0.7f,   -0.25f, -0.25f, 0.0f, 0.8f, 0.8f, 0.8f,
-                    0.25f, -0.25f, 0.0f,   0.9f,   0.9f, 0.9f, 0.0f, 0.25f,
-                    0.0f,  1.0f,   1.0f,   1.0f};
+float vertices[] = {-0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f,
+                    0.5f, 0.6f, 0.6f, 0.6f, 0.0f, 0.5f, 0.0f, 0.7f,
+                    0.7f, 0.7f, -0.25f, -0.25f, 0.0f, 0.8f, 0.8f, 0.8f,
+                    0.25f, -0.25f, 0.0f, 0.9f, 0.9f, 0.9f, 0.0f, 0.25f,
+                    0.0f, 1.0f, 1.0f, 1.0f};
 
 GLuint indices[] = {
-    0, 3, 5, 3, 2, 4, 5, 4, 1,
+    0,
+    3,
+    5,
+    3,
+    2,
+    4,
+    5,
+    4,
+    1,
 };
 
-int main(void) {
+GLFWwindow* Init(){
     if (!glfwInit()) throw(std::runtime_error("GLFW init failure"));
-
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
     if (!window) {
         throw(std::runtime_error("Failed to open window"));
@@ -44,13 +50,16 @@ int main(void) {
     glfwMakeContextCurrent(window);
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
-
     glViewport(0, 0, width, height);
-
     glfwSetKeyCallback(window, key_callback);
     glfwSetErrorCallback(error_callback);
+	glEnable(GL_DEPTH_TEST);
+	return window;
+}
 
-    Shaders shader("shaders/default.vert", "shaders/default.frag");
+int main(void) {
+	GLFWwindow* window = Init();
+    Shader shader("shaders/default.vert", "shaders/default.frag");
     VAO vao;
     vao.bind();
     VBO vbo(vertices, sizeof(vertices));
@@ -62,35 +71,22 @@ int main(void) {
     vbo.unbind();
     ebo.unbind();
 
-    GLuint uniID = glGetUniformLocation(shader.getID(), "scale");
+    Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0, 0, 0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         shader.activate();
+        camera.Matrix(45.0f, 0.1f, 100.0f, shader, "camMatrix");
+        camera.Inputs(window);
 
-        glm::mat4 model(1.0f);
-        glm::mat4 view(1.0f);
-        glm::mat4 proj(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
-        proj = glm::perspective(glm::radians(45.0f), (float)width / height,
-                                0.1f, 100.0f);
-
-        int modelLoc = glGetUniformLocation(shader.getID(), "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-        int viewLoc = glGetUniformLocation(shader.getID(), "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-        int projLoc = glGetUniformLocation(shader.getID(), "proj");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
-        glUniform1f(uniID, 0.5f);
         vao.bind();
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     vao.destroy();
     vbo.destroy();
     ebo.destroy();
