@@ -1,6 +1,7 @@
 project(Objects)
 
 add_library(Objects
+	Mesh.cpp
 	Camera.cpp
 	Shader.cpp
 	VAO.cpp
@@ -8,7 +9,7 @@ add_library(Objects
 	EBO.cpp
 )
 
-add_definitions(-DDEBUG)
+add_definitions(-std=c++17 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC ../glfw/include
