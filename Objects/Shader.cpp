@@ -38,6 +38,10 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
     glLinkProgram(ID);
+#ifdef DEBUG
+	glValidateProgram(ID);
+	//Check?
+#endif
 }
 
 void Shader::activate() { glUseProgram(ID); }

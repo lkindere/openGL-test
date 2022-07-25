@@ -1,12 +1,8 @@
 project(Objects)
 
 add_library(Objects
-	Mesh.cpp
-	Camera.cpp
+	# Camera.cpp
 	Shader.cpp
-	VAO.cpp
-	VBO.cpp
-	EBO.cpp
 )
 
 add_definitions(-std=c++17 -DDEBUG)
