@@ -21,7 +21,11 @@ struct Vert3v3
 template <class V>
 class ArrayObject {
 	public:
+		ArrayObject() {}
 		ArrayObject(std::vector<V>& vertices, std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
+			init(vertices, indices, type);
+		}
+		void init(std::vector<V>& vertices, std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
 			//Array
 			glGenVertexArrays(1, &VAO);
 			glBindVertexArray(VAO);
@@ -36,10 +40,10 @@ class ArrayObject {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndiceBuffer);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), type);
 			//Configure
-			unsigned char components = 2; //for Vert2v3
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 			//Unbind
 			glBindVertexArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);

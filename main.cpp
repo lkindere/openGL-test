@@ -6,6 +6,8 @@
 #include "Shader.hpp"
 #include "ArrayObject.hpp"
 
+#include "Sword.hpp"
+
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
@@ -17,9 +19,9 @@ const char* title = "Title";
 
 std::vector<Vert2v3> vertices =
 {
-	Vert2v3{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+	Vert2v3{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
 	Vert2v3{glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
-	Vert2v3{glm::vec3(0.5f, -0.5f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)}
+	Vert2v3{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)}
 };
 
 std::vector<GLuint> indices = {
@@ -56,13 +58,14 @@ int main(void) {
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	ArrayObject<Vert2v3> obj(vertices, indices);
 
+	Sword sword;
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.activate();
-		obj.bind();
-		// glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+		// obj.bind();
+		// glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+		sword.draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
