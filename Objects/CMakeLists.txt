@@ -1,11 +1,11 @@
 project(Objects)
 
 add_library(Objects
-	# Camera.cpp
+	Camera.cpp
 	Shader.cpp
 )
 
-add_definitions(-std=c++17 -DDEBUG)
+add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC ../glfw/include

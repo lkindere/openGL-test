@@ -1,7 +1,9 @@
 #include "Camera.hpp"
 
-Camera::Camera(int width, int height, glm::vec3 position)
-    : width(width), height(height), Position(position) {}
+#include <iostream>
+
+Camera::Camera(int width, int height)
+    : width(width), height(height) {}
 
 void Camera::updateMatrix(float FOV, float nearPlane, float farPlane) {
     glm::mat4 view(1.0f);
@@ -16,8 +18,11 @@ void Camera::updateMatrix(float FOV, float nearPlane, float farPlane) {
 void Camera::Matrix(Shader &shader, const char* uniform){
 	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
-
 void Camera::Inputs(GLFWwindow* window) {
+#if DEBUG > 0
+	std::cout << "Camera position: " <<
+		 Position.x << ' ' << Position.y << ' ' << Position.z << ' ' << std::endl;
+#endif
     // Keys
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         Position += speed * Orientation;

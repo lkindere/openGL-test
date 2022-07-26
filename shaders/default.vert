@@ -5,8 +5,10 @@ layout (location = 1) in vec3 aColor;
 
 out vec3 _color;
 
+uniform mat4 camPos;
+
 void main()
 {
-   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+   gl_Position = camPos * vec4(aPos, 1.0);
    _color = aColor;
 }

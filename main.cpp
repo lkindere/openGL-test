@@ -4,6 +4,7 @@
 #include "callbacks.hpp"
 
 #include "Shader.hpp"
+#include "Camera.hpp"
 #include "ArrayObject.hpp"
 
 #include "Sword.hpp"
@@ -17,21 +18,10 @@ int height = 1000;
 int width = 1000;
 const char* title = "Title";
 
-std::vector<Vert2v3> vertices =
-{
-	Vert2v3{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
-	Vert2v3{glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
-	Vert2v3{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)}
-};
-
-std::vector<GLuint> indices = {
-	0, 1, 2
-};
-
 GLFWwindow* Init() {
     if (!glfwInit()) throw(std::runtime_error("GLFW init failure"));
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);			//Mac 4.1
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
     GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -46,7 +36,7 @@ GLFWwindow* Init() {
     gladLoadGL(glfwGetProcAddress);
     glViewport(0, 0, width, height);
     glEnable(GL_DEPTH_TEST);
-	glDebugMessageCallback(GLdebug_callback, NULL);
+	// glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
 #if DEBUG > 0
 	std::cout << glGetString(GL_VERSION) << 'n' << std::endl;
 #endif
@@ -56,15 +46,15 @@ GLFWwindow* Init() {
 int main(void) {
     GLFWwindow* window = Init();
     Shader shader("shaders/default.vert", "shaders/default.frag");
-	ArrayObject<Vert2v3> obj(vertices, indices);
-
 	Sword sword;
+	Camera camera(width, height);	
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.activate();
-		// obj.bind();
-		// glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+		camera.Inputs(window);
+		camera.updateMatrix(90.0f, 0.1f, 100.0f);
+		camera.Matrix(shader, "camPos");
 		sword.draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
