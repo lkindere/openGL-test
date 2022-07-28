@@ -9,6 +9,7 @@
 #include "ArrayObject.hpp"
 
 #include "Sword.hpp"
+#include "Player.hpp"
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
@@ -56,16 +57,16 @@ int main(void) {
     Init();
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	Sword sword;
-	Camera camera(settings.width(), settings.height());	
+	Camera camera;
+	Player player;
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.activate();
-		if (settings.mode() == free_float){
-			camera.Inputs();
-			camera.Matrix(shader);
-		}
+		camera.Inputs();
+		camera.Matrix(shader);
 		sword.draw(shader);
+		player.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

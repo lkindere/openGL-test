@@ -5,10 +5,16 @@
 
 extern Settings settings;
 
-Camera::Camera(int width, int height)
-    : width(width), height(height) {}
+Camera::Camera() {}
 
 void Camera::Matrix(Shader &shader){
+	if (settings.mode() == free_float)
+		matrix_freeFloat(shader);
+	if (settings.mode() == first_person)
+		matrix_firstPerson(shader);
+}
+
+void Camera::matrix_freeFloat(Shader &shader){
 	glm::mat4 view(1.0f);
     glm::mat4 projection(1.0f);
 
@@ -17,12 +23,28 @@ void Camera::Matrix(Shader &shader){
 
 	cameraMatrix = projection * view;
 
-	glm::mat4 rotation(1.0f);
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
 	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
+
+void Camera::matrix_firstPerson(Shader &shader){
+	glm::vec3 Center = glm::vec3(0.0f);
+	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 2.0f);
+
+	glm::mat4 view = glm::lookAt(Position, Center, Up);
+	glm::mat4 projection = glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far());
+	glm::mat4 posMatrix = projection * view;
+
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(posMatrix));
+}
+
 void Camera::Inputs() {
-    // Keys
+	if (settings.mode() == free_float)
+		input_freeFloat();
+	if (settings.mode() == first_person)
+		input_firstPerson();
+}
+
+void Camera::input_freeFloat(){
     if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
         Position += speed * Orientation;
     if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
@@ -42,7 +64,7 @@ void Camera::Inputs() {
     // Mouse
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		if (firstClick){
-			glfwSetCursorPos(settings.window(), (width / 2), (height / 2));
+			glfwSetCursorPos(settings.window(), (settings.width() / 2), (settings.height() / 2));
 			firstClick = false;
 		}
         glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -50,8 +72,8 @@ void Camera::Inputs() {
         double mouseY;
         glfwGetCursorPos(settings.window(), &mouseX, &mouseY);
 
-        float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-        float rotY = sensitivity * (float)(mouseX - (height / 2)) / height;
+        float rotX = sensitivity * (float)(mouseY - (settings.height() / 2)) / settings.height();
+        float rotY = sensitivity * (float)(mouseX - (settings.height() / 2)) / settings.height();
 
         glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 
@@ -60,10 +82,14 @@ void Camera::Inputs() {
 
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
-		glfwSetCursorPos(settings.window(), (width / 2), (height / 2)); 
+		glfwSetCursorPos(settings.window(), (settings.width() / 2), (settings.height() / 2)); 
 	}	
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE){
         glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		firstClick = true;
 	}
+}
+
+void Camera::input_firstPerson(){
+
 }

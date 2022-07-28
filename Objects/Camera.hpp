@@ -12,22 +12,25 @@
 #include "Shader.hpp"
 
 class Camera {
-   public:
-    Camera(int width, int height);
-	void Matrix(Shader& shader);
-    void Inputs();
+	public:
+		Camera();
+		void Matrix(Shader& shader);
+		void Inputs();
 
-   public:
-    glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 cameraMatrix = glm::mat4(1.0f);
+	private:
+		void matrix_freeFloat(Shader& shader);
+		void matrix_firstPerson(Shader& shader);
+		void input_freeFloat();
+		void input_firstPerson();
 
-    int width;
-    int height;
+	private:
+		glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
+    	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
-    float speed = 0.05f;
-    float sensitivity = 100.0f;
+		float speed = 0.05f;
+		float sensitivity = 100.0f;
 
-	bool firstClick = true;
+		bool firstClick = true;
 };
