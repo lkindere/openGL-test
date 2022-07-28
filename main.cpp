@@ -1,6 +1,7 @@
 #include <exception>
 #include <iostream>
 
+#include "settings.hpp"
 #include "callbacks.hpp"
 
 #include "Shader.hpp"
@@ -14,54 +15,62 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-int height = 1000;
-int width = 1000;
+Settings settings;
 const char* title = "Title";
 
-GLFWwindow* Init() {
+void Init_settings(){
+	settings.setWidth(1000);
+	settings.setHeight(1000);
+	settings.setMode(free_float);
+	settings.setFOV(70.0);
+	settings.setNear(0.01);
+	settings.setFar(1000.0);
+}
+
+void Init() {
+	Init_settings();
     if (!glfwInit()) throw(std::runtime_error("GLFW init failure"));
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);			//Mac 4.1
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-    GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
-    if (!window) {
+    settings.setWindow(glfwCreateWindow(settings.width(), settings.height(), title, NULL, NULL));
+    if (!settings.window()) {
         throw(std::runtime_error("Failed to open window"));
         glfwTerminate();
     }
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(settings.window(), key_callback);
     glfwSetErrorCallback(error_callback);
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(settings.window());
     glfwSwapInterval(1);
     gladLoadGL(glfwGetProcAddress);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, settings.width(), settings.height());
     glEnable(GL_DEPTH_TEST);
 	// glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
 #if DEBUG > 0
 	std::cout << glGetString(GL_VERSION) << 'n' << std::endl;
 #endif
-    return window;
 }
 
 int main(void) {
-    GLFWwindow* window = Init();
+    Init();
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	Sword sword;
-	Camera camera(width, height);	
-    while (!glfwWindowShouldClose(window)) {
+	Camera camera(settings.width(), settings.height());	
+    while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.activate();
-		camera.Inputs(window);
-		camera.updateMatrix(90.0f, 0.1f, 100.0f);
-		camera.Matrix(shader, "camPos");
-		sword.draw();
-        glfwSwapBuffers(window);
+		if (settings.mode() == free_float){
+			camera.Inputs();
+			camera.Matrix(shader);
+		}
+		sword.draw(shader);
+        glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }
 	std::cout << glGetError() << std::endl;
-
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(settings.window());
     glfwTerminate();
     return 0;
 }

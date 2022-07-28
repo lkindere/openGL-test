@@ -1,55 +1,54 @@
-#include "Camera.hpp"
+#include "settings.hpp"
 
+#include "Camera.hpp"
 #include <iostream>
+
+extern Settings settings;
 
 Camera::Camera(int width, int height)
     : width(width), height(height) {}
 
-void Camera::updateMatrix(float FOV, float nearPlane, float farPlane) {
-    glm::mat4 view(1.0f);
+void Camera::Matrix(Shader &shader){
+	glm::mat4 view(1.0f);
     glm::mat4 projection(1.0f);
 
     view = glm::lookAt(Position, Position + Orientation, Up);
-    projection = glm::perspective(glm::radians(FOV), (float)width / height, nearPlane, farPlane);
+    projection = glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far());
 
 	cameraMatrix = projection * view;
-}
 
-void Camera::Matrix(Shader &shader, const char* uniform){
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+	glm::mat4 rotation(1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
-void Camera::Inputs(GLFWwindow* window) {
-#if DEBUG > 0
-	std::cout << "Camera position: " <<
-		 Position.x << ' ' << Position.y << ' ' << Position.z << ' ' << std::endl;
-#endif
+void Camera::Inputs() {
     // Keys
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
         Position += speed * Orientation;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
         Position += speed * -glm::normalize(glm::cross(Orientation, Up));
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
         Position += speed * -Orientation;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
         Position += speed * glm::normalize(glm::cross(Orientation, Up));
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS)
         Position += speed * Up;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
         Position += speed * -Up;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 0.4f;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+    if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         speed = 0.1f;
     // Mouse
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+    if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		if (firstClick){
-			glfwSetCursorPos(window, (width / 2), (height / 2));
+			glfwSetCursorPos(settings.window(), (width / 2), (height / 2));
 			firstClick = false;
 		}
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         double mouseX;
         double mouseY;
-        glfwGetCursorPos(window, &mouseX, &mouseY);
+        glfwGetCursorPos(settings.window(), &mouseX, &mouseY);
 
         float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
         float rotY = sensitivity * (float)(mouseX - (height / 2)) / height;
@@ -61,10 +60,10 @@ void Camera::Inputs(GLFWwindow* window) {
 
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
-		glfwSetCursorPos(window, (width / 2), (height / 2)); 
+		glfwSetCursorPos(settings.window(), (width / 2), (height / 2)); 
 	}	
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE){
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE){
+        glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		firstClick = true;
 	}
 }

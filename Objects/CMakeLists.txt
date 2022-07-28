@@ -8,6 +8,7 @@ add_library(Objects
 add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
+	PUBLIC ../
 	PUBLIC ../glfw/include
 	PUBLIC ../glfw/deps
 	PUBLIC ../glm

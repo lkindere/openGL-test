@@ -1,4 +1,7 @@
 #include "callbacks.hpp"
+#include "settings.hpp"
+
+extern Settings settings;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 #if DEBUG > 1
@@ -11,6 +14,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 #endif
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS){
+		if (settings.mode() == free_float)
+			settings.setMode(first_person);
+		else
+			settings.setMode(free_float);
+	}
 }
 
 void error_callback(int error_code, const char* description) {
