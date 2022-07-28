@@ -9,9 +9,9 @@ add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC ../
-	PUBLIC ../glfw/include
-	PUBLIC ../glfw/deps
-	PUBLIC ../glm
+	PUBLIC ../external/glfw/include
+	PUBLIC ../external/glfw/deps
+	PUBLIC ../external/glm
 )
 
 target_link_directories(${PROJECT_NAME}
