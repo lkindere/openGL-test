@@ -1,9 +1,0 @@
-libdir=/Users/lkindere/.brew/lib
-includedir=/Users/lkindere/.brew/include
-
-Name: Importer
-Description: Import various well-known 3D model formats in an uniform manner.
-Version: 5.2.0
-Libs: -L${libdir} -lassimp
-Libs.private:  -lz
-Cflags: -I${includedir}

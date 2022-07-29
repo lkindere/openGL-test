@@ -8,16 +8,17 @@ add_executable(${PROJECT_NAME}
 	main.cpp
 )
 
-add_subdirectory(/Users/lkindere/Desktop/test/external/assimp ./build)
+add_subdirectory(external/assimp)
 
 add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
-	PUBLIC ../external/assimp/include
+	PUBLIC external/assimp/include
+	PUBLIC ../external/glm
 )
 
 target_link_directories(${PROJECT_NAME}
-	PRIVATE ../external/assimp/bin
+	PRIVATE external/assimp/bin
 )
 
 
