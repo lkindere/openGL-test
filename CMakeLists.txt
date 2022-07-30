@@ -11,9 +11,9 @@ add_executable(${PROJECT_NAME}
 
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
-add_subdirectory(external/assimp)
 
 add_subdirectory(Objects)
+add_subdirectory(Importer)
 
 add_definitions(-std=c++11 -DDEBUG)
 
@@ -23,6 +23,7 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC external/glm
 	PUBLIC external/assimp/include
 	PUBLIC Objects
+	PUBLIC Importer
 )
 
 target_link_directories(${PROJECT_NAME}
@@ -35,4 +36,5 @@ target_link_libraries(${PROJECT_NAME}
 	glfw
 	assimp
 	Objects
+	Importer
 )

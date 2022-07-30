@@ -44,6 +44,7 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 #endif
 }
 
-void Shader::activate() { glUseProgram(ID); }
+void Shader::bind() { glUseProgram(ID); }
+void Shader::unbind() { glUseProgram(0); }
 void Shader::destroy() { glDeleteProgram(ID); }
 GLuint Shader::getID() { return ID; }

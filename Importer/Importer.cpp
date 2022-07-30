@@ -2,12 +2,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <glm/vec3.hpp>
-
 #include <iostream>
-#include <vector>
 
-#define GLuint unsigned int
+#include "Importer.hpp"
 
 std::vector<glm::vec3> process_vertices(aiMesh* mesh){
 	std::vector<glm::vec3>	vertices;
@@ -22,14 +19,15 @@ std::vector<glm::vec3> process_vertices(aiMesh* mesh){
 #endif
 	vertices.push_back(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
 	}
+	// mesh->mColors
 	return vertices;
 }
 
 //Will not be valid for anything other than triangles
 //Undefined without aiProcess_Triangulate flag
 //Most likely will crash if faces == 0
-std::vector<GLuint> process_indices(aiMesh* mesh){
-	std::vector<GLuint>	indices;
+std::vector<unsigned int> process_indices(aiMesh* mesh){
+	std::vector<unsigned int>	indices;
 #ifdef DEBUG
 	std::cout << "\nNumber of indices: " << mesh->mNumFaces * mesh->mFaces[0].mNumIndices << '\n' << std::endl;
 #endif
@@ -51,16 +49,26 @@ std::vector<GLuint> process_indices(aiMesh* mesh){
 	return indices;
 }
 
-int main(void)
-{
+Model process_model(aiMesh* mesh){
+	Model model;
+	model.vertices = process_vertices(mesh);
+	model.indices = process_indices(mesh);
+	return model;
+}
+
+std::vector<Model> importer(const char* path){
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile("untitled.obj", aiProcess_Triangulate | aiProcess_FlipUVs );
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs );
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
 		std::cout << "ASSIMP: " << importer.GetErrorString() << std::endl;
 		throw(1);
 	}
-	std::cout << "Meshes: " << scene->mNumMeshes << std::endl;
-	aiMesh *mesh = scene->mMeshes[0];
-	process_vertices(mesh);
-	process_indices(mesh);
+#ifdef DEBUG
+	std::cout << "Meshes: " << scene->mNumMeshes << '\n' << std::endl;
+#endif
+	std::vector<Model>	models;
+	models.reserve(scene->mNumMeshes);
+	for (auto i = 0; i < scene->mNumMeshes; ++i)
+		models.push_back(process_model(scene->mMeshes[i]));
+	return models;
 }

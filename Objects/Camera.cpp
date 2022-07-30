@@ -7,34 +7,47 @@ extern Settings settings;
 
 Camera::Camera() {}
 
-void Camera::Matrix(Shader &shader){
-	if (settings.mode() == free_float)
-		matrix_freeFloat(shader);
-	if (settings.mode() == first_person)
-		matrix_firstPerson(shader);
+void Camera::addShader(Shader& shader){
+	shaders.push_back(shader);
 }
 
-void Camera::matrix_freeFloat(Shader &shader){
+void Camera::Matrix(){
+	if (settings.mode() == free_float)
+		matrix_freeFloat();
+	if (settings.mode() == first_person)
+		matrix_firstPerson();
+}
+
+void Camera::matrix_freeFloat(){
 	glm::mat4 view(1.0f);
     glm::mat4 projection(1.0f);
 
     view = glm::lookAt(Position, Position + Orientation, Up);
     projection = glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far());
-
 	cameraMatrix = projection * view;
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+	glm::vec3 scale(1.0f);
+	for (auto it = shaders.begin(); it != shaders.end(); ++it){
+		it->bind();
+		glUniform3fv(glGetUniformLocation(it->getID(), "scale"), 1, glm::value_ptr(scale));
+		glUniformMatrix4fv(glGetUniformLocation(it->getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+		it->unbind();
+	}
 }
 
-void Camera::matrix_firstPerson(Shader &shader){
+void Camera::matrix_firstPerson(){
 	glm::vec3 Center = glm::vec3(0.0f);
 	glm::vec3 Position = glm::vec3(0.0f, 0.0f, 2.0f);
 
 	glm::mat4 view = glm::lookAt(Position, Center, Up);
 	glm::mat4 projection = glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far());
 	glm::mat4 posMatrix = projection * view;
-
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(posMatrix));
+	
+	for (auto it = shaders.begin(); it != shaders.end(); ++it){
+		it->bind();
+		glUniformMatrix4fv(glGetUniformLocation(it->getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(posMatrix));
+		it->unbind();
+	}
 }
 
 void Camera::Inputs() {

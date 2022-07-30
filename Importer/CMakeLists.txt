@@ -4,13 +4,14 @@ project(Importer)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-add_executable(${PROJECT_NAME}
-	main.cpp
+add_library(${PROJECT_NAME}
+	Importer.cpp
 )
 
 add_subdirectory(external/assimp)
 
-add_definitions(-std=c++11 -DDEBUG)
+add_definitions(-std=c++11)
+# add_definitions(-DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC external/assimp/include

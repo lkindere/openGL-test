@@ -1,18 +1,15 @@
 #pragma once
 
 #include "Sword.hpp"
-#include "Playermodel.hpp"
 
 extern Settings settings;
 
 class Player
 {
 	public:
-		Player() : health(10), energy(10), speed(1.0), position(0.0), orientation(0.0, 1.0, 0.0) {
-            PLAYERMODEL
-            VAO.init(Pvertices, Pindices);
+		Player(std::vector<Vert2v3> vertices, std::vector<GLuint> indices) : health(10), energy(10), speed(1.0), position(0.0), orientation(0.0, 1.0, 0.0) {
+            VAO.init(vertices, indices);
 			_indices = indices.size();
-
         }
 		void input() {
 		}
@@ -25,10 +22,10 @@ class Player
 			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(pos));
             glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(rotMatrix));
 
-            glPointSize(10);
-            #ifdef POINTS
-			    glDrawElements(GL_POINTS, _indices, GL_UNSIGNED_INT, (void*)0);
-            #endif
+            // #ifdef POINTS
+            	// glPointSize(10);
+			    // glDrawElements(GL_POINTS, _indices, GL_UNSIGNED_INT, (void*)0);
+            // #endif
             #ifndef POINTS
                 glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
             #endif
@@ -39,7 +36,7 @@ class Player
 		Player(const Player& p);
 		
 	private:
-		Sword sword;
+		// Sword sword;
 		short health;
 		short energy;
         float speed;

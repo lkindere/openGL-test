@@ -9,7 +9,8 @@
 class Shader {
    public:
     Shader(const char* vertPath, const char* fragPath);
-    void activate();
+    void bind();
+	void unbind();
     void destroy();
     GLuint getID();
 

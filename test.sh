@@ -1,1 +1,1 @@
-cmake -S ./ -B ./build/ && make -C ./build/ && ./build/test
+cmake -S ./ -B ./build/ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang  && make -C ./build/ && ./build/test
