@@ -5,12 +5,14 @@
 #include <glad/gl.h>
 #include <vector>
 
+//Vert color
 struct Vert2v3
 {
 	glm::vec3 v1;
 	glm::vec3 v2;
 };
 
+//Vert norm color
 struct Vert3v3
 {
 	glm::vec3 v1;
@@ -41,9 +43,11 @@ class ArrayObject {
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), type);
 			//Configure
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
 			//Unbind
 			glBindVertexArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);

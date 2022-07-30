@@ -11,7 +11,7 @@ extern Settings settings;
 class Sword
 {		//
 	public:
-		Sword(std::vector<Vert2v3>& vertices, std::vector<GLuint>& indices){
+		Sword(std::vector<Vert3v3>& vertices, std::vector<GLuint>& indices){
 			VAO.init(vertices, indices);
 			_indices = indices.size();
 		}
@@ -52,6 +52,6 @@ class Sword
 		const short damage = 10;
 		const short range = 10;
 		const short speed = 10;
-		ArrayObject<Vert2v3> VAO;
+		ArrayObject<Vert3v3> VAO;
 		short _indices;
 };

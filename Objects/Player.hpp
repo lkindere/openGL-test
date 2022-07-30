@@ -21,14 +21,8 @@ class Player
 			glm::vec3 pos(0.0);
 			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(pos));
             glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(rotMatrix));
-
-            // #ifdef POINTS
-            	// glPointSize(10);
-			    // glDrawElements(GL_POINTS, _indices, GL_UNSIGNED_INT, (void*)0);
-            // #endif
-            #ifndef POINTS
-                glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
-            #endif
+			
+            glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
 			VAO.unbind();
 		}
 	private:

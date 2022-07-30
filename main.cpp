@@ -57,12 +57,13 @@ void Init() {
 #endif
 }
 
-std::vector<Vert2v3> convert_vertices(std::vector<Model>& meshes){
-	std::vector<Vert2v3>	vertices;
+std::vector<Vert3v3> convert_vertices(std::vector<Model>& meshes){
+	std::vector<Vert3v3>	vertices;
 	for (auto i = 0; i < meshes[0].vertices.size(); ++i){
-		Vert2v3	vert;
+		Vert3v3	vert;
 		vert.v1 = meshes[0].vertices[i];
-		vert.v2 = glm::vec3(0.5f);
+		vert.v2 = meshes[0].normals[i];
+		vert.v3 = glm::vec3(0.5f);
 		vertices.push_back(vert);
 	}
 	return vertices;
@@ -77,10 +78,10 @@ int main(void) {
 	camera.addShader(lightShader);
 
 	std::vector<Model> meshes = importer("sword.obj");
-	std::vector<Vert2v3> vertices = convert_vertices(meshes);
+	std::vector<Vert3v3> vertices = convert_vertices(meshes);
 	Sword sword(vertices, meshes[0].indices);
 
-	meshes = importer("sphere.obj");
+	meshes = importer("light.obj");
 	vertices = convert_vertices(meshes);
 	Light light(vertices, meshes[0].indices);
 	light.addTarget(shader);

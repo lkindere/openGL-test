@@ -8,7 +8,7 @@ extern Settings settings;
 class Light
 {
 	public:
-		Light(std::vector<Vert2v3>& vertices, std::vector<GLuint>& indices){
+		Light(std::vector<Vert3v3>& vertices, std::vector<GLuint>& indices){
 			VAO.init(vertices, indices);
 			_indices = indices.size();
 		}
@@ -19,6 +19,7 @@ class Light
 			//Export lightColor to all target shaders
 			for (auto it = targets.begin(); it != targets.end(); ++it){
 				it->bind();
+				glUniform3fv(glGetUniformLocation(it->getID(), "lightPos"), 1, glm::value_ptr(pos));
 				glUniform4fv(glGetUniformLocation(it->getID(), "lightColor"), 1, glm::value_ptr(color));
 				it->unbind();
 			}
@@ -37,6 +38,6 @@ class Light
 		std::vector<Shader>	targets;
 		glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 pos = glm::vec3(0.0f, 3.5f, 0.0f);
-		ArrayObject<Vert2v3> VAO;
+		ArrayObject<Vert3v3> VAO;
 		short _indices;
 };
