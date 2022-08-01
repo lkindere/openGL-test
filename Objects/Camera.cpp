@@ -24,9 +24,6 @@ void Camera::Matrix(const glm::vec3& position, const glm::vec3& direction){
 }
 
 glm::vec3 Camera::updateDirection(){
-	std::cout << "Shaders: " << std::endl;
-	for (auto it = shaders.begin(); it != shaders.end(); ++it)
-		std::cout << "Shader: " << it->getID() << std::endl;
 	glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	double mouseX;
 	double mouseY;

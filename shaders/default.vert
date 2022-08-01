@@ -18,7 +18,7 @@ uniform vec3 playerPos;
 
 void main()
 {
-	gl_Position = vec4(pos, 1.0) + camPos * rotation * vec4(aPos * scale, 1.0);
+	gl_Position = rotation * camPos * vec4((aPos + pos) * scale, 1.0);
 	_pos = vec3(pos + aPos);
 	_normal = aNorm;
 	_color = aColor;

@@ -79,6 +79,8 @@ int main(void) {
 	std::vector<Model> meshes = importer("Models/junk.fbx");
 	std::vector<Vert> vertices = convert_vertices(meshes);
 	Player player(vertices, meshes[0].indices);
+	
+	player.setWeapon(new Sword(vertices, meshes[0].indices));
 
 	meshes = importer("Models/junk.fbx");
 	vertices = convert_vertices(meshes);
@@ -90,13 +92,14 @@ int main(void) {
 	Object floor(vertices, meshes[0].indices);
 	player.camera.addShader(shader);
 	player.camera.addShader(lightShader);
+
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
-		floor.draw(shader, glm::vec3(0.0f, 0.0f, 0.0f));
+		floor.draw(shader, glm::vec3(0.0f), glm::vec3(10.0f, 1.0f, 10.0f));
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

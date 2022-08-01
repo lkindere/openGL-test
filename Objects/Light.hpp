@@ -26,6 +26,7 @@ class Light
 			//Export lightColor to self + draw light
 			VAO.bind();
 			shader.bind();
+			glUniform3fv(glGetUniformLocation(shader.getID(), "scale"), 1, glm::value_ptr(glm::vec3(0.2f)));
 			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(pos));
 			glUniform4fv(glGetUniformLocation(shader.getID(), "lightColor"), 1, glm::value_ptr(color));
 			glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
@@ -34,8 +35,8 @@ class Light
 		}
 	private:
 		std::vector<Shader>	targets;
-		glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		glm::vec3 pos = glm::vec3(0.0f, 10.0f, 0.0f);
+		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
 		ArrayObject VAO;
 		short _indices;
 };
