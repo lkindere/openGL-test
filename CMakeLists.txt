@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23.2)
 
 project(test)
 
-# set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 add_executable(${PROJECT_NAME}
 	main.cpp
@@ -24,6 +24,7 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC external/assimp/include
 	PUBLIC Objects
 	PUBLIC Importer
+	PUBLIC Importer/external/assimp
 )
 
 target_link_directories(${PROJECT_NAME}

@@ -23,11 +23,15 @@ class Settings
 		void setWidth(int width) { width_ = width; }
 		void setHeight(int height) { height_ = height; }
 
+		//Camera
 		void setFOV(float FOV) { FOV_ = FOV; }
 		void setNear(float near) { near_ = near; }
 		void setFar(float far) { far_ = far; }
 
 		void setMode(e_mode mode) { mode_ = mode; }
+
+		//Physics
+		void setGravity(float gravity) { gravity_ = gravity; }
 		
 		//Flags
 		void set(e_flags flag) { flags_ |= flag; }
@@ -39,27 +43,35 @@ class Settings
 		int			width() const { return width_; }
 		int			height() const { return height_; }
 
+		//Camera
 		float		FOV() { return FOV_; }
 		float		near() { return near_; }
 		float		far() { return far_;  }
 
 		e_mode		mode() const { return mode_; }
+
+		//Physics
+		float		gravity() { return gravity_; }
 		
 		//Flags
-		int		flags() const { return flags_; }
-		bool	isSet(e_flags flag) { return (flags_ & flag); }
+		int			flags() const { return flags_; }
+		bool		isSet(e_flags flag) { return (flags_ & flag); }
 
 	private:
 		Settings& operator=(const Settings& s);
 		Settings(const Settings& s);
 
 	private:
+		//Window
 		GLFWwindow*	window_;
 		int			width_;
 		int			height_;
+		//Camera
 		float		FOV_;
 		float		near_;
 		float		far_;
+		//Physics
+		float		gravity_;
 
 		e_mode		mode_;
 		int			flags_;

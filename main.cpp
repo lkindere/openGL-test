@@ -13,6 +13,7 @@
 
 #include "Sword.hpp"
 #include "Player.hpp"
+#include "Object.hpp"
 
 
 #define GLAD_GL_IMPLEMENTATION
@@ -30,6 +31,7 @@ void Init_settings(){
 	settings.setFOV(70.0);
 	settings.setNear(0.01);
 	settings.setFar(1000.0);
+	settings.setGravity(0.01);
 }
 
 void Init() {
@@ -73,25 +75,31 @@ int main(void) {
     Init();
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	Shader lightShader("shaders/light.vert", "shaders/light.frag");
-	Camera camera;
-	camera.addShader(shader);
-	camera.addShader(lightShader);
+	// Camera camera;
+	// camera.addShader(shader);
+	// camera.addShader(lightShader);
 
-	std::vector<Model> meshes = importer("sword.obj");
+	std::vector<Model> meshes = importer("Models/sword.obj");
 	std::vector<Vert3v3> vertices = convert_vertices(meshes);
-	Sword sword(vertices, meshes[0].indices);
+	Player player(vertices, meshes[0].indices);
 
-	meshes = importer("light.obj");
+	meshes = importer("Models/light.obj");
 	vertices = convert_vertices(meshes);
 	Light light(vertices, meshes[0].indices);
 	light.addTarget(shader);
+
+	meshes = importer("Models/floor.obj");
+	vertices = convert_vertices(meshes);
+	Object floor(vertices, meshes[0].indices);
+	player.camera.addShader(shader);
+	player.camera.addShader(lightShader);
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		camera.Inputs();
-		camera.Matrix();
 		light.draw(lightShader);
-		sword.draw(shader);
+		player.input();
+		player.draw(shader);
+		floor.draw(shader, glm::vec3(0.0f, 0.0f, 0.0f));
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

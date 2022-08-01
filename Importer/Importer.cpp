@@ -44,11 +44,13 @@ std::vector<glm::vec3> process_normals(aiMesh* mesh){
 	return normals;
 }
 
+// std::vector<glm::vec2> process_textures(ai)
+
 Model process_model(aiMesh* mesh){
 	Model model;
 	model.vertices = process_vertices(mesh);
 	model.indices = process_indices(mesh);
-	model.normals = process_normals(mesh);;
+	model.normals = process_normals(mesh);
 	return model;
 }
 
@@ -59,6 +61,8 @@ std::vector<Model> importer(const char* path){
 		std::cout << "ASSIMP: " << importer.GetErrorString() << std::endl;
 		throw(1);
 	}
+	std::cout << "Textures: " << scene->mNumTextures << std::endl;
+	// scene->mTextures[0]->pcData
 #ifdef DEBUG
 	std::cout << "Meshes: " << scene->mNumMeshes << '\n' << std::endl;
 #endif

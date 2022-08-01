@@ -14,25 +14,20 @@
 class Camera {
 	public:
 		Camera();
-		void Matrix();
-		void Inputs();
+		void Matrix(const glm::vec3& position, const glm::vec3& direction);
 		void addShader(Shader& shader);
+		glm::vec3 updateDirection();
 
-	private:
-		void matrix_freeFloat();
-		void matrix_firstPerson();
-		void input_freeFloat();
-		void input_firstPerson();
-
-	private:
+	public:
 		std::vector<Shader>	shaders;
-		glm::vec3 Position = glm::vec3(0.0f, 0.0f, 1.0f);
-    	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
+
 		glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
+
+		float yaw = -90.0f;
+		float pitch = 0.0f;
+
 		glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
 		float speed = 0.05f;
-		float sensitivity = 100.0f;
-
-		bool firstClick = true;
 };
