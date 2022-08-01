@@ -7,7 +7,7 @@ extern Settings settings;
 class Object
 {
 	public:
-		Object(std::vector<Vert3v3> vertices, std::vector<GLuint> indices) {
+		Object(std::vector<Vert> vertices, std::vector<GLuint> indices) {
             VAO.init(vertices, indices);
 			_indices = indices.size();
         }
@@ -26,6 +26,6 @@ class Object
 		Object(const Object& p);
 
     private:
-        ArrayObject<Vert3v3> VAO;
+        ArrayObject VAO;
         short _indices;
 };

@@ -9,8 +9,9 @@
 struct Model
 {
 	std::vector<glm::vec3>		vertices;
-	std::vector<unsigned int>	indices;
 	std::vector<glm::vec3>		normals;
+	std::vector<glm::vec4>		colors;
+	std::vector<unsigned int>	indices;
 };
 
 std::vector<Model> importer(const char* path);

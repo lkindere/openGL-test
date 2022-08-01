@@ -2,12 +2,12 @@
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNorm;
-layout (location = 2) in vec3 aColor;
+layout (location = 2) in vec4 aColor;
 
 out mat4 _camPos;
 out vec3 _pos;
 out vec3 _normal;
-out vec3 _color;
+out vec4 _color;
 out vec3 _playerPos;
 
 uniform mat4 camPos;

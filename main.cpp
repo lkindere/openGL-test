@@ -59,13 +59,13 @@ void Init() {
 #endif
 }
 
-std::vector<Vert3v3> convert_vertices(std::vector<Model>& meshes){
-	std::vector<Vert3v3>	vertices;
+std::vector<Vert> convert_vertices(std::vector<Model>& meshes){
+	std::vector<Vert>	vertices;
 	for (auto i = 0; i < meshes[0].vertices.size(); ++i){
-		Vert3v3	vert;
-		vert.v1 = meshes[0].vertices[i];
-		vert.v2 = meshes[0].normals[i];
-		vert.v3 = glm::vec3(0.5f);
+		Vert vert;
+		vert.vertices = meshes[0].vertices[i];
+		vert.normals = meshes[0].normals[i];
+		vert.colors = meshes[0].colors[i];
 		vertices.push_back(vert);
 	}
 	return vertices;
@@ -75,20 +75,17 @@ int main(void) {
     Init();
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	Shader lightShader("shaders/light.vert", "shaders/light.frag");
-	// Camera camera;
-	// camera.addShader(shader);
-	// camera.addShader(lightShader);
 
-	std::vector<Model> meshes = importer("Models/sword.obj");
-	std::vector<Vert3v3> vertices = convert_vertices(meshes);
+	std::vector<Model> meshes = importer("Models/junk.fbx");
+	std::vector<Vert> vertices = convert_vertices(meshes);
 	Player player(vertices, meshes[0].indices);
 
-	meshes = importer("Models/light.obj");
+	meshes = importer("Models/junk.fbx");
 	vertices = convert_vertices(meshes);
 	Light light(vertices, meshes[0].indices);
 	light.addTarget(shader);
 
-	meshes = importer("Models/floor.obj");
+	meshes = importer("Models/junk.fbx");
 	vertices = convert_vertices(meshes);
 	Object floor(vertices, meshes[0].indices);
 	player.camera.addShader(shader);

@@ -1,1 +1,1 @@
-make -C ./build/ && ./build/test
+make -j4 -C ./build/ && ./build/test

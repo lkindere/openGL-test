@@ -8,7 +8,7 @@ extern Settings settings;
 class Light
 {
 	public:
-		Light(std::vector<Vert3v3>& vertices, std::vector<GLuint>& indices){
+		Light(std::vector<Vert>& vertices, std::vector<GLuint>& indices){
 			VAO.init(vertices, indices);
 			_indices = indices.size();
 		}
@@ -36,6 +36,6 @@ class Light
 		std::vector<Shader>	targets;
 		glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 pos = glm::vec3(0.0f, 10.0f, 0.0f);
-		ArrayObject<Vert3v3> VAO;
+		ArrayObject VAO;
 		short _indices;
 };

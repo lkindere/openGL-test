@@ -44,13 +44,20 @@ std::vector<glm::vec3> process_normals(aiMesh* mesh){
 	return normals;
 }
 
-// std::vector<glm::vec2> process_textures(ai)
+std::vector<glm::vec4> process_colors(aiMesh* mesh){
+	std::vector<glm::vec4> colors;
+	colors.reserve(mesh->mNumVertices);
+	for (auto i = 0; i < mesh->mNumVertices; ++i)
+		colors.push_back(glm::vec4(mesh->mColors[0][i].r, mesh->mColors[0][i].g, mesh->mColors[0][i].b, mesh->mColors[0][i].a));
+	return colors;
+}
 
 Model process_model(aiMesh* mesh){
 	Model model;
 	model.vertices = process_vertices(mesh);
 	model.indices = process_indices(mesh);
 	model.normals = process_normals(mesh);
+	model.colors = process_colors(mesh);
 	return model;
 }
 

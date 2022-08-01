@@ -5,12 +5,10 @@
 
 extern Settings settings;
 
-glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-
 class Player
 {
 	public:
-		Player(std::vector<Vert3v3> vertices, std::vector<GLuint> indices)
+		Player(std::vector<Vert> vertices, std::vector<GLuint> indices)
 			: health(10), energy(10), speed(0.1), walk(0.1), run(0.2), jump(30), position(0.0f, 10.0f, 0.0f), direction(0.0, 0.0, 1.0) {
             VAO.init(vertices, indices);
 			_indices = indices.size();
@@ -23,9 +21,9 @@ class Player
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
 				position -= speed * direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
-				position -= speed * glm::normalize(glm::cross(direction, Up));
+				position -= speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
-				position += speed * glm::normalize(glm::cross(direction, Up));
+				position += speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 				speed = run;
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
@@ -88,7 +86,7 @@ class Player
         glm::vec3 position;
 		glm::vec3 direction;
 
-        ArrayObject<Vert3v3> VAO;
+        ArrayObject VAO;
         short _indices;
 
 	private:

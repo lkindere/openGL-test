@@ -5,7 +5,7 @@ out vec4 FragColor;
 in mat4 _camPos;
 in vec3 _pos;
 in vec3 _normal;
-in vec3 _color;
+in vec4 _color;
 in vec3 _playerPos;
 
 uniform vec4 lightColor;
@@ -20,5 +20,5 @@ void main()
 
 	float diffuse = max(dot(_normal, lightDir), 0.0f);
 
-	FragColor = vec4(_color, 1.0f) * lightColor * diffuse + vec4(0.1);
+	FragColor = vec4(_color) * lightColor * diffuse;
 }
