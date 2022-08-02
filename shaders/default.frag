@@ -6,7 +6,6 @@ in mat4 _camPos;
 in vec3 _pos;
 in vec3 _normal;
 in vec4 _color;
-in vec3 _playerPos;
 
 uniform vec4 lightColor;
 uniform vec3 lightPos;

@@ -1,7 +1,11 @@
 #pragma once
 
+#include <glm/vec3.hpp>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
+#include <iostream>
 
 enum e_mode{
 	free_float = 0,
@@ -75,4 +79,8 @@ class Settings
 
 		e_mode		mode_;
 		int			flags_;
+
+	public:
+		void printvec(glm::vec3 vec){
+			std::cout << "X: " << vec.x << " Y: " << vec.y << " Z: " << vec.z << std::endl; }
 };

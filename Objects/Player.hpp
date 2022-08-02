@@ -54,12 +54,11 @@ class Player
 		}
 
         void draw(Shader& shader){
+			camera.Matrix(position, direction);
 			VAO.bind();
 			shader.bind();
 			if (weapon)
 				weapon->draw(shader, position, direction);
-			// Reset campos
-			camera.Matrix(position, direction);
 			shader.unbind();
 			VAO.unbind();
 		}

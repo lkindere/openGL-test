@@ -63,16 +63,14 @@ Model process_model(aiMesh* mesh){
 
 std::vector<Model> importer(const char* path){
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs );
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes );
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
 		std::cout << "ASSIMP: " << importer.GetErrorString() << std::endl;
 		throw(1);
 	}
-	std::cout << "Textures: " << scene->mNumTextures << std::endl;
-	// scene->mTextures[0]->pcData
-#ifdef DEBUG
+// #ifdef DEBUG
 	std::cout << "Meshes: " << scene->mNumMeshes << '\n' << std::endl;
-#endif
+// #endif
 	std::vector<Model>	models;
 	models.reserve(scene->mNumMeshes);
 	for (auto i = 0; i < scene->mNumMeshes; ++i)

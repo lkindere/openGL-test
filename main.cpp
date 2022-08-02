@@ -76,18 +76,18 @@ int main(void) {
     Shader shader("shaders/default.vert", "shaders/default.frag");
 	Shader lightShader("shaders/light.vert", "shaders/light.frag");
 
-	std::vector<Model> meshes = importer("Models/junk.fbx");
+	std::vector<Model> meshes = importer("Models/sword.fbx");
 	std::vector<Vert> vertices = convert_vertices(meshes);
 	Player player(vertices, meshes[0].indices);
 	
 	player.setWeapon(new Sword(vertices, meshes[0].indices));
 
-	meshes = importer("Models/junk.fbx");
+	meshes = importer("Models/light.fbx");
 	vertices = convert_vertices(meshes);
 	Light light(vertices, meshes[0].indices);
 	light.addTarget(shader);
 
-	meshes = importer("Models/junk.fbx");
+	meshes = importer("Models/floor.fbx");
 	vertices = convert_vertices(meshes);
 	Object floor(vertices, meshes[0].indices);
 	player.camera.addShader(shader);
@@ -99,7 +99,7 @@ int main(void) {
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
-		floor.draw(shader, glm::vec3(0.0f), glm::vec3(10.0f, 1.0f, 10.0f));
+		floor.draw(shader, glm::vec3(0.0f));
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

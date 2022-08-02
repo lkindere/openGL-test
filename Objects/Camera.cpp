@@ -3,6 +3,8 @@
 #include "Camera.hpp"
 #include <iostream>
 
+float g_pitch;
+float g_yaw;
 extern Settings settings;
 
 Camera::Camera() {}
@@ -11,6 +13,7 @@ void Camera::addShader(Shader& shader){
 	shaders.push_back(shader);
 }
 
+//Possibly change to only update the specific single shader needed for each draw
 void Camera::Matrix(const glm::vec3& position, const glm::vec3& direction){
     glm::mat4 projection(glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far()));
 	glm::mat4 view(glm::lookAt(position, position + direction, Up));
@@ -37,6 +40,8 @@ glm::vec3 Camera::updateDirection(){
 	pitch =  89.0f;
 		if(pitch < -89.0f)
 	pitch = -89.0f;
+	g_pitch = pitch;
+	g_yaw = yaw;
 	glm::vec3 direction(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)), sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
 	return glm::normalize(direction);
 }
