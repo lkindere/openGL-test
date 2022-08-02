@@ -14,6 +14,7 @@
 #include "Sword.hpp"
 #include "Player.hpp"
 #include "Object.hpp"
+#include "Mob.hpp"
 
 
 #define GLAD_GL_IMPLEMENTATION
@@ -73,8 +74,8 @@ std::vector<Vert> convert_vertices(std::vector<Model>& meshes){
 
 int main(void) {
     Init();
-    Shader shader("shaders/default.vert", "shaders/default.frag");
-	Shader lightShader("shaders/light.vert", "shaders/light.frag");
+    Shader shader("Shaders/default.vert", "Shaders/default.frag");
+	Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
 
 	std::vector<Model> meshes = importer("Models/sword.fbx");
 	std::vector<Vert> vertices = convert_vertices(meshes);
@@ -86,6 +87,10 @@ int main(void) {
 	vertices = convert_vertices(meshes);
 	Light light(vertices, meshes[0].indices);
 	light.addTarget(shader);
+
+	meshes = importer("Models/enemy.fbx");
+	vertices = convert_vertices(meshes);
+	Mob mob(vertices, meshes[0].indices);
 
 	meshes = importer("Models/floor.fbx");
 	vertices = convert_vertices(meshes);
@@ -99,6 +104,7 @@ int main(void) {
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
+		mob.draw(shader);
 		floor.draw(shader, glm::vec3(0.0f));
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
