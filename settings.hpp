@@ -36,6 +36,9 @@ class Settings
 
 		//Physics
 		void setGravity(float gravity) { gravity_ = gravity; }
+
+		//Data
+		void setPlayerPos(glm::vec3 position) { playerPos_ = position; }
 		
 		//Flags
 		void set(e_flags flag) { flags_ |= flag; }
@@ -56,6 +59,9 @@ class Settings
 
 		//Physics
 		float		gravity() { return gravity_; }
+
+		//Data
+		glm::vec3	playerPos() { return playerPos_; }
 		
 		//Flags
 		int			flags() const { return flags_; }
@@ -76,6 +82,8 @@ class Settings
 		float		far_;
 		//Physics
 		float		gravity_;
+		//Data
+		glm::vec3	playerPos_;
 
 		e_mode		mode_;
 		int			flags_;

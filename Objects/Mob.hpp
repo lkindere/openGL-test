@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "settings.hpp"
 
 extern Settings settings;
-
 class Mob
 {
 	public:
@@ -27,10 +27,15 @@ class Mob
             glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
             glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
-
-			// std::cout << "DRAWING\n" << std::endl;
 			shader.unbind();
 			VAO.unbind();
+			move();
+		}
+		void move(){
+			settings.printvec(direction);
+			direction = settings.playerPos() - position;
+			direction.y = 0.0f;
+			position += direction * (speed / 10);
 		}
 
 	private:

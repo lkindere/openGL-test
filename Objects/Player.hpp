@@ -32,6 +32,7 @@ class Player
 				collision.y = 0;
 				velocity.y = settings.gravity() * jump;
 			}
+			settings.setPlayerPos(position);
 			direction = camera.updateDirection();
 			physics();
 		}

@@ -26,6 +26,7 @@ class Sword : public Weapon
 			_indices = indices.size();
 		}
 		void attack(Shader& shader, const glm::vec3& pos, const glm::vec3& dir){
+			// collisions(pos, dir);
 			static int cooldown;
 			float framecount = 20;
 			static float frame;

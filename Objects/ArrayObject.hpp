@@ -5,13 +5,6 @@
 #include <glad/gl.h>
 #include <vector>
 
-struct Vert
-{
-	glm::vec3	vertices;
-	glm::vec3	normals;
-	glm::vec4	colors;
-};
-
 class ArrayObject {
 	public:
 		ArrayObject() {}
@@ -32,13 +25,21 @@ class ArrayObject {
 			glGenBuffers(1, &IndiceBuffer);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndiceBuffer);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), type);
-			//Configure
+			//Vertice
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void *)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)0);
+			//Normal
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void *)(3 * sizeof(float)));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(3 * sizeof(float)));
+			//Color
 			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void *)(6 * sizeof(float)));
+			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(6 * sizeof(float)));
+			//Bones
+			glEnableVertexAttribArray(3);
+			glVertexAttribIPointer(3, 3, GL_INT, sizeof(Vert), (void *)(10 * sizeof(float)));
+			//Weights
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(10 * sizeof(float) + 3 * sizeof(int)));
 			//Unbind
 			glBindVertexArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);

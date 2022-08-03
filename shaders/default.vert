@@ -3,6 +3,8 @@
 layout (location = 0) in vec3 aModel;
 layout (location = 1) in vec3 aNorm;
 layout (location = 2) in vec4 aColor;
+layout (location = 3) in ivec3 aBones;
+layout (location = 4) in vec3 aWeights;
 
 out mat4 _camPos;
 out vec3 _pos;

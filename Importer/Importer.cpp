@@ -52,28 +52,62 @@ std::vector<glm::vec4> process_colors(aiMesh* mesh){
 	return colors;
 }
 
+//Not sure if correct
+glm::mat4	convert_matrix(const aiMatrix4x4& aiMatrix){
+	glm::vec4 v1(aiMatrix.a1, aiMatrix.a2, aiMatrix.a3, aiMatrix.a4);
+	glm::vec4 v2(aiMatrix.b1, aiMatrix.b2, aiMatrix.b3, aiMatrix.b4);
+	glm::vec4 v3(aiMatrix.c1, aiMatrix.c2, aiMatrix.c3, aiMatrix.c4);
+	glm::vec4 v4(aiMatrix.d1, aiMatrix.d2, aiMatrix.d3, aiMatrix.d4);
+	return (glm::mat4(v1, v2, v3, v4));
+}
+
+std::vector<Bone> process_bones(aiMesh* mesh){
+	std::vector<Bone> bones;
+	bones.reserve(mesh->mNumBones);
+	for (auto i = 0; i < mesh->mNumBones; ++i){
+		Bone bone;
+		std::cout << "N weights: " << mesh->mBones[i]->mNumWeights << std::endl;
+		for (auto j = 0; j < mesh->mBones[i]->mNumWeights; ++j){
+			// if (j == MAX_WEIGHTS){
+			// 	std::cout << "More weights detected per bone than defined" << std::endl;
+			// 	break ;
+			// }
+			std::cout << "Bone: " << i << " Affecting: " << mesh->mBones[i]->mWeights[j].mVertexId << ' ' << mesh->mBones[i]->mWeights[j].mWeight << std::endl;
+			bone.vertices[j] = mesh->mBones[i]->mWeights[j].mVertexId;
+			bone.weights[j] = mesh->mBones[i]->mWeights[j].mWeight;
+		}
+		bone.offset = convert_matrix(mesh->mBones[i]->mOffsetMatrix);
+		bone.ID = i;
+		bones.push_back(bone);
+	}
+	// exit (0);
+	return bones;
+}
+
 Model process_model(aiMesh* mesh){
 	Model model;
 	model.vertices = process_vertices(mesh);
 	model.indices = process_indices(mesh);
 	model.normals = process_normals(mesh);
 	model.colors = process_colors(mesh);
+	// model.bones = process_bones(mesh);
 	return model;
 }
 
 std::vector<Model> importer(const char* path){
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes );
+	const aiScene* scene = importer.ReadFile(path,aiProcess_Triangulate | aiProcess_FlipUVs
+		| aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices | aiProcess_LimitBoneWeights);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
 		std::cout << "ASSIMP: " << importer.GetErrorString() << std::endl;
 		throw(1);
 	}
-// #ifdef DEBUG
-	std::cout << "Meshes: " << scene->mNumMeshes << '\n' << std::endl;
-// #endif
+	std::cout << "N meshes: " << scene->mNumMeshes << std::endl;
+	std::cout << AI_MAX_BONE_WEIGHTS << std::endl;
 	std::vector<Model>	models;
 	models.reserve(scene->mNumMeshes);
 	for (auto i = 0; i < scene->mNumMeshes; ++i)
 		models.push_back(process_model(scene->mMeshes[i]));
+	std::cout << "\n\n";
 	return models;
 }
