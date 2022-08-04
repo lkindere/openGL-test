@@ -69,6 +69,7 @@ int main(void) {
 
 	Object floor("Models/floor.fbx");
 
+	exit(0);
 	light.addTarget(shader);
 	player.camera.addShader(shader);
 	player.camera.addShader(lightShader);

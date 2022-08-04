@@ -15,7 +15,7 @@ add_subdirectory(external/glm)
 add_subdirectory(Objects)
 add_subdirectory(Importer)
 
-add_definitions(-std=c++17 -DDEBUG)
+add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC external/glfw/include

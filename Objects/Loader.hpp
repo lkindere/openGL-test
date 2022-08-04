@@ -32,7 +32,7 @@ struct Mesh
 
 //Indexes start from 1
 void check_bones(Vert& vert, unsigned int index, const std::vector<Bone>& bones){
-	unsigned int	matches[MAX_WEIGHTS] = {0};
+	int				matches[MAX_WEIGHTS] = {-1};
 	float			weights[MAX_WEIGHTS] = {0.0f};
 	unsigned int	counter = 0;
 	for (auto i = 0; i < bones.size(); ++i){
