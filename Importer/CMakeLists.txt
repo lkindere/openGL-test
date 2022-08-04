@@ -10,7 +10,7 @@ add_library(${PROJECT_NAME}
 
 add_subdirectory(external/assimp)
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++17)
 # add_definitions(-DDEBUG)
 
 target_include_directories(${PROJECT_NAME}

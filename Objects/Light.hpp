@@ -12,9 +12,8 @@ extern Settings settings;
 class Light
 {
 	public:
-		Light(std::vector<Vert>& vertices, std::vector<GLuint>& indices){
-			VAO.init(vertices, indices);
-			_indices = indices.size();
+		Light(const char* path){
+			VAO.init(path);
 		}
 		void addTarget(Shader& target){
 			targets.push_back(target);
@@ -33,7 +32,7 @@ class Light
 			glUniform3fv(glGetUniformLocation(shader.getID(), "scale"), 1, glm::value_ptr(glm::vec3(0.2f)));
 			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(pos));
 			glUniform4fv(glGetUniformLocation(shader.getID(), "lightColor"), 1, glm::value_ptr(color));
-			glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
+			glDrawElements(GL_TRIANGLES, VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
 			shader.unbind();
 			VAO.unbind();
 		}
@@ -42,5 +41,4 @@ class Light
 		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		glm::vec3 pos = glm::vec3(0.0f, 5.0f, 0.0f);
 		ArrayObject VAO;
-		short _indices;
 };

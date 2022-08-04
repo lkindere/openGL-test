@@ -6,20 +6,20 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
+#include <utility>
 
 #define MAX_WEIGHTS	3
 #define MAX_BONES 
 
-//ID of the specific bone
-//Array of vertices affected
-//Array of weights for affected vertices
+//ID of the bone
+//Weight map with indexes and floats
 //Matrix offset from mesh space to bone space
 struct Bone
 {
-	unsigned short	ID;
-	unsigned int	vertices[MAX_WEIGHTS];
-	float			weights[MAX_WEIGHTS];
-	glm::mat4		offset;
+	unsigned short					ID;
+	std::map<unsigned int, float>	weights;
+	glm::mat4						offset;
 };
 
 struct Model

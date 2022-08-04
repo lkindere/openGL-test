@@ -49,6 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include <string.h>
 #include <cmath>
+#include <stdlib.h>
 
 // ------------------------------------------------------------------------------------------------
 // Hashing function taken from

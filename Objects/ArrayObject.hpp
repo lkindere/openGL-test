@@ -1,17 +1,28 @@
 #pragma once
 
+#include <glad/gl.h>
 #include <glm/glm.hpp>
 
-#include <glad/gl.h>
-#include <vector>
+#include "Loader.hpp"
+#include "settings.hpp"
+
+extern Settings settings;
 
 class ArrayObject {
 	public:
-		ArrayObject() {}
-		ArrayObject(std::vector<Vert>& vertices, std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
-			init(vertices, indices, type);
+		ArrayObject() : _nIndices(0) {}
+		ArrayObject(const char* path, GLenum type = GL_STATIC_DRAW){
+			Mesh mesh = load_mesh(path);
+			init(mesh.vertices, mesh.indices, type);
 		}
-		void init(std::vector<Vert>& vertices, std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
+		ArrayObject(const Mesh& mesh, GLenum type = GL_STATIC_DRAW){
+			init(mesh.vertices, mesh.indices, type);
+		}
+		void init(const char* path, GLenum type = GL_STATIC_DRAW){
+			Mesh mesh = load_mesh(path);
+			init(mesh.vertices, mesh.indices, type);
+		}
+		void init(const std::vector<Vert>& vertices, const std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
 			//Array
 			glGenVertexArrays(1, &VAO);
 			glBindVertexArray(VAO);
@@ -25,6 +36,7 @@ class ArrayObject {
 			glGenBuffers(1, &IndiceBuffer);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndiceBuffer);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), type);
+			_nIndices = indices.size();
 			//Vertice
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)0);
@@ -48,9 +60,12 @@ class ArrayObject {
 			glDeleteBuffers(1, &VerticeBuffer);
 			glDeleteBuffers(1, &IndiceBuffer);
 		}
+		//Returns number of indices on the VAO
+		unsigned short nIndices() { return _nIndices; }
 		void bind() { glBindVertexArray(VAO); }
 		void unbind() { glBindVertexArray(0); }
-	
+
 	private:
-		GLuint VAO;
+		GLuint			VAO;
+		unsigned short	_nIndices;
 };

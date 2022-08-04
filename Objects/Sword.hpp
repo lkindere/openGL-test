@@ -21,9 +21,8 @@ extern float g_yaw;
 class Sword : public Weapon
 {		//
 	public:
-		Sword(std::vector<Vert>& vertices, std::vector<GLuint>& indices){
-			VAO.init(vertices, indices);
-			_indices = indices.size();
+		Sword(const char* path){
+			VAO.init(path);
 		}
 		void attack(Shader& shader, const glm::vec3& pos, const glm::vec3& dir){
 			// collisions(pos, dir);
@@ -75,7 +74,7 @@ class Sword : public Weapon
 			if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 				attacking = true;
 			attack(shader, pos, dir);
-            glDrawElements(GL_TRIANGLES, _indices, GL_UNSIGNED_INT, (void*)0);
+            glDrawElements(GL_TRIANGLES, VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
 
 			//Reset offset
 			glUniform3fv(glGetUniformLocation(shader.getID(), "fOffset"), 1, glm::value_ptr(glm::vec3(0.0f)));
@@ -86,6 +85,5 @@ class Sword : public Weapon
 		const short range = 10;
 		const short speed = 10;
 		ArrayObject VAO;
-		short _indices;
 		bool attacking = true;
 };

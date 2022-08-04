@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -91,4 +92,6 @@ class Settings
 	public:
 		void printvec(glm::vec3 vec){
 			std::cout << "X: " << vec.x << " Y: " << vec.y << " Z: " << vec.z << std::endl; }
+		void printvec(glm::vec4 vec){
+			std::cout << "X: " << vec.x << " Y: " << vec.y << " Z: " << vec.z << " W: " << vec.w << std::endl; }
 };

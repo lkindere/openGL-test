@@ -8,11 +8,8 @@ extern Settings settings;
 class Player
 {
 	public:
-		Player(std::vector<Vert> vertices, std::vector<GLuint> indices)
-			: health(10), energy(10), speed(0.1), walk(0.1), run(0.2), jump(30)
-			, position(0.0f, 10.0f, 0.0f), direction(0.0, 0.0, 1.0), weapon(nullptr) {
-            VAO.init(vertices, indices);
-			_indices = indices.size();
+		Player(const char* path){
+            VAO.init(path);
         }
 		void input() {
 			direction.y = 0;
@@ -72,19 +69,18 @@ class Player
 
 	private:
 		Weapon* weapon;
-		short health;
-		short energy;
-        float speed;
-		float walk;
-		float run;
-		short jump;
+		short health = 10;
+		short energy = 10;
+        float speed = 0.1;
+		float walk = 0.1;
+		float run = 0.2;
+		short jump = 30;
     
     private:
         glm::vec3 position;
 		glm::vec3 direction;
 
         ArrayObject VAO;
-        short _indices;
 
 	private:
 		glm::vec3 velocity = glm::vec3(0.0f);

@@ -1,23 +1,15 @@
 #include <exception>
 #include <iostream>
 
-// #include "Importer.hpp"
-
 #include "settings.hpp"
 #include "callbacks.hpp"
 
-// #include "Shader.hpp"
-// #include "Camera.hpp"
-// #include "Light.hpp"
-// #include "ArrayObject.hpp"
+#include "Shader.hpp"
+#include "Light.hpp"
 
-// #include "Sword.hpp"
-// #include "Player.hpp"
-// #include "Object.hpp"
-// #include "Mob.hpp"
-
-
-#include "Loader.hpp"
+#include "Player.hpp"
+#include "Object.hpp"
+#include "Mob.hpp"
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
@@ -62,60 +54,33 @@ void Init() {
 #endif
 }
 
-// std::vector<Vert> convert_vertices(std::vector<Model>& meshes){
-// 	std::vector<Vert>	vertices;
-// 	for (auto i = 0; i < meshes[0].vertices.size(); ++i){
-// 		Vert vert;
-// 		vert.vertices = meshes[0].vertices[i];
-// 		vert.normals = meshes[0].normals[i];
-// 		vert.colors = meshes[0].colors[i];
-// 		vertices.push_back(vert);
-// 	}
-// 	return vertices;
-// }
-
 int main(void) {
     Init();
 
-	// load_mesh("Models/bones.dae");
+    Shader shader("Shaders/default.vert", "Shaders/default.frag");
+	Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
 
-    // Shader shader("Shaders/default.vert", "Shaders/default.frag");
-	// Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
+	Player player("Models/sword.fbx");
+	player.setWeapon(new Sword("Models/sword.fbx"));
 
-	// std::cout << "Loading sword\n";
-	std::vector<Model> meshes = importer("Models/sword.fbx");
-	std::vector<Vert> vertices = convert_vertices(meshes);
-	// Player player(vertices, meshes[0].indices);
-	
-	// player.setWeapon(new Sword(vertices, meshes[0].indices));
+	Light light("Models/light.fbx");
 
-	std::cout << "Loading light\n";
-	meshes = importer("Models/bones.dae");
-	vertices = convert_vertices(meshes);
-	Light light(vertices, meshes[0].indices);
+	Mob mob("Models/bones.fbx");
+
+	Object floor("Models/floor.fbx");
+
 	light.addTarget(shader);
+	player.camera.addShader(shader);
+	player.camera.addShader(lightShader);
 
-	// std::cout << "Loading bones\n";
-	// meshes = importer("Models/bones.fbx");
-	// vertices = convert_vertices(meshes);
-	// Mob mob(vertices, meshes[0].indices);
-
-	// std::cout << "Loading floor\n";
-	// meshes = importer("Models/floor.fbx");
-	// vertices = convert_vertices(meshes);
-	// Object floor(vertices, meshes[0].indices);
-	// player.camera.addShader(shader);
-	// player.camera.addShader(lightShader);
-
-	exit(0);
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		light.draw(lightShader);
-		// player.input();
-		// player.draw(shader);
-		// mob.draw(shader);
-		// floor.draw(shader, glm::vec3(0.0f));
+		player.input();
+		player.draw(shader);
+		mob.draw(shader);
+		floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

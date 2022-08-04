@@ -62,25 +62,24 @@ glm::mat4	convert_matrix(const aiMatrix4x4& aiMatrix){
 }
 
 std::vector<Bone> process_bones(aiMesh* mesh){
+#ifdef DEBUG
+	std::cout << "\nProcessing bones: " << mesh->mNumBones << '\n' << std::endl;
+#endif
 	std::vector<Bone> bones;
 	bones.reserve(mesh->mNumBones);
 	for (auto i = 0; i < mesh->mNumBones; ++i){
 		Bone bone;
-		std::cout << "N weights: " << mesh->mBones[i]->mNumWeights << std::endl;
+#ifdef DEBUG
+		std::cout << "Bone[" << i << "] " "Weights: " << mesh->mBones[i]->mNumWeights << std::endl;
+#endif		
 		for (auto j = 0; j < mesh->mBones[i]->mNumWeights; ++j){
-			// if (j == MAX_WEIGHTS){
-			// 	std::cout << "More weights detected per bone than defined" << std::endl;
-			// 	break ;
-			// }
-			std::cout << "Bone: " << i << " Affecting: " << mesh->mBones[i]->mWeights[j].mVertexId << ' ' << mesh->mBones[i]->mWeights[j].mWeight << std::endl;
-			bone.vertices[j] = mesh->mBones[i]->mWeights[j].mVertexId;
-			bone.weights[j] = mesh->mBones[i]->mWeights[j].mWeight;
+			bone.weights.insert(std::make_pair(
+				mesh->mBones[i]->mWeights[j].mVertexId, mesh->mBones[i]->mWeights[j].mWeight));
 		}
 		bone.offset = convert_matrix(mesh->mBones[i]->mOffsetMatrix);
 		bone.ID = i;
 		bones.push_back(bone);
 	}
-	// exit (0);
 	return bones;
 }
 
@@ -90,7 +89,7 @@ Model process_model(aiMesh* mesh){
 	model.indices = process_indices(mesh);
 	model.normals = process_normals(mesh);
 	model.colors = process_colors(mesh);
-	// model.bones = process_bones(mesh);
+	model.bones = process_bones(mesh);
 	return model;
 }
 
@@ -102,8 +101,9 @@ std::vector<Model> importer(const char* path){
 		std::cout << "ASSIMP: " << importer.GetErrorString() << std::endl;
 		throw(1);
 	}
-	std::cout << "N meshes: " << scene->mNumMeshes << std::endl;
-	std::cout << AI_MAX_BONE_WEIGHTS << std::endl;
+#ifdef DEBUG
+	std::cout << "N meshes: " << scene->mNumMeshes << '\n' << std::endl;
+#endif
 	std::vector<Model>	models;
 	models.reserve(scene->mNumMeshes);
 	for (auto i = 0; i < scene->mNumMeshes; ++i)
