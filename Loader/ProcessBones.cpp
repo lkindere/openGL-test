@@ -4,8 +4,10 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 	std::vector<KeyPosition> positions;
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
-		pos.timestamp = node->mPositionKeys[i].mTime;
 		pos.position = toGLvec(node->mPositionKeys[i].mValue);
+		if (i > 0 && same_vec(pos.position, positions.rbegin()->position))
+			continue ;
+		pos.timestamp = node->mPositionKeys[i].mTime;
 		positions.push_back(pos);
 	}
 	return positions;
@@ -15,8 +17,10 @@ static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
 	std::vector<KeyRotation> rotations;
 	for (auto i = 0; i < node->mNumRotationKeys; ++i){
 		KeyRotation rot;
-		rot.timestamp = node->mRotationKeys[i].mTime;
 		rot.rotation = toGLquat(node->mRotationKeys[i].mValue);
+		if (i > 0 && same_quat(rot.rotation, rotations.rbegin()->rotation))
+			continue ;
+		rot.timestamp = node->mRotationKeys[i].mTime;
 		rotations.push_back(rot);
 	}
 	return rotations;
@@ -26,8 +30,10 @@ static std::vector<KeyScale> process_scales(aiNodeAnim* node){
 	std::vector<KeyScale> scales;
 	for (auto i = 0; i < node->mNumScalingKeys; ++i){
 		KeyScale scl;
-		scl.timestamp = node->mScalingKeys[i].mTime;
 		scl.scale = toGLvec(node->mScalingKeys[i].mValue);
+		if (i > 0 && same_vec(scl.scale, scales.rbegin()->scale))
+			continue ;
+		scl.timestamp = node->mScalingKeys[i].mTime;
 		scales.push_back(scl);
 	}
 	return scales;

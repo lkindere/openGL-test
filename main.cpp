@@ -62,23 +62,33 @@ int main(void) {
 	Mob mob(importer("Models/bones.fbx"));
 
 	Model& model = mob.getmodeltemp();
-	Bone bone = model.getbonetemp()[0];
+	// int wat = 0;
+	// for (auto it = model.getbonetemp().begin(); it != model.getbonetemp().end(); ++it){
+	// 	std::cout << wat++ << std::endl;
+	// 	std::cout << it->scales().size() << '\n' << std::endl;
+	// }
+	Bone bone = model.getbonetemp()[11];
 
 	std::cout << "Bone: " << bone.name() << " - \n";
-	for (auto i = 0; i < bone.positions().size(); ++i){
-		settings.printvec(bone.positions()[i].position);
+	for (auto i = 0; i < bone.rotations().size(); ++i){
+		settings.printmat(glm::toMat4(bone.rotations()[i].rotation));
+		std::cout << '\n';
 	}
 
-	std::cout << "Keyframes: " << bone.positions().size() << std::endl;
+	std::cout << "Keyframes: " << bone.scales().size() << std::endl;
 
+	float end = bone.rotations().rbegin()->timestamp;
 	std::cout << "Bone: " << bone.name() << " - \n";
-	for (auto i = 0; i < 2; ++i){
+	// for (auto i = 0; i < 2; ++i){
 		float j = 0;
-		while (j < bone.positions().rbegin()->timestamp){
-			settings.printvec(bone.currentPos((float)j));
-			++j;
+		while (j < end){
+			settings.printmat(bone.currentRot((float)j));
+			j += 0.5;
+			settings.printmat(bone.currentRot((float)j));
+			j += 0.5;
+			std::cout << '\n';
 		}
-	}
+	// }
 
     // Shader shader("Shaders/default.vert", "Shaders/default.frag");
 	// Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
