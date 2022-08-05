@@ -9,21 +9,20 @@
 
 #include "Camera.hpp"
 
+#include "Model.hpp"
+
 extern Settings settings;
 
 extern float g_pitch;
 extern float g_yaw;
-
-
 
 #include <unistd.h>
 
 class Sword : public Weapon
 {		//
 	public:
-		Sword(const char* path){
-			VAO.init(path);
-		}
+		Sword(const Model& model)
+			: _model(model) {}
 		void attack(Shader& shader, const glm::vec3& pos, const glm::vec3& dir){
 			// collisions(pos, dir);
 			static int cooldown;
@@ -74,8 +73,7 @@ class Sword : public Weapon
 			if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 				attacking = true;
 			attack(shader, pos, dir);
-            glDrawElements(GL_TRIANGLES, VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
-
+			_model.draw();
 			//Reset offset
 			glUniform3fv(glGetUniformLocation(shader.getID(), "fOffset"), 1, glm::value_ptr(glm::vec3(0.0f)));
 			glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "fRotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
@@ -84,6 +82,6 @@ class Sword : public Weapon
 		const short damage = 10;
 		const short range = 10;
 		const short speed = 10;
-		ArrayObject VAO;
+		Model _model;
 		bool attacking = true;
 };

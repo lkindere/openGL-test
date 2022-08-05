@@ -1,35 +1,33 @@
 #pragma once
 
-#include "Camera.hpp"
+#include "Model.hpp"
+
 #include "settings.hpp"
 
 extern Settings settings;
 class Mob
 {
 	public:
-		Mob(const char* path){
-            VAO.init(path);
-        }
+		Mob(const Model& model)
+			: _model(model) {}
 		// void setWeapon(Weapon* wep){
 		// 	delete weapon;
 		// 	weapon = wep;
 		// }
 
         void draw(Shader& shader){
-			VAO.bind();
 			shader.bind();
-
 			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(position));
 			glUniform3fv(glGetUniformLocation(shader.getID(), "scale"), 1, glm::value_ptr(glm::vec3(0.01f)));
             glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
-            glDrawElements(GL_TRIANGLES, VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
+			glUniform3fv(glGetUniformLocation(shader.getID(), "fOffset"), 1, glm::value_ptr(glm::vec3(0.0f)));
+			glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "fRotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+			_model.draw();
 			shader.unbind();
-			VAO.unbind();
 			move();
 		}
 		void move(){
-			settings.printvec(direction);
 			direction = settings.playerPos() - position;
 			direction.y = 0.0f;
 			position += direction * (speed / 10);
@@ -38,9 +36,6 @@ class Mob
 	private:
 		Mob& operator=(const Mob& p);
 		Mob(const Mob& p);
-		
-	public:
-		Camera camera;
 
 	private:
 		Weapon* weapon = nullptr;
@@ -52,5 +47,5 @@ class Mob
         glm::vec3 position = glm::vec3(5.0f, 0.0f, 5.0f);
 		glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
-        ArrayObject VAO;
+        Model _model;
 };

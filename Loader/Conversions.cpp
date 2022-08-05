@@ -1,10 +1,4 @@
-#pragma once
-
-#include <glm/vec3.hpp>
-#include <glm/gtc/quaternion.hpp>
-
-#include <assimp/vector3.h>
-#include <assimp/matrix4x4.h>
+#include "Conversions.hpp"
 
 glm::quat toGLquat(const aiQuaternion& aiQuat){
 	return glm::quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);

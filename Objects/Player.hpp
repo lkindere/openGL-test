@@ -3,14 +3,19 @@
 #include "Sword.hpp"
 #include "Camera.hpp"
 
+#include "Model.hpp"
+
+#include "settings.hpp"
+
+#include <iostream>
+
 extern Settings settings;
 
 class Player
 {
 	public:
-		Player(const char* path){
-            VAO.init(path);
-        }
+		Player(const Model& model)
+			: _model(model) {}
 		void input() {
 			direction.y = 0;
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
@@ -53,12 +58,10 @@ class Player
 
         void draw(Shader& shader){
 			camera.Matrix(position, direction);
-			VAO.bind();
 			shader.bind();
 			if (weapon)
 				weapon->draw(shader, position, direction);
 			shader.unbind();
-			VAO.unbind();
 		}
 	private:
 		Player& operator=(const Player& p);
@@ -68,7 +71,7 @@ class Player
 		Camera camera;
 
 	private:
-		Weapon* weapon;
+		Weapon* weapon = nullptr;
 		short health = 10;
 		short energy = 10;
         float speed = 0.1;
@@ -80,7 +83,7 @@ class Player
         glm::vec3 position;
 		glm::vec3 direction;
 
-        ArrayObject VAO;
+		Model	_model;
 
 	private:
 		glm::vec3 velocity = glm::vec3(0.0f);

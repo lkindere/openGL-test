@@ -1,27 +1,13 @@
 #pragma once
 
 #include <glad/gl.h>
-#include <glm/glm.hpp>
 
-#include "Loader.hpp"
-#include "settings.hpp"
-
-extern Settings settings;
+#include "Structs.hpp"
+#include "ProcessVAO.hpp"
 
 class ArrayObject {
 	public:
 		ArrayObject() : _nIndices(0) {}
-		ArrayObject(const char* path, GLenum type = GL_STATIC_DRAW){
-			Mesh mesh = load_mesh(path);
-			init(mesh.vertices, mesh.indices, type);
-		}
-		ArrayObject(const Mesh& mesh, GLenum type = GL_STATIC_DRAW){
-			init(mesh.vertices, mesh.indices, type);
-		}
-		void init(const char* path, GLenum type = GL_STATIC_DRAW){
-			Mesh mesh = load_mesh(path);
-			init(mesh.vertices, mesh.indices, type);
-		}
 		void init(const std::vector<Vert>& vertices, const std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
 			//Array
 			glGenVertexArrays(1, &VAO);

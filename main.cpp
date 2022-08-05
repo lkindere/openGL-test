@@ -11,6 +11,8 @@
 #include "Object.hpp"
 #include "Mob.hpp"
 
+#include "Importer.hpp"
+
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
@@ -60,16 +62,15 @@ int main(void) {
     Shader shader("Shaders/default.vert", "Shaders/default.frag");
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
 
-	Player player("Models/sword.fbx");
-	player.setWeapon(new Sword("Models/sword.fbx"));
+	Player player(importer("Models/sword.fbx"));
+	Light light(importer("Models/light.fbx"));
 
-	Light light("Models/light.fbx");
+	Object floor(importer("Models/floor.fbx"));
+	Mob mob(importer("Models/bones.fbx"));
 
-	Mob mob("Models/bones.fbx");
 
-	Object floor("Models/floor.fbx");
+	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
-	exit(0);
 	light.addTarget(shader);
 	player.camera.addShader(shader);
 	player.camera.addShader(lightShader);
