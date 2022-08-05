@@ -51,6 +51,7 @@ static void process_hierarchy(std::vector<Bone>& data, const aiNode* node){
 		chld.reserve(current->mNumChildren);
 		for (auto i = 0; i < current->mNumChildren; ++i)
 			chld.push_back(find_boneID(data, current->mChildren[i]->mName.data));
+		it->setRelative(toGLmat(current->mTransformation));
 		it->setChildren(chld);
 	}
 }

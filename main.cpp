@@ -59,35 +59,56 @@ void Init() {
 int main(void) {
     Init();
 
-    Shader shader("Shaders/default.vert", "Shaders/default.frag");
-	Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
-
-	Player player(importer("Models/sword.fbx"));
-	Light light(importer("Models/light.fbx"));
-
-	Object floor(importer("Models/floor.fbx"));
 	Mob mob(importer("Models/bones.fbx"));
 
+	Model& model = mob.getmodeltemp();
+	Bone bone = model.getbonetemp()[0];
 
-	player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	std::cout << "Bone: " << bone.name() << " - \n";
+	for (auto i = 0; i < bone.positions().size(); ++i){
+		settings.printvec(bone.positions()[i].position);
+	}
 
-	light.addTarget(shader);
-	player.camera.addShader(shader);
-	player.camera.addShader(lightShader);
+	std::cout << "Keyframes: " << bone.positions().size() << std::endl;
 
-    while (!glfwWindowShouldClose(settings.window())) {
-        glClearColor(0, 0, 0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		light.draw(lightShader);
-		player.input();
-		player.draw(shader);
-		mob.draw(shader);
-		floor.draw(shader);
-        glfwSwapBuffers(settings.window());
-        glfwPollEvents();
-    }
-	std::cout << glGetError() << std::endl;
-    glfwDestroyWindow(settings.window());
-    glfwTerminate();
+	std::cout << "Bone: " << bone.name() << " - \n";
+	for (auto i = 0; i < 2; ++i){
+		float j = 0;
+		while (j < bone.positions().rbegin()->timestamp){
+			settings.printvec(bone.currentPos((float)j));
+			++j;
+		}
+	}
+
+    // Shader shader("Shaders/default.vert", "Shaders/default.frag");
+	// Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
+
+	// Player player(importer("Models/sword.fbx"));
+	// Light light(importer("Models/light.fbx"));
+
+	// Object floor(importer("Models/floor.fbx"));
+	// Mob mob(importer("Models/bones.fbx"));
+
+
+	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
+
+	// light.addTarget(shader);
+	// player.camera.addShader(shader);
+	// player.camera.addShader(lightShader);
+
+    // while (!glfwWindowShouldClose(settings.window())) {
+    //     glClearColor(0, 0, 0, 1.0);
+    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// 	light.draw(lightShader);
+	// 	player.input();
+	// 	player.draw(shader);
+	// 	mob.draw(shader);
+	// 	floor.draw(shader);
+    //     glfwSwapBuffers(settings.window());
+    //     glfwPollEvents();
+    // }
+	// std::cout << glGetError() << std::endl;
+    // glfwDestroyWindow(settings.window());
+    // glfwTerminate();
     return 0;
 }

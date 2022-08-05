@@ -33,6 +33,9 @@ class Mob
 			position += direction * (speed / 10);
 		}
 
+
+		Model& getmodeltemp() { return _model; }
+
 	private:
 		Mob& operator=(const Mob& p);
 		Mob(const Mob& p);

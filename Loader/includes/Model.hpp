@@ -21,6 +21,8 @@ class Model
 			VAO.unbind();
 		}
 
+		std::vector<Bone>& getbonetemp() { return bones; }
+
 	private:
 		ArrayObject			VAO;
 		std::vector<Bone>	bones;
