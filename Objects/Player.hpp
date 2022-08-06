@@ -10,6 +10,7 @@
 #include <iostream>
 
 extern Settings settings;
+extern Camera camera;
 
 class Player
 {
@@ -17,7 +18,7 @@ class Player
 		Player(const Model& model)
 			: _model(model) {}
 		void input() {
-			direction.y = 0;
+			// direction.y = 0;
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
 				position += speed * direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
@@ -34,8 +35,8 @@ class Player
 				collision.y = 0;
 				velocity.y = settings.gravity() * jump;
 			}
-			settings.setPlayerPos(position);
-			direction = camera.updateDirection();
+            camera.setPosition(position);
+			direction = camera.mouseDirection();
 			physics();
 		}
         
@@ -57,18 +58,13 @@ class Player
 		}
 
         void draw(Shader& shader){
-			camera.Matrix(position, direction);
-			shader.bind();
 			if (weapon)
 				weapon->draw(shader, position, direction);
-			shader.unbind();
 		}
+
 	private:
 		Player& operator=(const Player& p);
 		Player(const Player& p);
-		
-	public:
-		Camera camera;
 
 	private:
 		Weapon* weapon = nullptr;
@@ -80,8 +76,8 @@ class Player
 		short jump = 30;
     
     private:
-        glm::vec3 position;
-		glm::vec3 direction;
+        glm::vec3 position = glm::vec3(0.0f);
+		glm::vec3 direction = glm::vec3(1.0f, 0.0f, 0.0f);
 
 		Model	_model;
 

@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Camera.hpp"
 #include "Model.hpp"
+
+extern Camera camera;
 
 class Object
 {
@@ -8,15 +11,16 @@ class Object
 		Object(const Model& model)
 			: _model(model) {}
         void draw(Shader& shader, const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f), const glm::mat4& rotation = glm::mat4(1.0f)){
-			shader.bind();
-			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(pos));
-			glUniform3fv(glGetUniformLocation(shader.getID(), "scale"), 1, glm::value_ptr(scale));
-            glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(rotation));
-
-			glUniform3fv(glGetUniformLocation(shader.getID(), "fOffset"), 1, glm::value_ptr(glm::vec3(0.0f)));
-			glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "fRotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-			_model.draw();
-			shader.unbind();
+			Uniforms uni;
+			uni.vec3 = {
+				std::make_pair("pos", pos),
+				std::make_pair("scale", scale)
+			};
+			uni.mat4 = {
+				std::make_pair("rotation", rotation),
+                std::make_pair("camPos", camera.matrix())
+			};
+			_model.draw(shader, uni);
 		}
 	private:
 		Object& operator=(const Object& p);

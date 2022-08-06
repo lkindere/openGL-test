@@ -1,10 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include <assimp/scene.h>
 #include <assimp/mesh.h>
 #include <assimp/anim.h>
-
-#include <vector>
 
 #include "Bone.hpp"
 #include "Structs.hpp"

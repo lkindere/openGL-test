@@ -30,3 +30,10 @@ struct Vert
 	glm::ivec3	bones;
 	glm::vec3	weights;
 };
+
+//Only used for importing
+struct VAOdata
+{
+	std::vector<Vert>			verts;
+	std::vector<unsigned int>	indices;
+};

@@ -1,33 +1,45 @@
 #pragma once
 
-#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/vector_angle.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include <vector>
-
-#include "Shader.hpp"
+extern Settings settings;
 
 class Camera {
 	public:
 		Camera();
-		void Matrix(const glm::vec3& position, const glm::vec3& direction);
-		void addShader(Shader& shader);
-		glm::vec3 updateDirection();
 
 	public:
-		std::vector<Shader>	shaders;
+		void setPosition(const glm::vec3& position);
+        void updateProjection();
 
-		glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-		glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
+	public:
+		glm::mat4   matrix() const;
+		glm::vec3   mouseDirection();
 
-		float yaw = -90.0f;
-		float pitch = 0.0f;
+	public:
+        const glm::vec3&    position() const;
+        const glm::vec3&    direction() const;
+		const glm::vec3&    up() const;
+		const glm::vec3&    front() const;
+		float               yaw() const;
+		float               pitch() const;
 
-		glm::mat4 cameraMatrix = glm::mat4(1.0f);
+	private:
+		glm::mat4 _projection = glm::mat4(1.0f);
 
-		float speed = 0.05f;
+		glm::vec3 _position = glm::vec3(0.0f);
+		glm::vec3 _direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+		float _yaw = -90.0f;
+		float _pitch = 0.0f;
+
+		const glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
+		const glm::vec3 _front = glm::vec3(0.0f, 0.0f, -1.0f);
+		const float _FOV = 70.0f;
+		const float _near = 0.01f;
+		const float _far = 1000.0f;
+        const float _speed = 0.05f;
 };

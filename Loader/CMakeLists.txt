@@ -6,9 +6,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 add_library(${PROJECT_NAME}
 	Importer.cpp
-	Conversions.cpp
 	ProcessVAO.cpp
 	ProcessBones.cpp
+	Conversions.cpp
+	ArrayObject.cpp
+	Bone.cpp
 )
 
 add_subdirectory(external/assimp)
@@ -18,7 +20,9 @@ add_definitions(-std=c++11)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC includes
+	PUBLIC ../Objects
 	PUBLIC external/assimp/include
+	PUBLIC ../external/glfw/include
 	PUBLIC ../external/glfw/deps
 	PUBLIC ../external/glm
 )

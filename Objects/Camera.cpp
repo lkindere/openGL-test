@@ -1,47 +1,49 @@
 #include "settings.hpp"
 
 #include "Camera.hpp"
-#include <iostream>
-
-float g_pitch;
-float g_yaw;
-extern Settings settings;
 
 Camera::Camera() {}
 
-void Camera::addShader(Shader& shader){
-	shaders.push_back(shader);
+void Camera::updateProjection() {
+    _projection = glm::perspective(
+	    glm::radians(_FOV), (float)settings.width() / settings.height(), _near, _far);
 }
 
-//Possibly change to only update the specific single shader needed for each draw
-void Camera::Matrix(const glm::vec3& position, const glm::vec3& direction){
-    glm::mat4 projection(glm::perspective(glm::radians(settings.FOV()), (float)settings.width() / settings.height(), settings.near(), settings.far()));
-	glm::mat4 view(glm::lookAt(position, position + direction, Up));
-	glm::mat4 cameraMatrix = projection * view;
-
-	for (auto it = shaders.begin(); it != shaders.end(); ++it){
-		it->bind();
-		glUniformMatrix4fv(glGetUniformLocation(it->getID(), "camPos"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-	}
-	glUseProgram(0); 
+void Camera::setPosition(const glm::vec3& position) {
+	_position = position;
 }
 
-glm::vec3 Camera::updateDirection(){
+glm::mat4 Camera::matrix() const {
+	glm::mat4 view(glm::lookAt(_position, _position + _direction, _up));
+	return glm::mat4(_projection * view);
+}
+
+glm::vec3 Camera::mouseDirection() {
 	glfwSetInputMode(settings.window(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	double mouseX;
 	double mouseY;
 	glfwGetCursorPos(settings.window(), &mouseX, &mouseY);
-	float offsetX = (mouseX - settings.width() / 2) * speed;
-	float offsetY = (settings.height() / 2 - mouseY) * speed;
+	float offsetX = (mouseX - settings.width() / 2) * _speed;
+	float offsetY = (settings.height() / 2 - mouseY) * _speed;
 	glfwSetCursorPos(settings.window(), (settings.width() / 2), (settings.height() / 2)); 
-	yaw += offsetX;
-	pitch += offsetY;
-		if(pitch > 89.0f)
-	pitch =  89.0f;
-		if(pitch < -89.0f)
-	pitch = -89.0f;
-	g_pitch = pitch;
-	g_yaw = yaw;
-	glm::vec3 direction(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)), sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
-	return glm::normalize(direction);
+	_yaw += offsetX;
+	_pitch += offsetY;
+		if(_pitch > 89.0f)
+	_pitch =  89.0f;
+		if(_pitch < -89.0f)
+	_pitch = -89.0f;
+	_direction = glm::vec3(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
+		sin(glm::radians(_pitch)), sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
+    std::cout << "Pos: ";
+    settings.printvec(_position);
+    std::cout << "Dir: ";
+    settings.printvec(_direction);
+	return glm::normalize(_direction);
 }
+
+const glm::vec3&    Camera::position() const { return _position; }
+const glm::vec3&    Camera::direction() const { return _direction; }
+const glm::vec3&    Camera::up() const { return _up; }
+const glm::vec3&    Camera::front() const { return _front; }
+float               Camera::yaw() const { return _yaw; }
+float               Camera::pitch() const { return _pitch; }

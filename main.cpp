@@ -19,16 +19,13 @@
 #include <GLFW/glfw3.h>
 
 Settings settings;
-const char* title = "Title";
+Camera camera;
 
 void Init_settings(){
 	settings.setWidth(1000);
 	settings.setHeight(1000);
-	settings.setMode(free_float);
-	settings.setFOV(70.0);
-	settings.setNear(0.01);
-	settings.setFar(1000.0);
 	settings.setGravity(0.01);
+    camera.updateProjection();
 }
 
 void Init() {
@@ -38,7 +35,7 @@ void Init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-    settings.setWindow(glfwCreateWindow(settings.width(), settings.height(), title, NULL, NULL));
+    settings.setWindow(glfwCreateWindow(settings.width(), settings.height(), "Title", NULL, NULL));
     if (!settings.window()) {
         throw(std::runtime_error("Failed to open window"));
         glfwTerminate();
@@ -58,67 +55,54 @@ void Init() {
 
 int main(void) {
     Init();
+	Uniforms uniDefault;
+	uniDefault.vec3 = {
+		std::make_pair("pos", glm::vec3(0.0f)),
+		std::make_pair("scale", glm::vec3(1.0f)),
+		std::make_pair("fOffset", glm::vec3(0.0f))
+	};
+	uniDefault.mat4 = {
+		std::make_pair("camPos", glm::mat4(1.0f)),
+		std::make_pair("rotation", glm::mat4(1.0f)),
+		std::make_pair("fRotation", glm::mat4(1.0f))
+	};
+    Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
 
+	Uniforms lightDefault;
+	lightDefault.vec3 = {
+		std::make_pair("pos", glm::vec3(0.0f)),
+		std::make_pair("scale", glm::vec3(1.0f))
+	};
+    lightDefault.vec4 = {
+        std::make_pair("lightColor", glm::vec4(1.0f))
+    };
+	lightDefault.mat4 = {
+		std::make_pair("camPos", glm::mat4(1.0f))
+	};
+	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", lightDefault);
+
+	Player player(importer("Models/sword.fbx"));
+	Light light(importer("Models/light.fbx"));
+	Object floor(importer("Models/floor.fbx"));
 	Mob mob(importer("Models/bones.fbx"));
 
-	Model& model = mob.getmodeltemp();
-	// int wat = 0;
-	// for (auto it = model.getbonetemp().begin(); it != model.getbonetemp().end(); ++it){
-	// 	std::cout << wat++ << std::endl;
-	// 	std::cout << it->scales().size() << '\n' << std::endl;
-	// }
-	Bone bone = model.getbonetemp()[11];
+	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
-	std::cout << "Bone: " << bone.name() << " - \n";
-	for (auto i = 0; i < bone.rotations().size(); ++i){
-		settings.printmat(glm::toMat4(bone.rotations()[i].rotation));
-		std::cout << '\n';
-	}
+	light.addTarget(shader);
 
-	std::cout << "Keyframes: " << bone.scales().size() << std::endl;
-
-	float end = bone.rotations().rbegin()->timestamp;
-	std::cout << "Bone: " << bone.name() << " - \n";
-	// for (auto i = 0; i < 2; ++i){
-		float j = 0;
-		while (j < end){
-			settings.printmat(bone.currentRot((float)j));
-			j += 0.5;
-			settings.printmat(bone.currentRot((float)j));
-			j += 0.5;
-			std::cout << '\n';
-		}
-	// }
-
-    // Shader shader("Shaders/default.vert", "Shaders/default.frag");
-	// Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
-
-	// Player player(importer("Models/sword.fbx"));
-	// Light light(importer("Models/light.fbx"));
-
-	// Object floor(importer("Models/floor.fbx"));
-	// Mob mob(importer("Models/bones.fbx"));
-
-
-	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
-
-	// light.addTarget(shader);
-	// player.camera.addShader(shader);
-	// player.camera.addShader(lightShader);
-
-    // while (!glfwWindowShouldClose(settings.window())) {
-    //     glClearColor(0, 0, 0, 1.0);
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// 	light.draw(lightShader);
-	// 	player.input();
-	// 	player.draw(shader);
-	// 	mob.draw(shader);
-	// 	floor.draw(shader);
-    //     glfwSwapBuffers(settings.window());
-    //     glfwPollEvents();
-    // }
-	// std::cout << glGetError() << std::endl;
-    // glfwDestroyWindow(settings.window());
-    // glfwTerminate();
+    while (!glfwWindowShouldClose(settings.window())) {
+        glClearColor(0, 0, 0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		light.draw(lightShader);
+		player.input();
+		player.draw(shader);
+		mob.draw(shader);
+		floor.draw(shader);
+        glfwSwapBuffers(settings.window());
+        glfwPollEvents();
+    }
+	std::cout << glGetError() << std::endl;
+    glfwDestroyWindow(settings.window());
+    glfwTerminate();
     return 0;
 }

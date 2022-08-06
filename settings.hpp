@@ -9,11 +9,6 @@
 
 #include <iostream>
 
-enum e_mode{
-	free_float = 0,
-	first_person = 1,
-};
-
 enum e_flags{
 	none = 1,
 };
@@ -21,7 +16,7 @@ enum e_flags{
 class Settings
 {
 	public:
-		Settings() : width_(), height_(), mode_(), flags_() {}
+		Settings() : width_(), height_(), flags_() {}
 		
 		//				SET
 		//Paramaters
@@ -29,18 +24,8 @@ class Settings
 		void setWidth(int width) { width_ = width; }
 		void setHeight(int height) { height_ = height; }
 
-		//Camera
-		void setFOV(float FOV) { FOV_ = FOV; }
-		void setNear(float near) { near_ = near; }
-		void setFar(float far) { far_ = far; }
-
-		void setMode(e_mode mode) { mode_ = mode; }
-
 		//Physics
 		void setGravity(float gravity) { gravity_ = gravity; }
-
-		//Data
-		void setPlayerPos(glm::vec3 position) { playerPos_ = position; }
 		
 		//Flags
 		void set(e_flags flag) { flags_ |= flag; }
@@ -52,18 +37,8 @@ class Settings
 		int			width() const { return width_; }
 		int			height() const { return height_; }
 
-		//Camera
-		float		FOV() { return FOV_; }
-		float		near() { return near_; }
-		float		far() { return far_;  }
-
-		e_mode		mode() const { return mode_; }
-
 		//Physics
 		float		gravity() { return gravity_; }
-
-		//Data
-		glm::vec3	playerPos() { return playerPos_; }
 		
 		//Flags
 		int			flags() const { return flags_; }
@@ -78,19 +53,13 @@ class Settings
 		GLFWwindow*	window_;
 		int			width_;
 		int			height_;
-		//Camera
-		float		FOV_;
-		float		near_;
-		float		far_;
 		//Physics
 		float		gravity_;
-		//Data
-		glm::vec3	playerPos_;
-
-		e_mode		mode_;
+		//Flags
 		int			flags_;
 
 	public:
+		//For easier debugging
 		void printvec(const glm::vec3& vec){
 			std::cout << "X: " << vec.x << " Y: " << vec.y << " Z: " << vec.z << std::endl; }
 		void printvec(const glm::vec4& vec){

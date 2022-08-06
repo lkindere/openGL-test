@@ -12,7 +12,6 @@ uniform vec3 lightPos;
 
 void main()
 {
-	// vec3 lpos = (_camPos * vec4(1.0f)).xyz;
 	vec3 lpos = lightPos;
 	vec3 normal = normalize(_normal);
 	vec3 lightDir = normalize(lpos - _pos);

@@ -15,23 +15,19 @@ out vec3 _pos;
 out vec3 _normal;
 out vec4 _color;
 
-uniform mat4 camPos;
 uniform vec3 pos;
 uniform vec3 scale;
-uniform mat4 rotation;
-
 uniform vec3 fOffset;
+
+uniform mat4 camPos;
+uniform mat4 rotation;
 uniform mat4 fRotation;
 
 // vec4 check_bones(vec4 model){
-// 	vec4 position = vec4(0.0f);
-// 	for (int i = 0; i < MAX_WEIGHTS; ++i){
-// 		if (aBones[i] == -1)
-// 			break ;
-// 		vec4 localPosition = BoneMatrices[aBones[i]] * model;
-// 		position += localPosition * aWeights[i];
-// 		//Normals ??? 
-// 	}
+// 	vec4 position = model;
+	// position += BoneMatrices[aBones[0]] * model * aWeights[0];
+	// position += BoneMatrices[aBones[1]] * model * aWeights[1];
+	// position += BoneMatrices[aBones[2]] * model * aWeights[2];
 // 	return position;
 // }
 
@@ -40,7 +36,7 @@ void main()
 	vec4 model = fRotation * vec4(aModel * scale, 1.0) * rotation;
 	model.xyz += pos.xyz;
 
-	// check_bones(model);
+	// model = check_bones(model);
 
 	gl_Position = camPos * vec4(model);
 	gl_Position.xyz += fOffset.xyz;

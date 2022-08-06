@@ -5,6 +5,8 @@
 #include "settings.hpp"
 
 extern Settings settings;
+extern Camera camera;
+
 class Mob
 {
 	public:
@@ -15,26 +17,23 @@ class Mob
 		// 	weapon = wep;
 		// }
 
-        void draw(Shader& shader){
-			shader.bind();
-			glUniform3fv(glGetUniformLocation(shader.getID(), "pos"), 1, glm::value_ptr(position));
-			glUniform3fv(glGetUniformLocation(shader.getID(), "scale"), 1, glm::value_ptr(glm::vec3(0.01f)));
-            glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "rotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
-			glUniform3fv(glGetUniformLocation(shader.getID(), "fOffset"), 1, glm::value_ptr(glm::vec3(0.0f)));
-			glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "fRotation"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-			_model.draw();
-			shader.unbind();
+        void draw(const Shader& shader){
+			Uniforms uni;
+			uni.vec3 = {
+				std::make_pair("pos", position),
+				std::make_pair("scale", glm::vec3(0.01f)),
+			};
+            uni.mat4 = {
+                std::make_pair("camPos", camera.matrix())
+            };
+			_model.draw(shader, uni);
 			move();
 		}
 		void move(){
-			direction = settings.playerPos() - position;
+			direction = camera.position() - position;
 			direction.y = 0.0f;
 			position += direction * (speed / 10);
 		}
-
-
-		Model& getmodeltemp() { return _model; }
 
 	private:
 		Mob& operator=(const Mob& p);
