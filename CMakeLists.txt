@@ -18,19 +18,18 @@ add_subdirectory(Loader)
 add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
+    PUBLIC Loader/includes
+    PUBLIC Objects/includes
 	PUBLIC external/glfw/include
 	PUBLIC external/glfw/deps
 	PUBLIC external/glm
 	PUBLIC external/assimp/include
-	PUBLIC Objects
-	PUBLIC Loader
 	PUBLIC Loader/external/assimp
 )
 
 target_link_directories(${PROJECT_NAME}
 	PRIVATE external/glfw/src
 )
-
 
 target_link_libraries(${PROJECT_NAME}
 	glfw

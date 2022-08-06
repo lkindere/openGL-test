@@ -19,21 +19,18 @@ class Model
 			bones = bonevec;
 		}
 		//All required uniforms need to be set beforehand from calling class
-		void draw(const Shader& shader, const Uniforms& uniforms){
+		void draw(const Shader& shader, Uniforms uniforms){
+			std::vector<glm::mat4> boneMatrices = animator.updateMatrices(bones);
+            uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();
 			shader.update(uniforms);
-			// std::vector<glm::mat4> boneMatrices = animator.updateMatrices(bones);
-			// glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "BoneMatrices"),
-				// boneMatrices.size(), GL_FALSE, glm::value_ptr(boneMatrices.data()[0]));
 
 			glDrawElements(GL_TRIANGLES, VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
 
 			shader.unbind();
 			VAO.unbind();
 		}
-
-		std::vector<Bone>& getbonetemp() { return bones; }
 
 	private:
 		ArrayObject			VAO;

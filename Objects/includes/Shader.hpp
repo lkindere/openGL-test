@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <map>
 
 #include <glm/vec3.hpp>
@@ -10,15 +11,10 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-struct Uniforms {
-    std::map<std::string, glm::vec3>    vec3;
-    std::map<std::string, glm::vec4>    vec4;
-    std::map<std::string, glm::mat4>    mat4;
-};
+#include "Uniforms.hpp"
 
 class Shader {
     public:

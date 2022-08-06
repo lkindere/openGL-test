@@ -63,13 +63,13 @@ class Sword : public Weapon
 
 			Uniforms uni;
 			uni.vec3 = {
-				std::make_pair("fOffset", glm::vec3(0.5f, -0.5f, 0.0f)),
-				std::make_pair("pos", drawpos),
-				std::make_pair("scale", scale)
+				make_uni("fOffset", glm::vec3(0.5f, -0.5f, 0.0f)),
+				make_uni("pos", drawpos),
+				make_uni("scale", scale)
 			};
 			uni.mat4 = {
-				std::make_pair("rotation", rotation),
-                std::make_pair("camPos", camera.matrix())
+				make_uni("rotation", rotation),
+                make_uni("camPos", camera.matrix())
 			};
 			// if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 			// 	attacking = true;

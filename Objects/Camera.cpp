@@ -1,5 +1,3 @@
-#include "settings.hpp"
-
 #include "Camera.hpp"
 
 Camera::Camera() {}
@@ -34,10 +32,6 @@ glm::vec3 Camera::mouseDirection() {
 	_pitch = -89.0f;
 	_direction = glm::vec3(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
 		sin(glm::radians(_pitch)), sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
-    std::cout << "Pos: ";
-    settings.printvec(_position);
-    std::cout << "Dir: ";
-    settings.printvec(_direction);
 	return glm::normalize(_direction);
 }
 

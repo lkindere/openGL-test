@@ -51,20 +51,20 @@ void Shader::update(const Uniforms& uniforms) const {
 	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit){
 		auto it = uniforms.vec3.find(dit->first);
 		(it != uniforms.vec3.end()) ?
-			glUniform3fv(glGetUniformLocation(_ID, it->first.data()), 1, glm::value_ptr(it->second))
-			:	glUniform3fv(glGetUniformLocation(_ID, dit->first.data()), 1, glm::value_ptr(dit->second));
+			glUniform3fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]))
+			:	glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit){
 		auto it = uniforms.vec4.find(dit->first);
 		(it != uniforms.vec4.end()) ?
-			glUniform4fv(glGetUniformLocation(_ID, it->first.data()), 1, glm::value_ptr(it->second))
-			:	glUniform4fv(glGetUniformLocation(_ID, dit->first.data()), 1, glm::value_ptr(dit->second));
+			glUniform4fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]))
+			:	glUniform4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.mat4.begin(); dit != _default.mat4.end(); ++dit){
 		auto it = uniforms.mat4.find(dit->first);
 		(it != uniforms.mat4.end()) ?
-			glUniformMatrix4fv(glGetUniformLocation(_ID, it->first.data()), 1, GL_FALSE, glm::value_ptr(it->second))
-			:	glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first.data()), 1, GL_FALSE, glm::value_ptr(dit->second));
+			glUniformMatrix4fv(glGetUniformLocation(_ID, it->first), it->second.size(), GL_FALSE, glm::value_ptr(it->second.data()[0]))
+			:	glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), GL_FALSE, glm::value_ptr(dit->second.data()[0]));
 	}
 }
 
@@ -72,15 +72,15 @@ void Shader::update(const Uniforms& uniforms) const {
 void Shader::update() const {
 	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit){
 		std::cout << "Exporting: " << dit->first << std::endl;
-		glUniform3fv(glGetUniformLocation(_ID, dit->first.data()), 1, glm::value_ptr(dit->second));
+		glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit){
 		std::cout << "Exporting: " << dit->first << std::endl;
-		glUniform4fv(glGetUniformLocation(_ID, dit->first.data()), 1, glm::value_ptr(dit->second));
+		glUniform4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.mat4.begin(); dit != _default.mat4.end(); ++dit){
 		std::cout << "Exporting: " << dit->first << std::endl;
-		glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first.data()), 1, GL_FALSE, glm::value_ptr(dit->second));
+		glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), GL_FALSE, glm::value_ptr(dit->second.data()[0]));
 	}
 }
 

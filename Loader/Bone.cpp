@@ -4,9 +4,10 @@ Bone::Bone(const char* name) : _name(name) {}
 
 glm::mat4 Bone::currentMatrix(float time) const {
 	glm::mat4 pos = currentPos(time);
-	glm::mat4 rot = currentRot(time);
-	glm::mat4 scale = currentScale(time);
-	return (pos * rot * scale);
+	// glm::mat4 rot = currentRot(time);
+	// glm::mat4 scale = currentScale(time);
+	// return (pos * rot * scale);
+    return pos;
 }
 
 //Could change all 3 to keep static last pointer for faster iteration

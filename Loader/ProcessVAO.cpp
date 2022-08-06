@@ -1,5 +1,7 @@
 #include "ProcessVAO.hpp"
 
+        #include <iostream>
+
 static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 	std::vector<unsigned int>	indices;
 	indices.reserve(mesh->mNumFaces * 3);
@@ -43,7 +45,7 @@ static void process_bones(const aiMesh* mesh, Vert& vert, int index){
 			if (mesh->mBones[i]->mWeights[j].mVertexId == index){
 				if (counter >= 3)
 					throw(std::runtime_error("Too many bones per vertex"));
-				matches[counter] = j;
+				matches[counter] = i;
 				weights[counter] = mesh->mBones[i]->mWeights[j].mWeight;
 				++counter;
 				break ;	//Prevents duplicates that assimp imports for some reason

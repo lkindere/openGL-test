@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "settings.hpp"
 
 extern Settings settings;
 

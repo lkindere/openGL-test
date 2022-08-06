@@ -57,34 +57,37 @@ int main(void) {
     Init();
 	Uniforms uniDefault;
 	uniDefault.vec3 = {
-		std::make_pair("pos", glm::vec3(0.0f)),
-		std::make_pair("scale", glm::vec3(1.0f)),
-		std::make_pair("fOffset", glm::vec3(0.0f))
+        make_uni("pos", glm::vec3(0.0f)),
+		make_uni("pos", glm::vec3(0.0f)),
+		make_uni("scale", glm::vec3(1.0f)),
+		make_uni("fOffset", glm::vec3(0.0f))
 	};
 	uniDefault.mat4 = {
-		std::make_pair("camPos", glm::mat4(1.0f)),
-		std::make_pair("rotation", glm::mat4(1.0f)),
-		std::make_pair("fRotation", glm::mat4(1.0f))
+		make_uni("camPos", glm::mat4(1.0f)),
+		make_uni("rotation", glm::mat4(1.0f)),
+		make_uni("fRotation", glm::mat4(1.0f)),
+        make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
 	};
+
     Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
 
 	Uniforms lightDefault;
 	lightDefault.vec3 = {
-		std::make_pair("pos", glm::vec3(0.0f)),
-		std::make_pair("scale", glm::vec3(1.0f))
+		make_uni("pos", glm::vec3(0.0f)),
+		make_uni("scale", glm::vec3(1.0f))
 	};
     lightDefault.vec4 = {
-        std::make_pair("lightColor", glm::vec4(1.0f))
+        make_uni("lightColor", glm::vec4(1.0f))
     };
 	lightDefault.mat4 = {
-		std::make_pair("camPos", glm::mat4(1.0f))
+		make_uni("camPos", glm::mat4(1.0f))
 	};
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", lightDefault);
 
 	Player player(importer("Models/sword.fbx"));
 	Light light(importer("Models/light.fbx"));
 	Object floor(importer("Models/floor.fbx"));
-	Mob mob(importer("Models/bones.fbx"));
+	Mob mob(importer("Models/bs.fbx"));
 
 	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 

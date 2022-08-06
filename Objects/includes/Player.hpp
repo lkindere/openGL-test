@@ -18,7 +18,7 @@ class Player
 		Player(const Model& model)
 			: _model(model) {}
 		void input() {
-			// direction.y = 0;
+			direction.y = 0;
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
 				position += speed * direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
