@@ -7,9 +7,14 @@ Bone::Bone(const char* name) : _name(name) {}
 
 glm::mat4 Bone::currentMatrix(float time) const {
 	glm::mat4 pos = currentPos(time);
-	// glm::mat4 rot = currentRot(time);
-    glm::mat4 rot = glm::mat4(1.0f);
+	glm::mat4 rot = currentRot(time);
 	glm::mat4 scale = currentScale(time);
+    // glm::mat4 rot = glm::mat4(1.0f);
+	// glm::mat4 scale;
+	// scale[0] = {3.0f, 0.0f, 0.0f, 0.0f};
+	// scale[1] = {0.0f, 3.0f, 0.0f, 0.0f};
+	// scale[2] = {0.0f, 0.0f, 3.0f, 0.0f};
+	// scale[3] = {0.0f, 0.0f, 0.0f, 1.0f};
 if (settings.print){
     std::cout << "POS:\n";
     settings.printmat(pos);
@@ -22,7 +27,7 @@ if (settings.print){
     settings.printmat(pos * rot * scale);
 }
 	// return (pos * rot * scale);
-    return scale;
+    return pos * scale;
     // return scale;
 }
 
@@ -75,7 +80,7 @@ glm::mat4 Bone::currentScale(float time) const {
 		last = &_scales[i];
 		next = &_scales[i + 1];
 	}
-	return glm::translate(glm::mat4(1.0f), glm::mix(last->scale, next->scale,
+	return glm::scale(glm::mat4(1.0f), glm::mix(last->scale, next->scale,
 		getInterpolant(time, last->timestamp, next->timestamp)));
 }
 
