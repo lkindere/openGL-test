@@ -19,7 +19,7 @@ class Model
 	public:
 		Model(const VAOdata& data, const std::vector<Bone>& bonevec, GLenum drawtype = GL_STATIC_DRAW) {
 			VAO.init(data.verts, data.indices, drawtype);
-			animator.reserve(bonevec.size());
+			animator.init(bonevec);
 			bones = bonevec;
 		}
 		//All required uniforms need to be set beforehand from calling class

@@ -24,15 +24,28 @@ uniform mat4 rotation;
 uniform mat4 fRotation;
 
 vec4 check_bones(vec4 model){
-	vec4 position = model;
-	position += BoneMatrices[aBones[0]] * aWeights[0] * model;
-	position += BoneMatrices[aBones[1]] * aWeights[1] * model;
-	position += BoneMatrices[aBones[2]] * aWeights[2] * model;
+	// vec4 position = model;
+	// position += BoneMatrices[aBones[0]] * model * aWeights[0];
+	// position += BoneMatrices[aBones[1]] * model * aWeights[1];
+	// position += BoneMatrices[aBones[2]] * model * aWeights[2];
+	// return position;
+
+    vec4 position = model;
+    vec4 temp;
+	temp = BoneMatrices[aBones[0]] * model;
+    position += temp * aWeights[0];
+
+	temp =  BoneMatrices[aBones[1]] * model;
+    position += temp * aWeights[1];
+
+	temp = BoneMatrices[aBones[2]] * model;
+    position += temp * aWeights[2];
 	return position;
+
     // mat4 transformation = BoneMatrices[aBones[0]] * aWeights[0];
     // transformation += BoneMatrices[aBones[1]] * aWeights[1];
     // transformation += BoneMatrices[aBones[2]] * aWeights[2];
-    // return transformation * model;
+    // return model * transformation;
 }
 
 void main()

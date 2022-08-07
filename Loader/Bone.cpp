@@ -7,8 +7,8 @@ Bone::Bone(const char* name) : _name(name) {}
 
 glm::mat4 Bone::currentMatrix(float time) const {
 	glm::mat4 pos = currentPos(time);
-	glm::mat4 rot = currentRot(time);
-    // glm::mat4 rot = glm::mat4(1.0f);
+	// glm::mat4 rot = currentRot(time);
+    glm::mat4 rot = glm::mat4(1.0f);
 	glm::mat4 scale = currentScale(time);
 if (settings.print){
     std::cout << "POS:\n";
@@ -21,7 +21,8 @@ if (settings.print){
     std::cout << "FINAL:\n";
     settings.printmat(pos * rot * scale);
 }
-	return (pos * rot * scale);
+	// return (pos * rot * scale);
+    return scale;
     // return scale;
 }
 

@@ -6,7 +6,7 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
      std::cout << "nPosition keys: " << node->mNumPositionKeys << std::endl;
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
-		pos.position = flipGLvec(node->mPositionKeys[i].mValue);
+		pos.position = toGLvec(node->mPositionKeys[i].mValue);
 		if (i > 0 && same_vec(pos.position, positions.rbegin()->position))
 			continue ;
 		pos.timestamp = node->mPositionKeys[i].mTime;
