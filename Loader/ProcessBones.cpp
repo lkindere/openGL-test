@@ -3,10 +3,10 @@
 #include <iostream>
 static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 	std::vector<KeyPosition> positions;
-     std::cout << "Position keys: " << node->mNumPositionKeys << std::endl;
+     std::cout << "nPosition keys: " << node->mNumPositionKeys << std::endl;
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
-		pos.position = toGLvec(node->mPositionKeys[i].mValue);
+		pos.position = flipGLvec(node->mPositionKeys[i].mValue);
 		if (i > 0 && same_vec(pos.position, positions.rbegin()->position))
 			continue ;
 		pos.timestamp = node->mPositionKeys[i].mTime;
@@ -17,7 +17,7 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 
 static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
 	std::vector<KeyRotation> rotations;
-        std::cout << "Rotation keys: " << node->mNumRotationKeys << std::endl;
+        std::cout << "nRotation keys: " << node->mNumRotationKeys << std::endl;
 	for (auto i = 0; i < node->mNumRotationKeys; ++i){
 		KeyRotation rot;
 		rot.rotation = toGLquat(node->mRotationKeys[i].mValue);
@@ -31,7 +31,7 @@ static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
 
 static std::vector<KeyScale> process_scales(aiNodeAnim* node){
 	std::vector<KeyScale> scales;
-    std::cout << "Scaling keys: " << node->mNumScalingKeys << std::endl;
+    std::cout << "nScaling keys: " << node->mNumScalingKeys << std::endl;
 	for (auto i = 0; i < node->mNumScalingKeys; ++i){
 		KeyScale scl;
 		scl.scale = toGLvec(node->mScalingKeys[i].mValue);
@@ -86,10 +86,15 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 	}
     std::cout << "Bones: " << data.size() << std::endl;
     for (auto i = 0; i < data.size(); ++i){
+        std::cout << "Name: " << data[i].name() << std::endl;
         std::cout << "Positions: " << data[i].positions().size() << std::endl;
+        std::cout << "Pos last: " << data[i].positions().rbegin()->timestamp << std::endl;
         std::cout << "Rotations: " << data[i].rotations().size() << std::endl;
+        std::cout << "Rot last: " << data[i].rotations().rbegin()->timestamp << std::endl;
         std::cout << "Scales: " << data[i].scales().size() << std::endl;
+        std::cout << "Scale last: " << data[i].scales().rbegin()->timestamp << std::endl;
     }
+    std::cout << "\n\n";
 	process_hierarchy(data, root);
 	return data;
 }

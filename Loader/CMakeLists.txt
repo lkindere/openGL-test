@@ -20,6 +20,7 @@ add_definitions(-std=c++11)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC includes
+    PUBLIC ../
 	PUBLIC ../Objects/includes
 	PUBLIC external/assimp/include
 	PUBLIC ../external/glfw/include

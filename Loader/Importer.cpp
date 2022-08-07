@@ -14,7 +14,8 @@ Model importer(const char* path){
 		| aiProcess_FlipUVs
 		| aiProcess_OptimizeMeshes
 		| aiProcess_LimitBoneWeights
-		| aiProcess_OptimizeGraph);
+		| aiProcess_OptimizeGraph
+        );
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		throw(std::runtime_error(importer.GetErrorString()));
 	if (scene->mAnimations)

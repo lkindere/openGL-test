@@ -58,6 +58,9 @@ class Settings
 		//Flags
 		int			flags_;
 
+    public:
+        bool print = false;
+
 	public:
 		//For easier debugging
 		void printvec(const glm::vec3& vec){

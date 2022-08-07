@@ -53,6 +53,17 @@ void Init() {
 #endif
 }
 
+#include <string>
+
+Mob* inputPath(){
+    std::string str;
+    std::cout << "Input file: " << std::endl;
+    std::getline(std::cin, str);
+    str = "Models/" + str;
+    std::cout << "Loading: " << str << std::endl;
+    return new Mob(importer(str.data()));
+}
+
 int main(void) {
     Init();
 	Uniforms uniDefault;
@@ -68,7 +79,6 @@ int main(void) {
 		make_uni("fRotation", glm::mat4(1.0f)),
         make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
 	};
-
     Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
 
 	Uniforms lightDefault;
@@ -86,21 +96,31 @@ int main(void) {
 
 	Player player(importer("Models/sword.fbx"));
 	Light light(importer("Models/light.fbx"));
-	Object floor(importer("Models/floor.fbx"));
-	Mob mob(importer("Models/bs.fbx"));
+	// Object floor(importer("Models/floor.fbx"));
 
-	player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
+
+    Mob* mob = inputPath();
 
 	light.addTarget(shader);
 
+    int i = 0;
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
-		mob.draw(shader);
-		floor.draw(shader);
+		mob->draw(shader);
+        if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
+            delete mob;
+            mob = inputPath();
+        }
+        if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
+            settings.print = settings.print = true;
+        if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
+            settings.print = settings.print = false;
+		// floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

@@ -35,8 +35,8 @@ class Bone
 	public:
 		unsigned short						ID() const;
 		const std::string&					name() const;
-		const glm::mat4						offset() const;
-		const glm::mat4						relative() const;
+		const glm::mat4&					offset() const;
+		const glm::mat4&					relative() const;
 		const std::vector<KeyPosition>&		positions() const;
 		const std::vector<KeyRotation>&		rotations() const;
 		const std::vector<KeyScale>&		scales() const;

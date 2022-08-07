@@ -1,13 +1,28 @@
 #include "Bone.hpp"
+#include "settings.hpp"
+
+extern Settings settings;
 
 Bone::Bone(const char* name) : _name(name) {}
 
 glm::mat4 Bone::currentMatrix(float time) const {
 	glm::mat4 pos = currentPos(time);
-	// glm::mat4 rot = currentRot(time);
-	// glm::mat4 scale = currentScale(time);
-	// return (pos * rot * scale);
-    return pos;
+	glm::mat4 rot = currentRot(time);
+    // glm::mat4 rot = glm::mat4(1.0f);
+	glm::mat4 scale = currentScale(time);
+if (settings.print){
+    std::cout << "POS:\n";
+    settings.printmat(pos);
+    std::cout << "SCALE:\n";
+    settings.printmat(scale);
+    std::cout << "ROT:\n";
+    settings.printmat(rot);
+    std::cout << std::endl;
+    std::cout << "FINAL:\n";
+    settings.printmat(pos * rot * scale);
+}
+	return (pos * rot * scale);
+    // return scale;
 }
 
 //Could change all 3 to keep static last pointer for faster iteration
@@ -79,8 +94,8 @@ void Bone::setChildren(const std::vector<unsigned short>& chld) { _children = ch
 //Get
 unsigned short						Bone::ID() const { return _ID; };
 const std::string&					Bone::name() const { return _name; };
-const glm::mat4						Bone::offset() const { return _offset; }
-const glm::mat4						Bone::relative() const { return _relative; }
+const glm::mat4&					Bone::offset() const { return _offset; }
+const glm::mat4&					Bone::relative() const { return _relative; }
 const std::vector<KeyPosition>&		Bone::positions() const { return _positions; }
 const std::vector<KeyRotation>&		Bone::rotations() const { return _rotations; }  
 const std::vector<KeyScale>&		Bone::scales() const { return _scales; } 

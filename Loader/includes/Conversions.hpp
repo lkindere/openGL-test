@@ -12,6 +12,10 @@
 glm::quat toGLquat(const aiQuaternion& aiQuat);
 glm::vec3 toGLvec(const aiVector3D& aiVec);
 glm::vec4 toGLvec(const aiColor4D& aiCol);
+
+//Test
+glm::vec3 flipGLvec(const aiVector3D& aiVec);
+
 //Not sure if correct
 glm::mat4	toGLmat(const aiMatrix4x4& aiMat);
 

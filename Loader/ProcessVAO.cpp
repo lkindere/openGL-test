@@ -30,9 +30,11 @@ static std::vector<glm::vec3> process_normals(const aiMesh* mesh){
 
 static std::vector<glm::vec4> process_colors(const aiMesh* mesh){
 	std::vector<glm::vec4> colors;
-	colors.reserve(mesh->mNumVertices);
-	for (auto i = 0; i < mesh->mNumVertices; ++i)
-		colors.push_back(toGLvec(mesh->mColors[0][i]));
+    // if (!mesh->mColors[0])
+    //     return colors;
+	// colors.reserve(mesh->mNumVertices);
+	// for (auto i = 0; i < mesh->mNumVertices; ++i)
+	// 	colors.push_back(toGLvec(mesh->mColors[0][i]));
 	return colors;
 }
 
@@ -66,7 +68,8 @@ VAOdata	process_vao(const aiMesh* mesh){
 		Vert vert;
 		vert.vertices = vertices[i];
 		vert.normals = normals[i];
-		vert.colors = colors[i];
+        if (colors.size() != 0)
+		    vert.colors = colors[i];
 		process_bones(mesh, vert, i);
 		data.verts.push_back(vert);
 	}

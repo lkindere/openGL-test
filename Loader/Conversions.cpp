@@ -12,6 +12,10 @@ glm::vec4 toGLvec(const aiColor4D& aiCol){
 	return (glm::vec4(aiCol.r, aiCol.g, aiCol.b, aiCol.a));
 }
 
+glm::vec3 flipGLvec(const aiVector3D& aiVec){
+    return glm::vec3(aiVec.x, aiVec.z, aiVec.y);
+}
+
 //Not sure if correct
 glm::mat4	toGLmat(const aiMatrix4x4& aiMat){
 	glm::vec4 v1(aiMat.a1, aiMat.a2, aiMat.a3, aiMat.a4);

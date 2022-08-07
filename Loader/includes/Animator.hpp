@@ -14,7 +14,7 @@ class Animator
 		}
 		
 		const std::vector<glm::mat4>& updateMatrices(const std::vector<Bone>& bones){
-			if (currentTime > 100)
+			if (currentTime > 10000)
                 currentTime = 0;
             _matrices.clear();
 			for (auto i = 0; i < bones.size(); ++i)
