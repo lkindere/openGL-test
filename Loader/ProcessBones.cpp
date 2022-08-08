@@ -7,11 +7,18 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
 		pos.position = toGLvec(node->mPositionKeys[i].mValue);
+        std::cout << "Pos: " << pos.position.x << ' '
+         << pos.position.y << ' '
+          << pos.position.z << std::endl;
 		if (i > 0 && same_vec(pos.position, positions.rbegin()->position))
 			continue ;
 		pos.timestamp = node->mPositionKeys[i].mTime;
 		positions.push_back(pos);
 	}
+    for (auto i = 0; i < positions.size(); ++i)
+        std::cout << "Position: " << positions[i].position.x << ' '
+            << positions[i].position.y << ' '
+            << positions[i].position.z << std::endl;
 	return positions;
 }
 
@@ -48,6 +55,11 @@ static unsigned short find_boneID(const std::vector<Bone>& data, const std::stri
 		if (it->name() == name)
 			return it->ID();
 	}
+    std::cout << "Bone: " << name << std::endl;
+    std::cout << "All:\n";
+    for (auto i = 0; i < data.size(); ++i){
+        std::cout << data[i].name() << std::endl;
+    }
 	throw(std::runtime_error("Bone ID not found\n"));
 }
 
@@ -70,12 +82,22 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 	std::vector<Bone> data;
 	if (!animation)
 		return data;
+    std::cout << "Num bones: " << mesh->mNumBones << std::endl;
+    for (auto i = 0; i < mesh->mNumBones; ++i)
+        std::cout << "Bone name: " << mesh->mBones[i]->mName.data << std::endl;
+    std::cout << '\n';
+    std::cout << "Animation nChannels: " << animation->mNumChannels << '\n' << std::endl;
+    for (auto i = 0; i < animation->mNumChannels; ++i)
+        std::cout << "Anim name: " << animation->mChannels[i]->mNodeName.data << std::endl;
+    std::cout << '\n';
 	for (auto i = 0; i < mesh->mNumBones; ++i){
 		Bone bone(mesh->mBones[i]->mName.data);
 		bone.setID(i);
 		bone.setOffset(toGLmat(mesh->mBones[i]->mOffsetMatrix));
 		for (auto j = 0; j < animation->mNumChannels; ++j){
+            std::cout << "Bone name: " << bone.name() << " - " << "Node name: " << animation->mChannels[j]->mNodeName.data << std::endl;
 			if (bone.name() == animation->mChannels[j]->mNodeName.data){
+                std::cout << "MATCH" << std::endl;
 				bone.setPositions(process_positions(animation->mChannels[j]));
 				bone.setRotations(process_rotations(animation->mChannels[j]));
 				bone.setScales(process_scales(animation->mChannels[j]));
@@ -84,7 +106,7 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 			}
 		}
 	}
-    std::cout << "Bones: " << data.size() << std::endl;
+    std::cout << "Bones: " << data.size() << '\n' << std::endl;
     for (auto i = 0; i < data.size(); ++i){
         std::cout << "Name: " << data[i].name() << std::endl;
         std::cout << "Positions: " << data[i].positions().size() << std::endl;
@@ -92,9 +114,10 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
         std::cout << "Rotations: " << data[i].rotations().size() << std::endl;
         std::cout << "Rot last: " << data[i].rotations().rbegin()->timestamp << std::endl;
         std::cout << "Scales: " << data[i].scales().size() << std::endl;
-        std::cout << "Scale last: " << data[i].scales().rbegin()->timestamp << std::endl;
+        std::cout << "Scale last: " << data[i].scales().rbegin()->timestamp << '\n' << std::endl;
     }
     std::cout << "\n\n";
 	process_hierarchy(data, root);
+    exit(0);
 	return data;
 }

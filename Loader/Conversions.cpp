@@ -1,7 +1,7 @@
 #include "Conversions.hpp"
 
 glm::quat toGLquat(const aiQuaternion& aiQuat){
-	return glm::quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
+	return glm::quat(aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z);
 }
 
 glm::vec3 toGLvec(const aiVector3D& aiVec){
@@ -12,17 +12,14 @@ glm::vec4 toGLvec(const aiColor4D& aiCol){
 	return (glm::vec4(aiCol.r, aiCol.g, aiCol.b, aiCol.a));
 }
 
-glm::vec3 flipGLvec(const aiVector3D& aiVec){
-    return glm::vec3(aiVec.x, aiVec.z, aiVec.y);
-}
-
 //Not sure if correct
 glm::mat4	toGLmat(const aiMatrix4x4& aiMat){
-	glm::vec4 v1(aiMat.a1, aiMat.a2, aiMat.a3, aiMat.a4);
-	glm::vec4 v2(aiMat.b1, aiMat.b2, aiMat.b3, aiMat.b4);
-	glm::vec4 v3(aiMat.c1, aiMat.c2, aiMat.c3, aiMat.c4);
-	glm::vec4 v4(aiMat.d1, aiMat.d2, aiMat.d3, aiMat.d4);
-	return (glm::mat4(v1, v2, v3, v4));
+    return glm::mat4(
+        glm::vec4(aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1),
+        glm::vec4(aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2),
+        glm::vec4(aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3),
+        glm::vec4(aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4)
+    );
 }
 
 static bool same_float(float a, float b){

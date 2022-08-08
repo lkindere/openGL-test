@@ -32,7 +32,7 @@ void Init() {
 	Init_settings();
     if (!glfwInit()) throw(std::runtime_error("GLFW init failure"));
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);			//Mac 4.1
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
     settings.setWindow(glfwCreateWindow(settings.width(), settings.height(), "Title", NULL, NULL));
@@ -47,7 +47,7 @@ void Init() {
     gladLoadGL(glfwGetProcAddress);
     glViewport(0, 0, settings.width(), settings.height());
     glEnable(GL_DEPTH_TEST);
-	glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
+	// glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
 #if DEBUG > 0
 	std::cout << glGetString(GL_VERSION) << '\n' << std::endl;
 #endif

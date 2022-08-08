@@ -9,13 +9,8 @@ glm::mat4 Bone::currentMatrix(float time) const {
 	glm::mat4 pos = currentPos(time);
 	glm::mat4 rot = currentRot(time);
 	glm::mat4 scale = currentScale(time);
-    // glm::mat4 rot = glm::mat4(1.0f);
-	// glm::mat4 scale;
-	// scale[0] = {3.0f, 0.0f, 0.0f, 0.0f};
-	// scale[1] = {0.0f, 3.0f, 0.0f, 0.0f};
-	// scale[2] = {0.0f, 0.0f, 3.0f, 0.0f};
-	// scale[3] = {0.0f, 0.0f, 0.0f, 1.0f};
 if (settings.print){
+    std::cout << "\n";
     std::cout << "POS:\n";
     settings.printmat(pos);
     std::cout << "SCALE:\n";
@@ -25,19 +20,24 @@ if (settings.print){
     std::cout << std::endl;
     std::cout << "FINAL:\n";
     settings.printmat(pos * rot * scale);
+    std::cout << '\n';
 }
-	// return (pos * rot * scale);
-    return pos * scale;
-    // return scale;
+	return (pos);
 }
 
 //Could change all 3 to keep static last pointer for faster iteration
 //Not that many frames atm
 glm::mat4 Bone::currentPos(float time) const {
+    std::cout << "Position size: " << _positions.size() << std::endl;
 	if (_positions.size() == 0)
 		return glm::mat4(1.0f);
-	if (_positions.size() == 1)
+	if (_positions.size() == 1){
+        std::cout << "POSITION:\n";
+        settings.printvec(_positions[0].position);
+        std::cout << "TO MAT:\n";
+        settings.printmat(glm::translate(glm::mat4(1.0f), _positions[0].position));
 		return glm::translate(glm::mat4(1.0f), _positions[0].position);
+    }
 	const KeyPosition* last = &_positions[0];
 	const KeyPosition* next = &_positions[1];
 	for (auto i = 1; i < _positions.size() - 1; ++i){
@@ -46,6 +46,8 @@ glm::mat4 Bone::currentPos(float time) const {
 		last = &_positions[i];
 		next = &_positions[i + 1];
 	}
+    std::cout << "POSITION LAST:\n";
+    settings.printvec(last->position);
 	return glm::translate(glm::mat4(1.0f), glm::mix(last->position, next->position,
 		getInterpolant(time, last->timestamp, next->timestamp)));
 }
@@ -63,8 +65,14 @@ glm::mat4 Bone::currentRot(float time) const {
 		last = &_rotations[i];
 		next = &_rotations[i + 1];
 	}
-	return glm::toMat4(glm::mix(last->rotation, next->rotation,
-		getInterpolant(time, last->timestamp, next->timestamp)));
+    glm::mat4 flip(
+        glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+        glm::vec4(0.0f, 0.0f, 1.0f, 0.0f),
+        glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
+        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+    );
+    return glm::toMat4(glm::slerp(last->rotation, next->rotation,
+		getInterpolant(time, last->timestamp, next->timestamp))) * flip;
 }
 
 glm::mat4 Bone::currentScale(float time) const {
