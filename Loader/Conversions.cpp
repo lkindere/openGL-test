@@ -14,12 +14,19 @@ glm::vec4 toGLvec(const aiColor4D& aiCol){
 
 //Not sure if correct
 glm::mat4	toGLmat(const aiMatrix4x4& aiMat){
-    return glm::mat4(
+    return 
+    glm::mat4(
         glm::vec4(aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1),
         glm::vec4(aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2),
         glm::vec4(aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3),
         glm::vec4(aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4)
     );
+    // glm::mat4(
+    //     glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+    //     glm::vec4(0.0f, 0.0f, 1.0f, 0.0f),
+    //     glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
+    //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+    // );
 }
 
 static bool same_float(float a, float b){

@@ -35,20 +35,15 @@ class Animator
             for (auto i = 0; i < bones.size(); ++i)
                 _matrices.push_back(glm::mat4(1.0f));
 			for (auto i = 0; i < bones.size(); ++i){
-                glm::mat4 temp = bones[i].currentMatrix(currentTime);
-                std::cout << "\n\n";
-                std::cout << "Matrix " << i << " pre mult: " << std::endl;
-                settings.printmat(_matrices[i]);
-                std::cout << "Matrix " << i << " mult with: " << std::endl;
-                settings.printmat(temp);
-				_matrices[i] *= temp;
-                std::cout << "Matrix " << i << " post mult: " << std::endl;
-                settings.printmat(_matrices[i]);
+                _matrices[i] = _matrices[i] * bones[i].currentMatrix(currentTime);
                 //Find out why the Z changes
                 // _matrices[i][3].z = 0.0f;
                 for (auto j = 0; j < bones[i].children().size(); ++j){
                     _matrices[bones[i].children()[j]] = _matrices[i];
                 }
+				_matrices[i] = bones[i].offset() * _matrices[i];
+                std::cout << "FINAL:\n";
+                settings.printmat(_matrices[i]);
             }
             currentTime += 5;
             // for (auto i = 0; i < _matrices.size(); ++i){

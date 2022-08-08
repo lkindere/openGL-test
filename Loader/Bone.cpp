@@ -22,7 +22,7 @@ if (settings.print){
     settings.printmat(pos * rot * scale);
     std::cout << '\n';
 }
-	return (pos);
+	return (pos * rot * scale);
 }
 
 //Could change all 3 to keep static last pointer for faster iteration

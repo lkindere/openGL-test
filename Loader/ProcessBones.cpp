@@ -1,6 +1,12 @@
 #include "ProcessBones.hpp"
 
 #include <iostream>
+
+
+#include "settings.hpp"
+
+extern Settings settings;
+
 static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 	std::vector<KeyPosition> positions;
      std::cout << "nPosition keys: " << node->mNumPositionKeys << std::endl;
@@ -82,6 +88,20 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 	std::vector<Bone> data;
 	if (!animation)
 		return data;
+    for (auto i = 0; i < root->mNumChildren; ++i){
+        std::cout << "Name: " << root->mChildren[i]->mName.data << std::endl;
+        std::cout << "Transformation:\n";
+        settings.printmat(toGLmat(root->mChildren[i]->mTransformation));
+        std::cout << '\n';
+    }
+    root = root->mChildren[0];
+    for (auto i = 0; i < root->mNumChildren; ++i){
+        std::cout << "Name: " << root->mChildren[i]->mName.data << std::endl;
+        std::cout << "Transformation:\n";
+        settings.printmat(toGLmat(root->mChildren[i]->mTransformation));
+        std::cout << '\n';
+    }
+    exit(0);
     std::cout << "Num bones: " << mesh->mNumBones << std::endl;
     for (auto i = 0; i < mesh->mNumBones; ++i)
         std::cout << "Bone name: " << mesh->mBones[i]->mName.data << std::endl;
@@ -106,18 +126,7 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 			}
 		}
 	}
-    std::cout << "Bones: " << data.size() << '\n' << std::endl;
-    for (auto i = 0; i < data.size(); ++i){
-        std::cout << "Name: " << data[i].name() << std::endl;
-        std::cout << "Positions: " << data[i].positions().size() << std::endl;
-        std::cout << "Pos last: " << data[i].positions().rbegin()->timestamp << std::endl;
-        std::cout << "Rotations: " << data[i].rotations().size() << std::endl;
-        std::cout << "Rot last: " << data[i].rotations().rbegin()->timestamp << std::endl;
-        std::cout << "Scales: " << data[i].scales().size() << std::endl;
-        std::cout << "Scale last: " << data[i].scales().rbegin()->timestamp << '\n' << std::endl;
-    }
     std::cout << "\n\n";
 	process_hierarchy(data, root);
-    exit(0);
 	return data;
 }
