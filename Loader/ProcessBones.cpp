@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-
+#include "debug.hpp"
 #include "settings.hpp"
 
 extern Settings settings;
@@ -88,28 +88,8 @@ std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation
 	std::vector<Bone> data;
 	if (!animation)
 		return data;
-    for (auto i = 0; i < root->mNumChildren; ++i){
-        std::cout << "Name: " << root->mChildren[i]->mName.data << std::endl;
-        std::cout << "Transformation:\n";
-        settings.printmat(toGLmat(root->mChildren[i]->mTransformation));
-        std::cout << '\n';
-    }
-    root = root->mChildren[0];
-    for (auto i = 0; i < root->mNumChildren; ++i){
-        std::cout << "Name: " << root->mChildren[i]->mName.data << std::endl;
-        std::cout << "Transformation:\n";
-        settings.printmat(toGLmat(root->mChildren[i]->mTransformation));
-        std::cout << '\n';
-    }
+    print_hierarchy(root);
     exit(0);
-    std::cout << "Num bones: " << mesh->mNumBones << std::endl;
-    for (auto i = 0; i < mesh->mNumBones; ++i)
-        std::cout << "Bone name: " << mesh->mBones[i]->mName.data << std::endl;
-    std::cout << '\n';
-    std::cout << "Animation nChannels: " << animation->mNumChannels << '\n' << std::endl;
-    for (auto i = 0; i < animation->mNumChannels; ++i)
-        std::cout << "Anim name: " << animation->mChannels[i]->mNodeName.data << std::endl;
-    std::cout << '\n';
 	for (auto i = 0; i < mesh->mNumBones; ++i){
 		Bone bone(mesh->mBones[i]->mName.data);
 		bone.setID(i);
