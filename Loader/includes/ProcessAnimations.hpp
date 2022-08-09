@@ -6,8 +6,7 @@
 #include <assimp/mesh.h>
 #include <assimp/anim.h>
 
-#include "Bone.hpp"
 #include "Structs.hpp"
 #include "Conversions.hpp"
 
-std::vector<Bone> process_bones(const aiMesh* mesh, const aiAnimation* animation, const aiNode* root);
+std::vector<AnimTimers> process_animations(const aiNode* root, const aiScene* scene, std::vector<BoneData>& bones);

@@ -1,13 +1,17 @@
 #include "Importer.hpp"
 
-Model process_model(const aiMesh* mesh, const aiAnimation* animation, const aiNode* root){
-	VAOdata	data = process_vao(mesh);
-	std::vector<Bone> bones = process_bones(mesh, animation, root);
-	return Model(data, bones);
+#include "debug.hpp"
+
+MeshData process_scene(const aiScene* scene){
+    if (scene->mNumMeshes != 1)
+        throw(std::runtime_error("Number of meshes != 1"));
+    MeshData data = process_mesh(scene->mRootNode, scene->mMeshes[0]);
+    data.timers = process_animations(scene->mRootNode, scene, data.bones);
+    return data;
 }
 
 //Takes a path to a file, returns loaded model
-Model importer(const char* path){
+MeshData importer(const char* path){
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, 
 		aiProcess_Triangulate
@@ -18,9 +22,12 @@ Model importer(const char* path){
         );
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		throw(std::runtime_error(importer.GetErrorString()));
-    std::cout << "N meshes: " << scene->mNumMeshes << std::endl;
-    std::cout << "N anims: " << scene->mNumAnimations << std::endl;
-	if (scene->mAnimations)
-		return (process_model(scene->mMeshes[0], scene->mAnimations[0], scene->mRootNode));
-	return (process_model(scene->mMeshes[0], nullptr, nullptr));
+    print_hierarchy(scene->mRootNode);
+    process_scene(scene);
+    return MeshData();
+}
+
+int main(void){
+    importer("../Models/bones.fbx");
+    return 0;
 }

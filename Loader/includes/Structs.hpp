@@ -32,8 +32,35 @@ struct Vert
 };
 
 //Only used for importing
-struct VAOdata
+
+struct AnimData
 {
-	std::vector<Vert>			verts;
-	std::vector<unsigned int>	indices;
+    std::vector<KeyPosition>    positions;
+    std::vector<KeyRotation>    rotations;
+    std::vector<KeyScale>       scales;
 };
+
+struct BoneData
+{
+    std::string                 name;
+    glm::mat4                   transform;
+    glm::mat4                   offset;
+    std::vector<AnimData>       animations;
+    std::vector<unsigned short> children;
+};
+
+struct AnimTimers
+{
+    float duration;
+    float tps;
+};
+
+struct MeshData
+{
+    std::vector<Vert>			verts;
+    std::vector<unsigned int>	indices;
+    std::vector<BoneData>       bones;
+    std::vector<AnimTimers>     timers;
+    glm::mat4                   transformation;
+};
+

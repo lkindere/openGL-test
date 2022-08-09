@@ -6,9 +6,10 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+#include <assimp/scene.h>
 #include <assimp/mesh.h>
 
 #include "Structs.hpp"
 #include "Conversions.hpp"
 
-VAOdata	process_vao(const aiMesh* mesh);
+MeshData process_mesh(const aiNode* root, const aiMesh* mesh);

@@ -4,13 +4,12 @@ project(Loader)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-add_library(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
 	Importer.cpp
-	ProcessVAO.cpp
-	ProcessBones.cpp
+	ProcessMesh.cpp
+	ProcessAnimations.cpp
 	Conversions.cpp
-	ArrayObject.cpp
-	Bone.cpp
+    debug.cpp
 )
 
 add_subdirectory(external/assimp)

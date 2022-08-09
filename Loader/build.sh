@@ -1,0 +1,1 @@
+cmake -S ./ -B ./build/ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CC_COMPILER=clang  && make -j4 -C ./build/ && ./build/Loader

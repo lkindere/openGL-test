@@ -6,8 +6,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Model.hpp"
-#include "ProcessVAO.hpp"
-#include "ProcessBones.hpp"
+#include "ProcessMesh.hpp"
+#include "ProcessAnimations.hpp"
 
-Model importer(const char* path);
+MeshData importer(const char* path);
