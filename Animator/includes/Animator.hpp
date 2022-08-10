@@ -6,6 +6,9 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "Structs.hpp"
+#include "settings.hpp"
+
+extern Settings settings;
 
 
 class Animator
@@ -17,7 +20,6 @@ class Animator
 			_timers = data.timers;
             _bones = data.bones;
             _transformation = data.transformation;
-            _matrices.insert(_matrices.begin(), _bones.size(), _transformation);
 		}
 		
 		const std::vector<glm::mat4>& updateMatrices(){
@@ -46,6 +48,7 @@ class Animator
 
     private:
         glm::mat4 currentMatrix(const BoneData& bone, float time) const {
+            static int i;
             if (bone.animations.size() == 0)
                 return glm::mat4(1.0f);
             glm::mat4 pos = currentPos(bone.animations[0].positions, currentTick);
@@ -64,6 +67,12 @@ class Animator
         //     settings.printmat(pos * rot * scale);
         //     std::cout << '\n';
         // }
+            // glm::mat4 flip(
+            //     glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+            //     glm::vec4(0.0f, 0.0f, -1.0f, 0.0f),
+            //     glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
+            //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+            // );
             return (pos * rot * scale);
         }
 
@@ -99,7 +108,7 @@ class Animator
             }
             // glm::mat4 flip(
             //     glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-            //     glm::vec4(0.0f, 0.0f, 1.0f, 0.0f),
+            //     glm::vec4(0.0f, 0.0f, -1.0f, 0.0f),
             //     glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
             //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
             // );
