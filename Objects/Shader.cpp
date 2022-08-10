@@ -71,15 +71,21 @@ void Shader::update(const Uniforms& uniforms) const {
 //Exports default uniforms to shader
 void Shader::update() const {
 	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit){
+#ifdef DEBUG
 		std::cout << "Exporting: " << dit->first << std::endl;
+#endif
 		glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit){
+#ifdef DEBUG
 		std::cout << "Exporting: " << dit->first << std::endl;
+#endif
 		glUniform4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	}
 	for (auto dit = _default.mat4.begin(); dit != _default.mat4.end(); ++dit){
+#ifdef DEBUG
 		std::cout << "Exporting: " << dit->first << std::endl;
+#endif
 		glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), GL_FALSE, glm::value_ptr(dit->second.data()[0]));
 	}
 }

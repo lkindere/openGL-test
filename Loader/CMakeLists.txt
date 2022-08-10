@@ -4,31 +4,26 @@ project(Loader)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-add_executable(${PROJECT_NAME}
-	Importer.cpp
-	ProcessMesh.cpp
-	ProcessAnimations.cpp
-	Conversions.cpp
+add_library(${PROJECT_NAME}
+    Importer.cpp
+    Conversions.cpp
+    ProcessMesh.cpp
+    ProcessAnimations.cpp
     debug.cpp
 )
 
-add_subdirectory(external/assimp)
+add_subdirectory(_external/assimp)
 
 add_definitions(-std=c++11)
-# add_definitions(-DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC includes
-    PUBLIC ../
-	PUBLIC ../Objects/includes
-	PUBLIC external/assimp/include
-	PUBLIC ../external/glfw/include
-	PUBLIC ../external/glfw/deps
-	PUBLIC ../external/glm
+	PUBLIC _external/assimp/include
+	PUBLIC ../_external/glm
 )
 
 target_link_directories(${PROJECT_NAME}
-	PRIVATE external/assimp/bin
+	PRIVATE _external/assimp/bin
 )
 
 target_link_libraries(${PROJECT_NAME}

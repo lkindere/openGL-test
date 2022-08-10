@@ -5,6 +5,7 @@
 #include "callbacks.hpp"
 
 #include "Shader.hpp"
+#include "Camera.hpp"
 #include "Light.hpp"
 
 #include "Player.hpp"
@@ -97,9 +98,9 @@ int main(void) {
 	Player player(importer("Models/sword.fbx"));
 	Light light(importer("Models/light.fbx"));
 
-	// Object floor(importer("Models/floor.fbx"));
+	Object floor(importer("Models/floor.fbx"));
 
-	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
     Mob* mob = inputPath();
 
@@ -121,7 +122,7 @@ int main(void) {
             settings.print = settings.print = true;
         if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
             settings.print = settings.print = false;
-		// floor.draw(shader);
+		floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

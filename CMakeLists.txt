@@ -9,31 +9,30 @@ add_executable(${PROJECT_NAME}
 	callbacks.cpp
 )
 
-add_subdirectory(external/glfw)
-add_subdirectory(external/glm)
+add_subdirectory(_external/glfw)
+add_subdirectory(_external/glm)
 
-add_subdirectory(Objects)
 add_subdirectory(Loader)
+add_subdirectory(Animator)
+add_subdirectory(Objects)
 
 add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC Loader/includes
     PUBLIC Objects/includes
-	PUBLIC external/glfw/include
-	PUBLIC external/glfw/deps
-	PUBLIC external/glm
-	PUBLIC external/assimp/include
-	PUBLIC Loader/external/assimp
+	PUBLIC _external/glfw/include
+	PUBLIC _external/glfw/deps
+	PUBLIC _external/glm
 )
 
 target_link_directories(${PROJECT_NAME}
-	PRIVATE external/glfw/src
+	PRIVATE _external/glfw/src
 )
 
 target_link_libraries(${PROJECT_NAME}
 	glfw
-	assimp
-	Objects
 	Loader
+    Animator
+	Objects
 )

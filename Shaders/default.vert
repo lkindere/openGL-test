@@ -23,12 +23,12 @@ uniform mat4 camPos;
 uniform mat4 rotation;
 uniform mat4 fRotation;
 
-// vec4 check_bones(vec4 model){
-// 	vec4 position;
-// 	position = BoneMatrices[aBones[0]] * model * aWeights[0];
-// 	position += BoneMatrices[aBones[1]] * model * aWeights[1];
-// 	position += BoneMatrices[aBones[2]] * model * aWeights[2];
-// 	return position;
+vec4 check_bones(vec4 model){
+	vec4 position;
+	position = BoneMatrices[aBones[0]] * model * aWeights[0];
+	position += BoneMatrices[aBones[1]] * model * aWeights[1];
+	position += BoneMatrices[aBones[2]] * model * aWeights[2];
+	return position;
 
     // vec4 position = model;
     // vec4 temp;
@@ -46,13 +46,13 @@ uniform mat4 fRotation;
     // transformation += BoneMatrices[aBones[1]] * aWeights[1];
     // transformation += BoneMatrices[aBones[2]] * aWeights[2];
     // return transformation * model;
-// }
+}
 
 void main()
 {
-	// vec4 model = check_bones(vec4(aModel, 1.0));
+	vec4 model = check_bones(vec4(aModel, 1.0));
 
-	vec4 model = fRotation * vec4(aModel * scale, 1.0) * rotation;
+	// vec4 model = fRotation * vec4(aModel * scale, 1.0) * rotation;
 	model.xyz += pos.xyz;
 
 

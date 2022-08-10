@@ -10,7 +10,6 @@ MeshData process_scene(const aiScene* scene){
     return data;
 }
 
-//Takes a path to a file, returns loaded model
 MeshData importer(const char* path){
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, 
@@ -23,11 +22,5 @@ MeshData importer(const char* path){
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		throw(std::runtime_error(importer.GetErrorString()));
     print_hierarchy(scene->mRootNode);
-    process_scene(scene);
-    return MeshData();
-}
-
-int main(void){
-    importer("../Models/bones.fbx");
-    return 0;
+    return process_scene(scene);
 }
