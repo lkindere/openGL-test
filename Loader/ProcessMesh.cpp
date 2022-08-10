@@ -41,7 +41,7 @@ static std::vector<glm::vec4> process_colors(const aiMesh* mesh){
 static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 	int		counter = 0;
 	int		matches[3] = {0};
-	float	weights[3] = {0.0f};
+	float	weights[3] = {0};
 	for (auto i = 0; i < mesh->mNumBones; ++i){
 		for (auto j = 0; j < mesh->mBones[i]->mNumWeights; ++j){
 			if (mesh->mBones[i]->mWeights[j].mVertexId == index){

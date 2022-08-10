@@ -1,10 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+
+#include <glm/gtx/quaternion.hpp>
 
 #include "Structs.hpp"
 
-#include <iostream>
 
 class Animator
 {
@@ -27,17 +29,25 @@ class Animator
             _matrices.insert(_matrices.begin(), _bones.size(), _transformation);
 			for (auto i = 0; i < _bones.size(); ++i){
                 _matrices[i] = _matrices[i] * currentMatrix(_bones[i], currentTick);
+                // _matrices[i] =  currentMatrix(_bones[i], currentTick) * _matrices[i];
                 for (auto j = 0; j < _bones[i].children.size(); ++j){
                     _matrices[_bones[i].children[j]] = _matrices[i];
                 }
-				_matrices[i] *= _bones[i].offset;
+				// _matrices[i] = _matrices[i] * _bones[i].offset;
+                _matrices[i] = _bones[i].offset * _matrices[i];
             }
             currentTick += 5;
 			return _matrices;
 		}
+        
+        const glm::mat4& meshTransform() const {
+            return _transformation;
+        }
 
     private:
         glm::mat4 currentMatrix(const BoneData& bone, float time) const {
+            if (bone.animations.size() == 0)
+                return glm::mat4(1.0f);
             glm::mat4 pos = currentPos(bone.animations[0].positions, currentTick);
             glm::mat4 rot = currentRot(bone.animations[0].rotations, currentTick);
             glm::mat4 scale = currentScale(bone.animations[0].scales, currentTick);

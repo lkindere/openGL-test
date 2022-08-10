@@ -8,7 +8,6 @@
 #include "Structs.hpp"
 
 #include "Shader.hpp"
-#include "Bone.hpp"
 #include "Animator.hpp"
 #include "ArrayObject.hpp"
 
@@ -25,10 +24,8 @@ class Model
         }
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
-			const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
-            // for (auto i = 0; i < boneMatrices.size(); ++i){
-                // settings.printmat(boneMatrices[i]);
-            // }
+            const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
+            uniforms.mat4.insert(make_uni("meshTransform", animator.meshTransform()));
             uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();

@@ -33,7 +33,7 @@ void Init() {
 	Init_settings();
     if (!glfwInit()) throw(std::runtime_error("GLFW init failure"));
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);			//Mac 4.1
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
     settings.setWindow(glfwCreateWindow(settings.width(), settings.height(), "Title", NULL, NULL));
@@ -48,7 +48,7 @@ void Init() {
     gladLoadGL(glfwGetProcAddress);
     glViewport(0, 0, settings.width(), settings.height());
     glEnable(GL_DEPTH_TEST);
-	// glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
+	glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
 #if DEBUG > 0
 	std::cout << glGetString(GL_VERSION) << '\n' << std::endl;
 #endif
@@ -69,13 +69,13 @@ int main(void) {
     Init();
 	Uniforms uniDefault;
 	uniDefault.vec3 = {
-        make_uni("pos", glm::vec3(0.0f)),
 		make_uni("pos", glm::vec3(0.0f)),
 		make_uni("scale", glm::vec3(1.0f)),
 		make_uni("fOffset", glm::vec3(0.0f))
 	};
 	uniDefault.mat4 = {
 		make_uni("camPos", glm::mat4(1.0f)),
+        make_uni("meshTransform", glm::mat4(1.0f)),
 		make_uni("rotation", glm::mat4(1.0f)),
 		make_uni("fRotation", glm::mat4(1.0f)),
         make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
@@ -122,7 +122,7 @@ int main(void) {
             settings.print = settings.print = true;
         if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
             settings.print = settings.print = false;
-		floor.draw(shader);
+		// floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

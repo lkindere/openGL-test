@@ -17,6 +17,7 @@ add_subdirectory(Animator)
 add_subdirectory(Objects)
 
 add_definitions(-std=c++11 -DDEBUG)
+# set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC Loader/includes

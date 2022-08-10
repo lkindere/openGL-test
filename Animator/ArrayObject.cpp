@@ -1,10 +1,12 @@
 #include "ArrayObject.hpp"
 
+#include <iostream>
+
 ArrayObject::ArrayObject() : _nIndices(0) {}
 
 void ArrayObject::init(const std::vector<Vert>& vertices,
 						const std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
-	//Array
+    //Array
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	//Vertices

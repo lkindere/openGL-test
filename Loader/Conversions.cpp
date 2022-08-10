@@ -21,12 +21,6 @@ glm::mat4	toGLmat(const aiMatrix4x4& aiMat){
         glm::vec4(aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3),
         glm::vec4(aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4)
     );
-    // glm::mat4(
-    //     glm::vec4(1.0f, 0.0f, 0.0f, 0.0f),
-    //     glm::vec4(0.0f, 0.0f, 1.0f, 0.0f),
-    //     glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
-    //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
-    // );
 }
 
 static bool same_float(float a, float b){
