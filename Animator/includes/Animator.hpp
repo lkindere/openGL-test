@@ -20,6 +20,23 @@ class Animator
 			_timers = data.timers;
             _bones = data.bones;
             _transformation = data.transformation;
+            _inverse = data.inverse;
+            // _transformation = glm::mat4(1.0f);
+            // for (auto i = 0; i < data.bones.size(); ++i){
+                // if (data.bones[i].animations.size() != 0){
+                    // for (auto j = 0; j < data.bones[i].animations[0].positions.size(); ++j){
+                    //     // std::cout << "Timestamp: " << data.bones[i].animations[0].positions[j].timestamp << '\n';
+                    //     // settings.printmat(glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position));
+                    //     // std::cout << std::endl;
+                    //     // std::cout << "Multiplied with transformation:\n";
+                    //     // settings.printmat(data.transformation * glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position));
+                    //     // std::cout << "Multiplied with different order:\n";
+                    //     // settings.printmat(glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position) * data.transformation);
+                    //     // std::cout << std::endl;
+                    // // }
+
+                // }
+            // }
 		}
 		
 		const std::vector<glm::mat4>& updateMatrices(){
@@ -35,8 +52,8 @@ class Animator
                 for (auto j = 0; j < _bones[i].children.size(); ++j){
                     _matrices[_bones[i].children[j]] = _matrices[i];
                 }
-				// _matrices[i] = _matrices[i] * _bones[i].offset;
-                _matrices[i] = _bones[i].offset * _matrices[i];
+				_matrices[i] = _inverse * _matrices[i] * _bones[i].offset;
+                // _matrices[i] = _bones[i].offset * _matrices[i];
             }
             currentTick += 5;
 			return _matrices;
@@ -48,11 +65,13 @@ class Animator
 
     private:
         glm::mat4 currentMatrix(const BoneData& bone, float time) const {
-            static int i;
             if (bone.animations.size() == 0)
-                return glm::mat4(1.0f);
+                return bone.transform;
             glm::mat4 pos = currentPos(bone.animations[0].positions, currentTick);
             glm::mat4 rot = currentRot(bone.animations[0].rotations, currentTick);
+            // std::cout << "Current rot:\n";
+            // settings.printmat(rot);
+            // std::cout << std::endl;
             glm::mat4 scale = currentScale(bone.animations[0].scales, currentTick);
         // if (settings.print){
         //     std::cout << "\n";
@@ -73,7 +92,9 @@ class Animator
             //     glm::vec4(0.0f, 1.0f, 0.0f, 0.0f),
             //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
             // );
+            // return rot;
             return (pos * rot * scale);
+            // return (pos * rot * scale);
         }
 
         glm::mat4 currentPos(const std::vector<KeyPosition>& positions, float time) const {
@@ -94,10 +115,13 @@ class Animator
         }
 
         glm::mat4 currentRot(const std::vector<KeyRotation>& rotations, float time) const {
-            if (rotations.size() == 0)
+            if (rotations.size() == 0){
+                std::cout << "NO ROTATIONS\n";
                 return glm::mat4(1.0f);
+            }
+            // return glm::toMat4(glm::normalize(rotations[0].rotation));
             if (rotations.size() == 1)
-                return glm::toMat4(rotations[0].rotation);
+                return glm::toMat4(glm::normalize(rotations[0].rotation));
             const KeyRotation* last = &rotations[0];
             const KeyRotation* next = &rotations[1];
             for (auto i = 1; i < rotations.size() - 1; ++i){
@@ -114,8 +138,8 @@ class Animator
             // );
             // return glm::toMat4(glm::slerp(last->rotation, next->rotation,
             //     getInterpolant(time, last->timestamp, next->timestamp))) * flip;
-            return glm::toMat4(glm::slerp(last->rotation, next->rotation,
-                getInterpolant(time, last->timestamp, next->timestamp)));
+            return glm::toMat4(glm::normalize(glm::slerp(last->rotation, next->rotation,
+                getInterpolant(time, last->timestamp, next->timestamp))));
         }
 
         glm::mat4 currentScale(const std::vector<KeyScale>& scales, float time) const {
@@ -145,5 +169,6 @@ class Animator
         std::vector<AnimTimers> _timers;
         std::vector<BoneData>   _bones;
         glm::mat4               _transformation;
+        glm::mat4               _inverse;
 		std::vector<glm::mat4>	_matrices;
 };

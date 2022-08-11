@@ -25,41 +25,47 @@ uniform mat4 rotation;
 uniform mat4 fRotation;
 
 vec4 check_bones(vec4 model){
-	vec4 position;
-	position = BoneMatrices[aBones[0]] * model * aWeights[0];
-	position += BoneMatrices[aBones[1]] * model * aWeights[1];
-	position += BoneMatrices[aBones[2]] * model * aWeights[2];
+    if (aWeights[0] == 0.0)
+        return model;
+	vec4 position = model;
+	position = BoneMatrices[aBones[0]] * aWeights[0] * model;
+	position += BoneMatrices[aBones[1]] * aWeights[1] * model;
+	position += BoneMatrices[aBones[2]] * aWeights[2] * model;
 	return position;
+    // return mat4(1.0f);
 
-    // vec4 position = model;
-    // vec4 temp;
-	// temp = BoneMatrices[aBones[0]] * model;
-    // position += temp * aWeights[0];
+// //     // vec4 position = model;
+// //     // vec4 temp;
+// // 	// temp = BoneMatrices[aBones[0]] * model;
+// //     // position += temp * aWeights[0];
 
-	// temp =  BoneMatrices[aBones[1]] * model;
-    // position += temp * aWeights[1];
+// // 	// temp =  BoneMatrices[aBones[1]] * model;
+// //     // position += temp * aWeights[1];
 
-	// temp = BoneMatrices[aBones[2]] * model;
-    // position += temp * aWeights[2];
-	// return position;
-    // mat4 transformation = BoneMatrices[aBones[0]] * aWeights[0];
-    // transformation += BoneMatrices[aBones[1]] * aWeights[1];
-    // transformation += BoneMatrices[aBones[2]] * aWeights[2];
-    // if (transformation == mat4(0.0f))
-    //     transformation = mat4(1.0f);
-    // return transformation * meshTransform * model;
+// // 	// temp = BoneMatrices[aBones[2]] * model;
+// //     // position += temp * aWeights[2];
+// // 	// return position;
+// //     // mat4 transformation = BoneMatrices[aBones[0]] * aWeights[0];
+// //     // transformation += BoneMatrices[aBones[1]] * aWeights[1];
+// //     // transformation += BoneMatrices[aBones[2]] * aWeights[2];
+// //     // if (transformation == mat4(0.0f))
+// //     //     transformation = mat4(1.0f);
+// //     // return transformation * meshTransform * model;
 }
 
 void main()
 {
-	vec4 model = check_bones(vec4(aModel, 1.0) * meshTransform);
+	vec4 model = vec4(aModel, 1.0) * meshTransform;
+    // vec4 model = vec4(aModel, 1.0);
+    model = check_bones(model);
 
-	model = fRotation * model * rotation;
-	model.xyz += pos.xyz;
+	// model = fRotation * model * rotation;
+	// model.xyz += pos.xyz + fOffset.xyz;
 
 
-	gl_Position = camPos * vec4(model);
-	gl_Position.xyz += fOffset.xyz;
+    gl_Position = camPos * model;
+	// gl_Position = camPos * vec4(model);
+	// gl_Position.xyz += fOffset.xyz;
 	_pos = vec3(model.xyz);
 	_normal = aNorm;
 	_color = aColor;

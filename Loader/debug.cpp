@@ -14,6 +14,13 @@ void print_vec(const glm::vec4& vec, bool sp){
         std::cout << std::endl;
 }
 
+void print_vec(const glm::quat& vec, bool sp){
+	std::cout << "X: " << vec.x << " Y: "
+        << vec.y << " Z: " << vec.z << " W: " << vec.w << '\n';
+    if (sp)
+        std::cout << std::endl;
+}
+
 void print_vec(const aiVector3D& vec, bool sp){
     print_vec(toGLvec(vec), sp);
 }
@@ -61,6 +68,30 @@ void print_bonedata(const std::vector<BoneData>& bonedata){
         }
     }
     std::cout << std::endl;
+}
+
+void print_keyframes(std::vector<KeyPosition>& positions){
+    std::cout << "Positions:\n";
+    for (auto i = 0; i < positions.size(); ++i){
+        std::cout << "Timestamp: " << positions[i].timestamp << '\n';
+        print_vec(positions[i].position);
+    }
+}
+
+void print_keyframes(std::vector<KeyRotation>& rotations){
+    std::cout << "Rotations:\n";
+    for (auto i = 0; i < rotations.size(); ++i){
+        std::cout << "Timestamp: " << rotations[i].timestamp << '\n';
+        print_vec(rotations[i].rotation);
+    }
+}
+
+void print_keyframes(std::vector<KeyScale>& scales){
+    std::cout << "Scales:\n";
+    for (auto i = 0; i < scales.size(); ++i){
+        std::cout << "Timestamp: " << scales[i].timestamp << '\n';
+        print_vec(scales[i].scale);
+    }
 }
 
 void print_hierarchy(const aiNode* root, int spaces){

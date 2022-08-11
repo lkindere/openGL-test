@@ -59,12 +59,20 @@ static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 }
 
 static glm::mat4 get_mesh_transform(const aiNode* node){
-    std::cout << "Node found: " << node->mName.data << std::endl;
-    glm::mat4 finalMat(1.0f);
+    std::vector<glm::mat4> matrices;
     while (node){
-        finalMat *= toGLmat(node->mTransformation);
+        matrices.push_back(toGLmat(node->mTransformation));
         node = node->mParent;
     }
+    // glm::mat4 finalMat = *matrices.begin();
+    // for (auto it = matrices.begin() + 1; it != matrices.end(); ++it)
+    //     finalMat *= *it;
+    glm::mat4 finalMat = *matrices.rbegin();
+    for (auto it = matrices.rbegin() + 1; it != matrices.rend(); ++it)
+        finalMat *= *it;
+    std::cout << "FINAL MAT:\n" << std::endl;
+    print_mat(finalMat);
+    std::cout << std::endl;
     return finalMat;
 }
 

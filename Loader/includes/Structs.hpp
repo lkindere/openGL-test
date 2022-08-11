@@ -65,5 +65,6 @@ struct MeshData
     std::vector<BoneData>       bones;
     std::vector<AnimTimers>     timers;
     glm::mat4                   transformation;
+    glm::mat4                   inverse;
 };
 
