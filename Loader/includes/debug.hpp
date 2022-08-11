@@ -27,5 +27,6 @@ void print_keyframes(std::vector<KeyPosition>& positions);
 void print_keyframes(std::vector<KeyRotation>& rotations);
 void print_keyframes(std::vector<KeyScale>& scales);
 
-void print_bonedata(const std::vector<BoneData>& bonedata);
+// void print_bonedata(const std::vector<BoneData>& bonedata);
+void print_hierarchy(const NodeData& root, int spaces = 0);
 void print_hierarchy(const aiNode* root, int spaces = 0);

@@ -58,72 +58,73 @@ static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 	vert.weights = glm::vec3(weights[0], weights[1], weights[2]);
 }
 
-static glm::mat4 get_mesh_transform(const aiNode* node){
-    std::vector<glm::mat4> matrices;
-    while (node){
-        matrices.push_back(toGLmat(node->mTransformation));
-        node = node->mParent;
-    }
-    // glm::mat4 finalMat = *matrices.begin();
-    // for (auto it = matrices.begin() + 1; it != matrices.end(); ++it)
-    //     finalMat *= *it;
-    glm::mat4 finalMat = *matrices.rbegin();
-    for (auto it = matrices.rbegin() + 1; it != matrices.rend(); ++it)
-        finalMat *= *it;
-    std::cout << "FINAL MAT:\n" << std::endl;
-    print_mat(finalMat);
-    std::cout << std::endl;
-    return finalMat;
-}
+// const aiNode* find_mesh_node(const aiNode* root, unsigned int ID){
+//     if (root->mNumMeshes){
+//         for (auto i = 0; i < root->mNumMeshes; ++i){
+//             if (root->mMeshes[i] == ID)
+//                 return root;
+//         }
+//     }
+//     for (auto i = 0; i < root->mNumChildren; ++i){
+//         const aiNode* ret = find_mesh_node(root->mChildren[i], ID);
+//         if (ret)
+//             return ret;
+//     }
+//     return NULL;
+// }
 
-const aiNode* find_mesh_node(const aiNode* root, unsigned int ID){
-    if (root->mNumMeshes){
-        for (auto i = 0; i < root->mNumMeshes; ++i){
-            if (root->mMeshes[i] == ID)
-                return root;
+// static void process_hierarchy(std::vector<BoneData>& data, const aiNode* node){
+// 	const aiNode* current;
+// 	for (auto i = 0; i < data.size(); ++i){
+// 		current = node->FindNode(data[i].name.data());
+// 		if (!current)
+// 			throw(std::runtime_error("Node not found"));
+// 		std::vector<unsigned short> chld;
+// 		chld.reserve(current->mNumChildren);
+// 		for (auto i = 0; i < current->mNumChildren; ++i){
+//             for (auto j = 0; j < data.size(); ++j){
+//                 if (data[j].name == current->mChildren[i]->mName.data){
+//                     chld.push_back(j);
+//                     break ;
+//                 }
+//             }
+//         };
+//         data[i].transform = toGLmat(current->mTransformation);
+//         data[i].children = chld;
+// 	}
+// }
+
+static BoneData* process_bone(const aiNode* root, const aiMesh* mesh){
+    for (auto i = 0; i < mesh->mNumBones; ++i){
+        if (mesh->mBones[i]->mName == root->mName){
+            BoneData* bone = new BoneData;
+            bone->ID = i;
+            bone->offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
+            //Animations;
+            return bone;
         }
     }
-    for (auto i = 0; i < root->mNumChildren; ++i){
-        const aiNode* ret = find_mesh_node(root->mChildren[i], ID);
-        if (ret)
-            return ret;
-    }
-    return NULL;
+    return nullptr;
 }
 
-static void process_hierarchy(std::vector<BoneData>& data, const aiNode* node){
-	const aiNode* current;
-	for (auto i = 0; i < data.size(); ++i){
-		current = node->FindNode(data[i].name.data());
-		if (!current)
-			throw(std::runtime_error("Node not found"));
-		std::vector<unsigned short> chld;
-		chld.reserve(current->mNumChildren);
-		for (auto i = 0; i < current->mNumChildren; ++i){
-            for (auto j = 0; j < data.size(); ++j){
-                if (data[j].name == current->mChildren[i]->mName.data){
-                    chld.push_back(j);
-                    break ;
-                }
-            }
-        };
-        data[i].transform = toGLmat(current->mTransformation);
-        data[i].children = chld;
-	}
-}
+static void process_nodes(NodeData& node, const aiNode* root, const aiMesh* mesh){
+    node.name = root->mName.data;
+    node.bone = process_bone(root, mesh);
+    node.transformation = toGLmat(root->mTransformation);
+    node.children.resize(root->mNumChildren);
+    for (auto i = 0; i < root->mNumChildren; ++i)
+        process_nodes(node.children[i], root->mChildren[i], mesh);
 
-static std::vector<BoneData> process_bones(const aiNode* root, const aiMesh* mesh){
-	std::vector<BoneData> data;
-    data.reserve(mesh->mNumBones);
-	for (auto i = 0; i < mesh->mNumBones; ++i){
-		BoneData bone;
-        bone.name = mesh->mBones[i]->mName.data;
-		bone.offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
-        data.push_back(bone);
-	}
-	process_hierarchy(data, root);
-    print_bonedata(data);
-	return data;
+//     data.reserve(mesh->mNumBones);
+// 	for (auto i = 0; i < mesh->mNumBones; ++i){
+// 		BoneData bone;
+//         bone.name = mesh->mBones[i]->mName.data;
+// 		bone.offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
+//         data.push_back(bone);
+// 	}
+// 	process_hierarchy(data, root);
+//     print_bonedata(data);
+// 	return data;
 }
 
 MeshData process_mesh(const aiNode* root, const aiMesh* mesh){
@@ -141,9 +142,6 @@ MeshData process_mesh(const aiNode* root, const aiMesh* mesh){
         process_weights(mesh, vert, i);
 		data.verts.push_back(vert);
 	}
-    //Change if more meshes than 1
-    data.transformation = get_mesh_transform(find_mesh_node(root, 0));
-    print_mat(data.transformation);
-    data.bones = process_bones(root, mesh);
+    process_nodes(data.nodes, root, mesh);
 	return data;
 }

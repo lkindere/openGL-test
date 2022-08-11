@@ -45,11 +45,20 @@ struct AnimData
 
 struct BoneData
 {
-    std::string                 name;
-    glm::mat4                   transform;
+    unsigned short              ID;
+    // std::string                 name;
+    // glm::mat4                   transform;
     glm::mat4                   offset;
     std::vector<AnimData>       animations;
-    std::vector<unsigned short> children;
+    // std::vector<unsigned short> children;
+};
+
+struct NodeData
+{
+    std::string             name;
+    BoneData*               bone;
+    std::vector<NodeData>   children;
+    glm::mat4               transformation;
 };
 
 struct AnimTimers
@@ -62,9 +71,10 @@ struct MeshData
 {
     std::vector<Vert>			verts;
     std::vector<unsigned int>	indices;
-    std::vector<BoneData>       bones;
+    NodeData                    nodes;
     std::vector<AnimTimers>     timers;
-    glm::mat4                   transformation;
-    glm::mat4                   inverse;
+    // std::vector<BoneData>       bones;
+    // glm::mat4                   transformation;
+    // glm::mat4                   inverse;
 };
 

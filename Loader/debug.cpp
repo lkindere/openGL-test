@@ -49,25 +49,25 @@ void print_mat(const aiMatrix4x4& mat){
 }
 
 void print_bonedata(const std::vector<BoneData>& bonedata){
-    for (auto i = 0; i < bonedata.size(); ++i){
-        std::cout << "Bone[" << i << "]: " << bonedata[i].name << '\n';
-        if (bonedata[i].animations.size() != 0){
-            for (auto j = 0; j < bonedata[i].animations.size(); ++j){
-                std::cout << "  Animation [" << j << "]" << '\n';
-                std::cout << "  Positions: " << bonedata[i].animations[j].positions.size() << '\n';
-                std::cout << "  Rotations: " << bonedata[i].animations[j].rotations.size() << '\n';
-                std::cout << "  Scales:    " << bonedata[i].animations[j].scales.size() << '\n';
-                std::cout << std::endl;
-            }
-        }
-        if (bonedata[i].children.size() != 0){
-            std::cout << "  Children: ";
-            for (auto j = 0; j < bonedata[i].children.size(); ++j)
-                std::cout << '[' << bonedata[i].children[j] << "] ";
-            std::cout << std::endl;
-        }
-    }
-    std::cout << std::endl;
+    // for (auto i = 0; i < bonedata.size(); ++i){
+    //     std::cout << "Bone[" << i << "]: " << bonedata[i].name << '\n';
+    //     if (bonedata[i].animations.size() != 0){
+    //         for (auto j = 0; j < bonedata[i].animations.size(); ++j){
+    //             std::cout << "  Animation [" << j << "]" << '\n';
+    //             std::cout << "  Positions: " << bonedata[i].animations[j].positions.size() << '\n';
+    //             std::cout << "  Rotations: " << bonedata[i].animations[j].rotations.size() << '\n';
+    //             std::cout << "  Scales:    " << bonedata[i].animations[j].scales.size() << '\n';
+    //             std::cout << std::endl;
+    //         }
+    //     }
+    //     if (bonedata[i].children.size() != 0){
+    //         std::cout << "  Children: ";
+    //         for (auto j = 0; j < bonedata[i].children.size(); ++j)
+    //             std::cout << '[' << bonedata[i].children[j] << "] ";
+    //         std::cout << std::endl;
+    //     }
+    // }
+    // std::cout << std::endl;
 }
 
 void print_keyframes(std::vector<KeyPosition>& positions){
@@ -91,6 +91,24 @@ void print_keyframes(std::vector<KeyScale>& scales){
     for (auto i = 0; i < scales.size(); ++i){
         std::cout << "Timestamp: " << scales[i].timestamp << '\n';
         print_vec(scales[i].scale);
+    }
+}
+
+void print_hierarchy(const NodeData& root, int spaces){
+    char indent[spaces + 1];
+    for (auto i = 0; i < spaces; ++i)
+        indent[i] = ' ';
+    indent[spaces] = '\0';
+    std::cout << indent << "Node:     " << root.name << '\n';
+    std::cout << indent << "Children: " << root.children.size() << '\n';
+    glm::mat4 mat(root.transformation);
+    for (auto i = 0; i < 4; ++i){
+        std::cout << indent << "X: " << mat[i].x << " Y: " << mat[i].y
+            << " Z: " << mat[i].z << " W: " << mat[i].w << '\n';
+    }
+    std::cout << '\n' << std::endl;
+    for (auto i = 0; i < root.children.size(); ++i){
+        print_hierarchy(root.children[i], spaces + 4);
     }
 }
 

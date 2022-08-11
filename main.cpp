@@ -67,62 +67,64 @@ Mob* inputPath(){
 
 int main(void) {
     Init();
-	Uniforms uniDefault;
-	uniDefault.vec3 = {
-		make_uni("pos", glm::vec3(0.0f)),
-		make_uni("scale", glm::vec3(1.0f)),
-		make_uni("fOffset", glm::vec3(0.0f))
-	};
-	uniDefault.mat4 = {
-		make_uni("camPos", glm::mat4(1.0f)),
-        make_uni("meshTransform", glm::mat4(1.0f)),
-		make_uni("rotation", glm::mat4(1.0f)),
-		make_uni("fRotation", glm::mat4(1.0f)),
-        make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
-	};
-    Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
+	// Uniforms uniDefault;
+	// uniDefault.vec3 = {
+	// 	make_uni("pos", glm::vec3(0.0f)),
+	// 	make_uni("scale", glm::vec3(1.0f)),
+	// 	make_uni("fOffset", glm::vec3(0.0f))
+	// };
+	// uniDefault.mat4 = {
+	// 	make_uni("camPos", glm::mat4(1.0f)),
+    //     make_uni("meshTransform", glm::mat4(1.0f)),
+	// 	make_uni("rotation", glm::mat4(1.0f)),
+	// 	make_uni("fRotation", glm::mat4(1.0f)),
+    //     make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
+	// };
+    // Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
 
-	Uniforms lightDefault;
-	lightDefault.vec3 = {
-		make_uni("pos", glm::vec3(0.0f)),
-		make_uni("scale", glm::vec3(1.0f))
-	};
-    lightDefault.vec4 = {
-        make_uni("lightColor", glm::vec4(1.0f))
-    };
-	lightDefault.mat4 = {
-		make_uni("camPos", glm::mat4(1.0f))
-	};
-	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", lightDefault);
+	// Uniforms lightDefault;
+	// lightDefault.vec3 = {
+	// 	make_uni("pos", glm::vec3(0.0f)),
+	// 	make_uni("scale", glm::vec3(1.0f))
+	// };
+    // lightDefault.vec4 = {
+    //     make_uni("lightColor", glm::vec4(1.0f))
+    // };
+	// lightDefault.mat4 = {
+	// 	make_uni("camPos", glm::mat4(1.0f))
+	// };
+	// Shader lightShader("Shaders/light.vert", "Shaders/light.frag", lightDefault);
 
-	Player player(importer("Models/sword.fbx"));
-	Light light(importer("Models/light.fbx"));
+	// Player player(importer("Models/sword.fbx"));
+	// Light light(importer("Models/light.fbx"));
 
-	Object floor(importer("Models/floor.fbx"));
+	// Object floor(importer("Models/floor.fbx"));
 
-	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	// // player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
-    Mob* mob = inputPath();
+    // Mob* mob = inputPath();
 
-	light.addTarget(shader);
+	// light.addTarget(shader);
+
+    importer("Models/bones.fbx");
 
     int i = 0;
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		light.draw(lightShader);
-		player.input();
-		player.draw(shader);
-		mob->draw(shader);
-        if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
-            delete mob;
-            mob = inputPath();
-        }
-        if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
-            settings.print = settings.print = true;
-        if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
-            settings.print = settings.print = false;
-		// floor.draw(shader);
+		// light.draw(lightShader);
+		// player.input();
+		// player.draw(shader);
+		// mob->draw(shader);
+        // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
+        //     delete mob;
+        //     mob = inputPath();
+        // }
+        // if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
+        //     settings.print = settings.print = true;
+        // if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
+        //     settings.print = settings.print = false;
+		// // floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }
