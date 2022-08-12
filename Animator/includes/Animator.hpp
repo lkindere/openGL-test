@@ -17,62 +17,43 @@ class Animator
 		Animator() {}
 
 		void init(const MeshData& data) {
-			// _timers = data.timers;
-            // _bones = data.bones;
-            // _transformation = data.transformation;
-            // _inverse = data.inverse;
-            // _transformation = glm::mat4(1.0f);
-            // for (auto i = 0; i < data.bones.size(); ++i){
-                // if (data.bones[i].animations.size() != 0){
-                    // for (auto j = 0; j < data.bones[i].animations[0].positions.size(); ++j){
-                    //     // std::cout << "Timestamp: " << data.bones[i].animations[0].positions[j].timestamp << '\n';
-                    //     // settings.printmat(glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position));
-                    //     // std::cout << std::endl;
-                    //     // std::cout << "Multiplied with transformation:\n";
-                    //     // settings.printmat(data.transformation * glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position));
-                    //     // std::cout << "Multiplied with different order:\n";
-                    //     // settings.printmat(glm::translate(glm::mat4(1.0f), data.bones[i].animations[0].positions[j].position) * data.transformation);
-                    //     // std::cout << std::endl;
-                    // // }
+			_timers = data.timers;
+            _nodes = data.nodes;
+            _matrices = std::vector<glm::mat4>(20, glm::mat4(1.0f));
+		}
 
-                // }
-            // }
-		}
-		
-		const std::vector<glm::mat4>& updateMatrices(){
-            // if (_timers.size() == 0)
-        //         return _matrices;
-		// 	if (currentTick > _timers[0].duration)
-        //         currentTick -= _timers[0].duration;
-        //     _matrices.clear();
-        //     _matrices.insert(_matrices.begin(), _bones.size(), _transformation);
-		// 	for (auto i = 0; i < _bones.size(); ++i){
-        //         _matrices[i] = _matrices[i] * currentMatrix(_bones[i], currentTick);
-        //         // _matrices[i] =  currentMatrix(_bones[i], currentTick) * _matrices[i];
-        //         for (auto j = 0; j < _bones[i].children.size(); ++j){
-        //             _matrices[_bones[i].children[j]] = _matrices[i];
-        //         }
-		// 		_matrices[i] = _inverse * _matrices[i] * _bones[i].offset;
-        //         // _matrices[i] = _bones[i].offset * _matrices[i];
-        //     }
-        //     currentTick += 5;
-			return _matrices;
-		}
-        
-        const glm::mat4& meshTransform() const {
-            return _transformation;
+        void traverseMatrices(const NodeData& node, const glm::mat4& parentTransform){
+            glm::mat4 nodeTransform = node.transformation;
+            if (node.bone != nullptr && node.bone->animations.size() != 0)
+                nodeTransform = currentMatrix(node.bone, currentTick);
+
+            glm::mat4 globalTransform = parentTransform * nodeTransform;
+            if (node.bone != nullptr)
+                _matrices[node.bone->ID] = globalTransform * node.bone->offset;
+            for (auto i = 0; i < node.children.size(); ++i)
+                traverseMatrices(node.children[i], globalTransform);
+                
         }
 
+		const std::vector<glm::mat4>& updateMatrices(){
+            ++currentTick;
+            if (currentTick > 100)
+                currentTick = 0;
+            traverseMatrices(_nodes, glm::mat4(1.0f));
+			return _matrices;
+		}
+
     private:
-        glm::mat4 currentMatrix(const BoneData& bone, float time) const {
+        glm::mat4 currentMatrix(const BoneData* bone, float time) const {
             // if (bone.animations.size() == 0)
             //     return bone.transform;
-            // glm::mat4 pos = currentPos(bone.animations[0].positions, currentTick);
-            // glm::mat4 rot = currentRot(bone.animations[0].rotations, currentTick);
-            // // std::cout << "Current rot:\n";
-            // // settings.printmat(rot);
-            // // std::cout << std::endl;
-            // glm::mat4 scale = currentScale(bone.animations[0].scales, currentTick);
+
+            glm::mat4 pos = currentPos(bone->animations[0].positions, currentTick);
+            glm::mat4 rot = currentRot(bone->animations[0].rotations, currentTick);
+            // std::cout << "Current rot:\n";
+            // settings.printmat(rot);
+            // std::cout << std::endl;
+            glm::mat4 scale = currentScale(bone->animations[0].scales, currentTick);
         // if (settings.print){
         //     std::cout << "\n";
         //     std::cout << "POS:\n";
@@ -93,9 +74,9 @@ class Animator
             //     glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
             // );
             // return rot;
+            return (pos * rot * scale);
             // return (pos * rot * scale);
-            // return (pos * rot * scale);
-            return glm::mat4(1.0f);
+            // return glm::mat4(1.0f);
         }
 
         glm::mat4 currentPos(const std::vector<KeyPosition>& positions, float time) const {
@@ -168,8 +149,6 @@ class Animator
         float lastTick = 0;
         float currentTick = 0;
         std::vector<AnimTimers> _timers;
-        std::vector<BoneData>   _bones;
-        glm::mat4               _transformation;
-        glm::mat4               _inverse;
-		std::vector<glm::mat4>	_matrices;
+        NodeData                _nodes;
+        std::vector<glm::mat4>  _matrices;
 };

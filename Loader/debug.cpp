@@ -1,5 +1,12 @@
 #include "debug.hpp"
 
+void print_vec(const glm::ivec3& vec, bool sp){
+	std::cout << "X: " << vec.x << " Y: "
+        << vec.y << " Z: " << vec.z << '\n';
+    if (sp)
+        std::cout << std::endl;
+}
+
 void print_vec(const glm::vec3& vec, bool sp){
 	std::cout << "X: " << vec.x << " Y: "
         << vec.y << " Z: " << vec.z << '\n';
@@ -92,6 +99,18 @@ void print_keyframes(std::vector<KeyScale>& scales){
         std::cout << "Timestamp: " << scales[i].timestamp << '\n';
         print_vec(scales[i].scale);
     }
+}
+
+void print_vertices(const std::vector<Vert>& verts){
+    for (auto i = 0; i < verts.size(); ++i){
+        std::cout << "Vertice[" << i << "]: ";
+        print_vec(verts[i].vertices, false);
+        std::cout << "  Affected by bones: ";
+        print_vec(verts[i].bones, false);
+        std::cout << "  Weights per bone:  ";
+        print_vec(verts[i].weights);
+    }
+    std::cout << std::endl;
 }
 
 void print_hierarchy(const NodeData& root, int spaces){

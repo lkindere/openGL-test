@@ -45,28 +45,28 @@
 // 	return scales;
 // }
 
-std::vector<AnimTimers> process_animations(const aiNode* root, const aiScene* scene, std::vector<BoneData>& bones){
+AnimData process_animations(const aiNode* root, const aiScene* scene, unsigned short boneID){
     std::vector<AnimTimers> timers;
-    // if (scene->mNumAnimations == 0)
-    //     return timers;
-    // for (auto i = 0; i < scene->mNumAnimations; ++i){
-    //     for (auto j = 0; j < scene->mAnimations[i]->mNumChannels; ++j){
-    //         for (auto k = 0; k < bones.size(); ++k){
-    //             if (bones[k].name == scene->mAnimations[i]->mChannels[j]->mNodeName.data){
-    //                 AnimData temp;
-    //                 temp.positions = process_positions(scene->mAnimations[i]->mChannels[j]);
-    //                 temp.rotations = process_rotations(scene->mAnimations[i]->mChannels[j]);
-    //                 temp.scales = process_scales(scene->mAnimations[i]->mChannels[j]);
-    //                 bones[k].animations.push_back(temp);
-    //                 break ;
-    //             }
-    //         }
-    //     }
-    //     AnimTimers time;
-    //     time.duration = scene->mAnimations[i]->mDuration;
-    //     time.tps = scene->mAnimations[i]->mTicksPerSecond;
-    //     timers.push_back(time);
-    // }
-    // print_bonedata(bones);
+    if (scene->mNumAnimations == 0)
+        return timers;
+    for (auto i = 0; i < scene->mNumAnimations; ++i){
+        for (auto j = 0; j < scene->mAnimations[i]->mNumChannels; ++j){
+            for (auto k = 0; k < bones.size(); ++k){
+                if (bones[k].name == scene->mAnimations[i]->mChannels[j]->mNodeName.data){
+                    AnimData temp;
+                    temp.positions = process_positions(scene->mAnimations[i]->mChannels[j]);
+                    temp.rotations = process_rotations(scene->mAnimations[i]->mChannels[j]);
+                    temp.scales = process_scales(scene->mAnimations[i]->mChannels[j]);
+                    bones[k].animations.push_back(temp);
+                    break ;
+                }
+            }
+        }
+        AnimTimers time;
+        time.duration = scene->mAnimations[i]->mDuration;
+        time.tps = scene->mAnimations[i]->mTicksPerSecond;
+        timers.push_back(time);
+    }
+    print_bonedata(bones);
     return timers;
 }

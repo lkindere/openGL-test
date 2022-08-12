@@ -25,7 +25,6 @@ class Model
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
             const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
-            uniforms.mat4.insert(make_uni("meshTransform", animator.meshTransform()));
             uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();

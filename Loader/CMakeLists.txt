@@ -8,7 +8,7 @@ add_library(${PROJECT_NAME}
     Importer.cpp
     Conversions.cpp
     ProcessMesh.cpp
-    ProcessAnimations.cpp
+    # ProcessAnimations.cpp
     debug.cpp
 )
 
