@@ -55,28 +55,6 @@ void print_mat(const aiMatrix4x4& mat){
     print_mat(toGLmat(mat));
 }
 
-void print_bonedata(const std::vector<BoneData>& bonedata){
-    // for (auto i = 0; i < bonedata.size(); ++i){
-    //     std::cout << "Bone[" << i << "]: " << bonedata[i].name << '\n';
-    //     if (bonedata[i].animations.size() != 0){
-    //         for (auto j = 0; j < bonedata[i].animations.size(); ++j){
-    //             std::cout << "  Animation [" << j << "]" << '\n';
-    //             std::cout << "  Positions: " << bonedata[i].animations[j].positions.size() << '\n';
-    //             std::cout << "  Rotations: " << bonedata[i].animations[j].rotations.size() << '\n';
-    //             std::cout << "  Scales:    " << bonedata[i].animations[j].scales.size() << '\n';
-    //             std::cout << std::endl;
-    //         }
-    //     }
-    //     if (bonedata[i].children.size() != 0){
-    //         std::cout << "  Children: ";
-    //         for (auto j = 0; j < bonedata[i].children.size(); ++j)
-    //             std::cout << '[' << bonedata[i].children[j] << "] ";
-    //         std::cout << std::endl;
-    //     }
-    // }
-    // std::cout << std::endl;
-}
-
 void print_keyframes(std::vector<KeyPosition>& positions){
     std::cout << "Positions:\n";
     for (auto i = 0; i < positions.size(); ++i){
@@ -104,7 +82,7 @@ void print_keyframes(std::vector<KeyScale>& scales){
 void print_vertices(const std::vector<Vert>& verts){
     for (auto i = 0; i < verts.size(); ++i){
         std::cout << "Vertice[" << i << "]: ";
-        print_vec(verts[i].vertices, false);
+        // print_vec(verts[i].vertices, false);
         std::cout << "  Affected by bones: ";
         print_vec(verts[i].bones, false);
         std::cout << "  Weights per bone:  ";

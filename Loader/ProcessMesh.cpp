@@ -58,14 +58,11 @@ static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 }
 
 static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
+    std::cout << "N positions: " << node->mNumPositionKeys << std::endl;
 	std::vector<KeyPosition> positions;
-     std::cout << "nPosition keys: " << node->mNumPositionKeys << std::endl;
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
 		pos.position = toGLvec(node->mPositionKeys[i].mValue);
-		// if (i > 0 && same_vec(pos.position, positions.rbegin()->position))
-		// 	continue ;  //Could be bad for interpolating unless next is also the same
-        //Keep only first and last in such cases
 		pos.timestamp = node->mPositionKeys[i].mTime;
 		positions.push_back(pos);
 	}
@@ -73,13 +70,11 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 }
 
 static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
+    std::cout << "N rotations: " << node->mNumRotationKeys << std::endl;
 	std::vector<KeyRotation> rotations;
-        std::cout << "nRotation keys: " << node->mNumRotationKeys << std::endl;
 	for (auto i = 0; i < node->mNumRotationKeys; ++i){
 		KeyRotation rot;
 		rot.rotation = toGLquat(node->mRotationKeys[i].mValue);
-		// if (i > 0 && same_quat(rot.rotation, rotations.rbegin()->rotation))
-		// 	continue ;
 		rot.timestamp = node->mRotationKeys[i].mTime;
 		rotations.push_back(rot);
 	}
@@ -87,13 +82,11 @@ static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
 }
 
 static std::vector<KeyScale> process_scales(aiNodeAnim* node){
+    std::cout << "N scales: " << node->mNumScalingKeys << std::endl;
 	std::vector<KeyScale> scales;
-    std::cout << "nScaling keys: " << node->mNumScalingKeys << std::endl;
 	for (auto i = 0; i < node->mNumScalingKeys; ++i){
 		KeyScale scl;
 		scl.scale = toGLvec(node->mScalingKeys[i].mValue);
-		// if (i > 0 && same_vec(scl.scale, scales.rbegin()->scale))
-		// 	continue ;
 		scl.timestamp = node->mScalingKeys[i].mTime;
 		scales.push_back(scl);
 	}
@@ -122,6 +115,7 @@ static std::vector<AnimData> process_animations(const aiNode* node, const aiScen
 static BoneData* process_bone(const aiNode* node, const aiScene* scene, const aiMesh* mesh){
     for (auto i = 0; i < mesh->mNumBones; ++i){
         if (mesh->mBones[i]->mName == node->mName){
+            std::cout << "Bone: " << node->mName.data << " ID: " << i << std::endl;
             BoneData* bone = new BoneData;
             bone->ID = i;
             bone->offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
@@ -139,17 +133,18 @@ static void process_nodes(NodeData& node, const aiNode* root, const aiScene* sce
     node.children.resize(root->mNumChildren);
     for (auto i = 0; i < root->mNumChildren; ++i)
         process_nodes(node.children[i], root->mChildren[i], scene, mesh);
+}
 
-//     data.reserve(mesh->mNumBones);
-// 	for (auto i = 0; i < mesh->mNumBones; ++i){
-// 		BoneData bone;
-//         bone.name = mesh->mBones[i]->mName.data;
-// 		bone.offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
-//         data.push_back(bone);
-// 	}
-// 	process_hierarchy(data, root);
-//     print_bonedata(data);
-// 	return data;
+std::vector<AnimTimers> process_timers(const aiScene* scene){
+    std::vector<AnimTimers> timers;
+    timers.reserve(scene->mNumAnimations);
+    for (auto i = 0; i < scene->mNumAnimations; ++i){
+        AnimTimers anim;
+        anim.duration = scene->mAnimations[i]->mDuration;
+        anim.tps = scene->mAnimations[i]->mTicksPerSecond;
+        timers.push_back(anim);
+    }
+    return timers;
 }
 
 MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* mesh){
@@ -167,6 +162,7 @@ MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* me
         process_weights(mesh, vert, i);
 		data.verts.push_back(vert);
 	}
+    data.timers = process_timers(scene);
     process_nodes(data.nodes, root, scene, mesh);
 	return data;
 }
