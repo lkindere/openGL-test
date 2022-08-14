@@ -48,12 +48,7 @@ const Uniforms& Shader::bind() const {
 
 //Exports provided uniforms to shader or defaults if not specified
 void Shader::update(const Uniforms& uniforms) const {
-    for (auto dit = _default.int1.begin(); dit != _default.int1.end(); ++dit){
-		auto it = uniforms.int1.find(dit->first);
-		(it != uniforms.int1.end()) ?
-			glUniform1iv(glGetUniformLocation(_ID, it->first), it->second.size(), it->second.data())
-			:	glUniform1iv(glGetUniformLocation(_ID, dit->first), dit->second.size(), dit->second.data());
-	}
+    glUniform1i(glGetUniformLocation(_ID, "flags"), uniforms.flags);
 	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit){
 		auto it = uniforms.vec3.find(dit->first);
 		(it != uniforms.vec3.end()) ?
@@ -76,8 +71,7 @@ void Shader::update(const Uniforms& uniforms) const {
 
 //Exports default uniforms to shader
 void Shader::update() const {
-    for (auto dit = _default.int1.begin(); dit != _default.int1.end(); ++dit)
-        glUniform1iv(glGetUniformLocation(_ID, dit->first), dit->second.size(), dit->second.data());
+    glUniform1i(glGetUniformLocation(_ID, "flags"), _default.flags);
 	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit)
 		glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
 	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit)

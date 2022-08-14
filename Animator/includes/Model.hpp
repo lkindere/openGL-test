@@ -26,7 +26,7 @@ class Model
 		void draw(const Shader& shader, Uniforms uniforms){
             const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
             if (VAO.hasTexture())
-                uniforms.int1.insert(make_uni("hasTexture", 1));
+                uniforms.flags |= hasTextures;
             uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();

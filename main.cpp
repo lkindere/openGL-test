@@ -65,13 +65,9 @@ Mob* inputPath(){
     return new Mob(importer(str.data()));
 }
 
-int main(void) {
-    Init();
-    // importer("Models/locscale.fbx");
-	Uniforms uniDefault;
-    uniDefault.int1 = {
-        make_uni("hasTexture", 0)
-    };
+Uniforms default_uniforms(){
+    Uniforms uniDefault;
+    uniDefault.flags = 0;
 	uniDefault.vec3 = {
 		make_uni("pos", glm::vec3(0.0f)),
 		make_uni("scale", glm::vec3(1.0f)),
@@ -83,9 +79,12 @@ int main(void) {
 		make_uni("fRotation", glm::mat4(1.0f)),
         make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
 	};
-    Shader shader("Shaders/default.vert", "Shaders/default.frag", uniDefault);
+    return uniDefault;
+}
 
+Uniforms light_uniforms(){
 	Uniforms lightDefault;
+    lightDefault.flags = 0;
 	lightDefault.vec3 = {
 		make_uni("pos", glm::vec3(0.0f)),
 		make_uni("scale", glm::vec3(1.0f))
@@ -96,7 +95,13 @@ int main(void) {
 	lightDefault.mat4 = {
 		make_uni("camPos", glm::mat4(1.0f))
 	};
-	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", lightDefault);
+    return lightDefault;
+}
+
+int main(void) {
+    Init();
+    Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
+	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
 
 	Player player(importer("Models/sword.fbx"));
 	Light light(importer("Models/light.fbx"));

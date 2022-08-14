@@ -25,5 +25,5 @@ class ArrayObject {
 	private:
 		GLuint			_VAO = -1;
         GLuint          _texture = -1;
-		unsigned short	_nIndices;
+		unsigned short	_nIndices = 0;
 };
