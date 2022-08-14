@@ -30,8 +30,17 @@ struct Vert
 	glm::vec3	vertices;
 	glm::vec3	normals;
 	glm::vec4	colors;
+    glm::vec2   textures;
 	glm::ivec3	bones;
 	glm::vec3	weights;
+};
+
+struct TextureData
+{
+    int             width;
+    int             height;
+    int             channels;
+    unsigned char*  data;
 };
 
 //Only used for importing
@@ -46,11 +55,8 @@ struct AnimData
 struct BoneData
 {
     unsigned short              ID;
-    // std::string                 name;
-    // glm::mat4                   transform;
     glm::mat4                   offset;
     std::vector<AnimData>       animations;
-    // std::vector<unsigned short> children;
 };
 
 struct NodeData
@@ -73,8 +79,6 @@ struct MeshData
     std::vector<unsigned int>	indices;
     NodeData                    nodes;
     std::vector<AnimTimers>     timers;
-    // std::vector<BoneData>       bones;
-    // glm::mat4                   transformation;
-    // glm::mat4                   inverse;
+    TextureData                 texture;
 };
 

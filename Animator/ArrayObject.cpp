@@ -4,11 +4,12 @@
 
 ArrayObject::ArrayObject() : _nIndices(0) {}
 
-void ArrayObject::init(const std::vector<Vert>& vertices,
-						const std::vector<GLuint>& indices, GLenum type = GL_STATIC_DRAW){
+void ArrayObject::init(const MeshData& data, GLenum type = GL_STATIC_DRAW){
+    const std::vector<Vert>&            vertices = data.verts;
+    const std::vector<unsigned int>&    indices = data.indices;
     //Array
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	glGenVertexArrays(1, &_VAO);
+	glBindVertexArray(_VAO);
 	//Vertices
 	GLuint VerticeBuffer;
 	glGenBuffers(1, &VerticeBuffer);
@@ -29,12 +30,15 @@ void ArrayObject::init(const std::vector<Vert>& vertices,
 	//Color
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(6 * sizeof(float)));
+    //Tex coords
+    glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(10 * sizeof(float)));
 	//Bones
-	glEnableVertexAttribArray(3);
-	glVertexAttribIPointer(3, 3, GL_INT, sizeof(Vert), (void *)(10 * sizeof(float)));
-	//Weights
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(10 * sizeof(float) + 3 * sizeof(int)));
+	glVertexAttribIPointer(4, 3, GL_INT, sizeof(Vert), (void *)(12 * sizeof(float)));
+	//Weights
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (void *)(12 * sizeof(float) + 3 * sizeof(int)));
 	//Unbind
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -42,9 +46,30 @@ void ArrayObject::init(const std::vector<Vert>& vertices,
 	//Delete
 	glDeleteBuffers(1, &VerticeBuffer);
 	glDeleteBuffers(1, &IndiceBuffer);
+    initTexture(data.texture);
 }
 
+void ArrayObject::initTexture(const TextureData& texture){
+    if (texture.data == nullptr){
+        std::cout << "NO TEXTURE\n";
+        return ;
+    }
+    glGenTextures(1, &_texture);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture.data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+}
+
+bool           ArrayObject::hasTexture() const { return _texture != -1; }
 unsigned short ArrayObject::nIndices() const { return _nIndices; }
 
-void ArrayObject::bind() const { glBindVertexArray(VAO); }
-void ArrayObject::unbind() const { glBindVertexArray(0); }
+void ArrayObject::bind() const {
+    glBindVertexArray(_VAO);
+    if (_texture != -1)
+        glBindTexture(GL_TEXTURE_2D, _texture);
+}
+void ArrayObject::unbind() const {
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}

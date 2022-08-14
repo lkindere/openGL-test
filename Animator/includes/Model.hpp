@@ -19,12 +19,14 @@ class Model
 {
 	public:
         Model(const MeshData& data, GLenum drawtype = GL_STATIC_DRAW){
-            VAO.init(data.verts, data.indices, drawtype);
+            VAO.init(data, drawtype);
             animator.init(data);
         }
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
             const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
+            if (VAO.hasTexture())
+                uniforms.int1.insert(make_uni("hasTexture", 1));
             uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();

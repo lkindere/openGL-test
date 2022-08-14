@@ -18,6 +18,7 @@ void print_vec(const glm::vec3& vec, bool sp = true);
 void print_vec(const glm::vec4& vec, bool sp = true);
 void print_vec(const aiVector3D& vec, bool sp = true);
 void print_vec(const aiColor4D& vec, bool sp = true);
+void print_vec(const aiTexel& vec, bool sp = true);
 void print_vec(const glm::quat& vec, bool sp = true);
 
 void print_mat(const glm::mat3& mat);

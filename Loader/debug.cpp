@@ -21,12 +21,20 @@ void print_vec(const glm::vec4& vec, bool sp){
         std::cout << std::endl;
 }
 
+void print_vec(const aiTexel& vec, bool sp){
+    std::cout << "R: " << (short)vec.r << " G: "
+        << (short)vec.g << " B: " << (short)vec.b << " A: " << (short)vec.a << '\n';
+    if (sp)
+        std::cout << std::endl;
+}
+
 void print_vec(const glm::quat& vec, bool sp){
 	std::cout << "X: " << vec.x << " Y: "
         << vec.y << " Z: " << vec.z << " W: " << vec.w << '\n';
     if (sp)
         std::cout << std::endl;
 }
+
 
 void print_vec(const aiVector3D& vec, bool sp){
     print_vec(toGLvec(vec), sp);

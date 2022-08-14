@@ -1,6 +1,9 @@
 #include "ProcessMesh.hpp"
 #include "debug.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 	std::vector<unsigned int>	indices;
 	indices.reserve(mesh->mNumFaces * 3);
@@ -29,12 +32,22 @@ static std::vector<glm::vec3> process_normals(const aiMesh* mesh){
 
 static std::vector<glm::vec4> process_colors(const aiMesh* mesh){
 	std::vector<glm::vec4> colors;
-    if (!mesh->mColors[0])
+    if (!mesh->HasVertexColors(0))
         return colors;
 	colors.reserve(mesh->mNumVertices);
 	for (auto i = 0; i < mesh->mNumVertices; ++i)
 		colors.push_back(toGLvec(mesh->mColors[0][i]));
 	return colors;
+}
+
+static std::vector<glm::vec2> process_textures(const aiMesh* mesh){
+	std::vector<glm::vec2> textures;
+    if (!mesh->HasTextureCoords(0))
+        return textures;
+	textures.reserve(mesh->mNumVertices);
+	for (auto i = 0; i < mesh->mNumVertices; ++i)
+		textures.push_back(glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y));
+	return textures;
 }
 
 static void process_weights(const aiMesh* mesh, Vert& vert, int index){
@@ -58,7 +71,7 @@ static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 }
 
 static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
-    std::cout << "N positions: " << node->mNumPositionKeys << std::endl;
+    // std::cout << "N positions: " << node->mNumPositionKeys << std::endl;
 	std::vector<KeyPosition> positions;
 	for (auto i = 0; i < node->mNumPositionKeys; ++i){
 		KeyPosition pos;
@@ -70,7 +83,7 @@ static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
 }
 
 static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
-    std::cout << "N rotations: " << node->mNumRotationKeys << std::endl;
+    // std::cout << "N rotations: " << node->mNumRotationKeys << std::endl;
 	std::vector<KeyRotation> rotations;
 	for (auto i = 0; i < node->mNumRotationKeys; ++i){
 		KeyRotation rot;
@@ -82,7 +95,7 @@ static std::vector<KeyRotation> process_rotations(aiNodeAnim* node){
 }
 
 static std::vector<KeyScale> process_scales(aiNodeAnim* node){
-    std::cout << "N scales: " << node->mNumScalingKeys << std::endl;
+    // std::cout << "N scales: " << node->mNumScalingKeys << std::endl;
 	std::vector<KeyScale> scales;
 	for (auto i = 0; i < node->mNumScalingKeys; ++i){
 		KeyScale scl;
@@ -147,21 +160,35 @@ std::vector<AnimTimers> process_timers(const aiScene* scene){
     return timers;
 }
 
+TextureData process_textures(const aiScene* scene){
+    TextureData data;
+    if (!scene->HasTextures()){
+        data.data = nullptr;
+        return data;
+    }
+    data.data = stbi_load_from_memory((unsigned char*)scene->mTextures[0]->pcData, scene->mTextures[0]->mWidth,
+        &data.width, &data.height, &data.channels, 0);
+    return data;
+}
+
 MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* mesh){
 	MeshData    data;
 	data.indices = process_indices(mesh);
 	std::vector<glm::vec3>	vertices = process_vertices(mesh);
 	std::vector<glm::vec3>	normals = process_normals(mesh);
 	std::vector<glm::vec4>	colors = process_colors(mesh);
+    std::vector<glm::vec2>  textures = process_textures(mesh);
 	for (auto i = 0; i < vertices.size(); ++i){
 		Vert vert;
 		vert.vertices = vertices[i];
 		vert.normals = normals[i];
         (colors.size() != 0) ?
 		    vert.colors = colors[i] : vert.colors = glm::vec4(1.0f);
+        vert.textures = textures[i];
         process_weights(mesh, vert, i);
 		data.verts.push_back(vert);
 	}
+    data.texture = process_textures(scene);
     data.timers = process_timers(scene);
     process_nodes(data.nodes, root, scene, mesh);
 	return data;

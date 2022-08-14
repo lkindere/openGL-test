@@ -22,6 +22,6 @@ MeshData importer(const char* path){
 		throw(std::runtime_error(importer.GetErrorString()));
     MeshData data = process_scene(scene);
     // print_hierarchy(data.nodes);
-    print_vertices(data.verts);
+    // print_vertices(data.verts);
     return data;
 }

@@ -17,6 +17,7 @@ add_definitions(-std=c++11)
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC includes
+    PUBLIC _external
 	PUBLIC _external/assimp/include
 	PUBLIC ../_external/glm
 )

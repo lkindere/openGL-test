@@ -9,17 +9,21 @@
 class ArrayObject {
 	public:
 		ArrayObject();
-		void init(const std::vector<Vert>& vertices,
-					const std::vector<GLuint>& indices, GLenum type);
+		void init(const MeshData& data, GLenum type);
 
 	public:
-		unsigned short nIndices() const;
+        bool            hasTexture() const;
+		unsigned short  nIndices() const;
+    
+    private:
+        void initTexture(const TextureData& texture);
 
 	public:
 		void bind() const;
 		void unbind() const;
 
 	private:
-		GLuint			VAO;
+		GLuint			_VAO = -1;
+        GLuint          _texture = -1;
 		unsigned short	_nIndices;
 };

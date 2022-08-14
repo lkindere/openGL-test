@@ -29,11 +29,6 @@ class Animator
                 return _matrices;
             updateTimers();
             traverseMatrices(_nodes, glm::mat4(1.0f));
-            for (auto i = 0; i < _matrices.size(); ++i){
-                std::cout << "Matrix[" << i << "]:\n";
-                settings.printmat(_matrices[i]);
-                std::cout << std::endl;
-            }
 			return _matrices;
 		}
 

@@ -67,7 +67,11 @@ Mob* inputPath(){
 
 int main(void) {
     Init();
+    // importer("Models/locscale.fbx");
 	Uniforms uniDefault;
+    uniDefault.int1 = {
+        make_uni("hasTexture", 0)
+    };
 	uniDefault.vec3 = {
 		make_uni("pos", glm::vec3(0.0f)),
 		make_uni("scale", glm::vec3(1.0f)),
