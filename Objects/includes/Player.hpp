@@ -17,16 +17,21 @@ class Player
 	public:
 		Player(const Model& model)
 			: _model(model) {}
+        
 		void input() {
-			direction.y = 0;
+            glm::vec3 new_position = camera.position();
+            if (camera.mode() == first_person){
+			    direction.y = 0;
+                new_position = position;
+            }
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
-				position += speed * direction;
+				new_position += speed * direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
-				position -= speed * direction;
+				new_position -= speed * direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
-				position -= speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+				new_position -= speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
-				position += speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+				new_position += speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 				speed = run;
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
@@ -35,17 +40,21 @@ class Player
 				collision.y = 0;
 				velocity.y = settings.gravity() * jump;
 			}
-            camera.setPosition(position);
 			direction = camera.mouseDirection();
-			physics();
+            camera.setPosition(new_position);
+            if (camera.mode() == first_person){
+                camera.setPosition(new_position + glm::vec3(0.0f, 4.0f, 0.0f) + (direction * glm::vec3(1.0f, 0.0f, 1.0f)));
+                position = new_position;
+                physics();
+            }
 		}
         
 		void physics(){
 			if (!collision.y){
 				velocity.y -= settings.gravity();
 				position.y += velocity.y;
-				if (position.y <= 2.0){
-					position.y = 2.0;
+				if (position.y < 0.0){
+					position.y = 0.0;
 					velocity.y = 0;
 					collision.y = 1;
 				}
@@ -58,8 +67,30 @@ class Player
 		}
 
         void draw(Shader& shader){
-			if (weapon)
-				weapon->draw(shader, position, direction);
+            if (camera.mode() == first_person)
+                rotation = glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f));
+            Uniforms uni;
+            uni.vec3 = {
+                make_uni("pos", position),
+                make_uni("scale", glm::vec3(1.0f))
+            };
+            uni.mat4 = {
+				// make_uni("rotation", rotation),
+                make_uni("camPos", camera.matrix())
+			};
+            _model.draw(shader, uni);
+			if (weapon){
+                const LimbData* limb = _model.getLimbData("Palm.L");
+                if (limb == nullptr){
+                    std::cout << "LIMB NOT FOUND\n";
+                    exit(0);
+                    return ;
+                }
+                const glm::mat4& transformation = _model.getBoneMatrix(limb->boneID);
+                glm::vec3 limbpos = transformation * glm::vec4(limb->position, 1.0f);
+                limbpos += position;
+				weapon->draw(shader, limbpos);
+            }
 		}
 
 	private:
@@ -78,6 +109,8 @@ class Player
     private:
         glm::vec3 position = glm::vec3(0.0f);
 		glm::vec3 direction = glm::vec3(1.0f, 0.0f, 0.0f);
+        glm::mat4 rotation = glm::mat4(1.0f);
+        glm::mat4 rightHand = glm::mat4(1.0f);
 
 		Model	_model;
 

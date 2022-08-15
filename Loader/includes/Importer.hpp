@@ -6,4 +6,4 @@
 
 #include "ProcessMesh.hpp"
 
-MeshData importer(const char* path);
+MeshData importer(const char* path, const std::vector<std::string>& limbs = std::vector<std::string>());

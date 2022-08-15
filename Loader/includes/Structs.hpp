@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include <string>
 
@@ -73,12 +74,20 @@ struct AnimTimers
     float tps;
 };
 
+struct LimbData
+{
+    std::string     name;
+    unsigned short  boneID;
+    glm::vec3       position;
+};
+
 struct MeshData
 {
-    std::vector<Vert>			verts;
-    std::vector<unsigned int>	indices;
-    NodeData                    nodes;
-    std::vector<AnimTimers>     timers;
-    TextureData                 texture;
+    std::vector<Vert>                   verts;
+    std::vector<unsigned int>           indices;
+    NodeData                            nodes;
+    std::vector<AnimTimers>             timers;
+    TextureData                         texture;
+    std::vector<LimbData>               limbs;
 };
 

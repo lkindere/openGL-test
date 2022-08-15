@@ -31,8 +31,25 @@ class Animator
             traverseMatrices(_nodes, glm::mat4(1.0f));
 			return _matrices;
 		}
+        
+        const glm::mat4& getBoneMatrix(int ID) const {
+            return _matrices[ID];
+        }
+
+        void setAnim(int anim){ currentAnim = anim; }
 
     private:
+        // int findBoneID(const char* name, const NodeData& node) const {
+        //     if (node.name == name && node.bone)
+        //         return node.bone->ID;
+        //     for (auto i = 0; i < node.children.size(); ++i){
+        //         int ID = findBoneID(name, node.children[i]);
+        //         if (ID != -1)
+        //             return ID;
+        //     }
+        //     return -1;
+        // }
+
         void updateTimers(){
             timeCurrent = glfwGetTime();
             if ((timeCurrent - timeLast) * _timers[0].tps >= _timers[0].duration)
@@ -114,7 +131,9 @@ class Animator
 	        return ((time - t1) / (t2 - t1));
         }
 
+
 	private:
+        int currentAnim = -1;
         float timeLast = 0;
         float timeCurrent = 0;
         float currentTick = 0;

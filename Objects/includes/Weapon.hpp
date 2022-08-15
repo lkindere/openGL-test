@@ -15,5 +15,5 @@ class Weapon
 		Weapon() {}
 		virtual ~Weapon() {}
 		// virtual void attack()
-		virtual void draw(Shader& shader, const glm::vec3& pos, const glm::vec3& dir) = 0;
+		virtual void draw(Shader& shader, const glm::vec3& pos) = 0;
 };

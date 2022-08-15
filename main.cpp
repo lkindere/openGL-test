@@ -103,14 +103,18 @@ int main(void) {
     Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
 
-	Player player(importer("Models/sword.fbx"));
+    std::vector<std::string> limbs = {
+        "ArmBot.L",
+        "Palm.L"
+    };
+	Player player(importer("Models/player.fbx", limbs));
 	Light light(importer("Models/light.fbx"));
 
 	Object floor(importer("Models/floor.fbx"));
 
 	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
-    Mob* mob = inputPath();
+    // Mob* mob = inputPath();
 
 	light.addTarget(shader);
 
@@ -120,15 +124,15 @@ int main(void) {
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
-		mob->draw(shader);
-        if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
-            delete mob;
-            mob = inputPath();
-        }
+		// mob->draw(shader);
+        // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
+        //     delete mob;
+        //     mob = inputPath();
+        // }
         if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
-            settings.print = settings.print = true;
+            camera.setMode(first_person);
         if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
-            settings.print = settings.print = false;
+            camera.setMode(detached);
 		floor.draw(shader);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();

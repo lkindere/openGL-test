@@ -26,10 +26,10 @@ glm::vec3 Camera::mouseDirection() {
 	glfwSetCursorPos(settings.window(), (settings.width() / 2), (settings.height() / 2)); 
 	_yaw += offsetX;
 	_pitch += offsetY;
-		if(_pitch > 89.0f)
-	_pitch =  89.0f;
-		if(_pitch < -89.0f)
-	_pitch = -89.0f;
+		if(_pitch > 60.0f)
+	_pitch =  60.0f;
+		if(_pitch < -60.0f)
+	_pitch = -60.0f;
 	_direction = glm::vec3(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
 		sin(glm::radians(_pitch)), sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
 	return glm::normalize(_direction);
