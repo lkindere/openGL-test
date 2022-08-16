@@ -56,10 +56,13 @@ MeshData importer(const char* path, const std::vector<std::string>& limbs){
 		// | aiProcess_LimitBoneWeights
 		// | aiProcess_OptimizeGraph
         );
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
+        std::cout << "RIP LOADING\n";
 		throw(std::runtime_error(importer.GetErrorString()));
+    }
     MeshData data = process_scene(scene, limbs);
     print_hierarchy(data.nodes);
     // print_vertices(data.verts);
+    std::cout << "Loaded " << path << " successfully\n";
     return data;
 }

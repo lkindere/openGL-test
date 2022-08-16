@@ -19,7 +19,7 @@ class Animator
 		void init(const MeshData& data){
 			_timers = data.timers;
             _nodes = data.nodes;
-            _matrices = std::vector<glm::mat4>(20, glm::mat4(1.0f));
+            _matrices = std::vector<glm::mat4>(30, glm::mat4(1.0f));
             timeCurrent = glfwGetTime();
             timeLast = timeCurrent;
 		}

@@ -21,7 +21,7 @@ enum flags
 };
 
 struct Uniforms {
-    int                                             flags;
+    int                                             flags = 0;
     std::map<const char*, std::vector<glm::vec3> >  vec3;
     std::map<const char*, std::vector<glm::vec4> >  vec4;
     std::map<const char*, std::vector<glm::mat4> >  mat4;

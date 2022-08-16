@@ -7,7 +7,7 @@ layout (location = 3) in vec2 aTextures;
 layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
-const int MAX_BONES = 20;
+const int MAX_BONES = 30;
 uniform mat4 BoneMatrices[MAX_BONES];
 
 out mat4 _camPos;
@@ -42,9 +42,8 @@ void main()
 	model.xyz += pos.xyz + fOffset.xyz;
 
     gl_Position = camPos * model;
-
 	_pos = vec3(model.xyz);
-	_normal = aNorm;
+	_normal = normal.xyz;
 	_color = aColor;
     _texCoords = aTextures;
 	_camPos = camPos;

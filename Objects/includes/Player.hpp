@@ -62,6 +62,7 @@ class Player
 		}
 
 		void setWeapon(Weapon* wep){
+            std::cout << "SEG\n";
 			delete weapon;
 			weapon = wep;
 		}
@@ -72,10 +73,10 @@ class Player
             Uniforms uni;
             uni.vec3 = {
                 make_uni("pos", position),
-                make_uni("scale", glm::vec3(1.0f))
+                // make_uni("scale", glm::vec3(1.0f))
             };
             uni.mat4 = {
-				// make_uni("rotation", rotation),
+				make_uni("rotation", rotation),
                 make_uni("camPos", camera.matrix())
 			};
             _model.draw(shader, uni);
@@ -87,7 +88,7 @@ class Player
                     return ;
                 }
                 const glm::mat4& transformation = _model.getBoneMatrix(limb->boneID);
-                glm::vec3 limbpos = transformation * glm::vec4(limb->position, 1.0f);
+                glm::vec3 limbpos = transformation * glm::vec4(limb->position, 1.0f) * rotation;
                 limbpos += position;
 				weapon->draw(shader, limbpos);
             }

@@ -162,6 +162,7 @@ std::vector<AnimTimers> process_timers(const aiScene* scene){
 
 TextureData process_textures(const aiScene* scene){
     TextureData data;
+    std::cout << "Has textures: " << scene->HasTextures() << std::endl;
     if (!scene->HasTextures()){
         data.data = nullptr;
         return data;

@@ -41,7 +41,7 @@ struct TextureData
     int             width;
     int             height;
     int             channels;
-    unsigned char*  data;
+    unsigned char*  data = nullptr;
 };
 
 //Only used for importing
@@ -63,7 +63,7 @@ struct BoneData
 struct NodeData
 {
     std::string             name;
-    BoneData*               bone;
+    BoneData*               bone = nullptr;
     std::vector<NodeData>   children;
     glm::mat4               transformation;
 };

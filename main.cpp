@@ -107,12 +107,12 @@ int main(void) {
         "ArmBot.L",
         "Palm.L"
     };
-	Player player(importer("Models/player.fbx", limbs));
+	Player player(importer("Models/PLAYER.fbx", limbs));
 	Light light(importer("Models/light.fbx"));
 
 	Object floor(importer("Models/floor.fbx"));
 
-	player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	player.setWeapon(new Sword(importer("Models/SWORD.fbx")));
 
     // Mob* mob = inputPath();
 
