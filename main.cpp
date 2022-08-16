@@ -68,33 +68,23 @@ Mob* inputPath(){
 Uniforms default_uniforms(){
     Uniforms uniDefault;
     uniDefault.flags = 0;
-	uniDefault.vec3 = {
-		make_uni("pos", glm::vec3(0.0f)),
-		make_uni("scale", glm::vec3(1.0f)),
-		make_uni("fOffset", glm::vec3(0.0f))
-	};
-	uniDefault.mat4 = {
-		make_uni("camPos", glm::mat4(1.0f)),
-		make_uni("rotation", glm::mat4(1.0f)),
-		make_uni("fRotation", glm::mat4(1.0f)),
-        make_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)))
-	};
+    uniDefault.add_uni("pos", glm::vec3(0.0f));
+    uniDefault.add_uni("scale", glm::vec3(1.0f));
+    uniDefault.add_uni("fOffset", glm::vec3(0.0f));
+    uniDefault.add_uni("camPos", glm::mat4(1.0f));
+    uniDefault.add_uni("rotation", glm::mat4(1.0f));
+    uniDefault.add_uni("fRotation", glm::mat4(1.0f));
+    uniDefault.add_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)));
     return uniDefault;
 }
 
 Uniforms light_uniforms(){
 	Uniforms lightDefault;
     lightDefault.flags = 1;
-	lightDefault.vec3 = {
-		make_uni("pos", glm::vec3(0.0f)),
-		make_uni("scale", glm::vec3(1.0f))
-	};
-    lightDefault.vec4 = {
-        make_uni("lightColor", glm::vec4(1.0f))
-    };
-	lightDefault.mat4 = {
-		make_uni("camPos", glm::mat4(1.0f))
-	};
+    lightDefault.add_uni("pos", glm::vec3(0.0f));
+    lightDefault.add_uni("scale", glm::vec3(1.0f));
+    lightDefault.add_uni("lightColor", glm::vec4(1.0f));
+    lightDefault.add_uni("camPos", glm::mat4(1.0f));
     return lightDefault;
 }
 

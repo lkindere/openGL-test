@@ -70,14 +70,9 @@ class Player
             if (camera.mode() == first_person)
                 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f));
             Uniforms uni;
-            uni.vec3 = {
-                make_uni("pos", position),
-                // make_uni("scale", glm::vec3(1.0f))
-            };
-            uni.mat4 = {
-				make_uni("rotation", rotation),
-                make_uni("camPos", camera.matrix())
-			};
+            uni.add_uni("pos", position);
+            uni.add_uni("rotation", rotation);
+            uni.add_uni("camPos", camera.matrix());
             _model.draw(shader, uni);
 			if (weapon){
                 const LimbData* limb = _model.getLimbData("Palm.L");
@@ -89,7 +84,8 @@ class Player
                 const glm::mat4& transformation = _model.getBoneMatrix(limb->boneID);
                 glm::vec3 limbpos = transformation * glm::vec4(limb->position, 1.0f) * rotation;
                 limbpos += position;
-				weapon->draw(shader, limbpos);
+                uni.add_uni("pos", limbpos);
+				weapon->draw(shader, uni);
             }
 		}
 

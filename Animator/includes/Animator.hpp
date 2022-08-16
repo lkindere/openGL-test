@@ -39,16 +39,6 @@ class Animator
         void setAnim(int anim){ currentAnim = anim; }
 
     private:
-        // int findBoneID(const char* name, const NodeData& node) const {
-        //     if (node.name == name && node.bone)
-        //         return node.bone->ID;
-        //     for (auto i = 0; i < node.children.size(); ++i){
-        //         int ID = findBoneID(name, node.children[i]);
-        //         if (ID != -1)
-        //             return ID;
-        //     }
-        //     return -1;
-        // }
 
         void updateTimers(){
             timeCurrent = glfwGetTime();
@@ -59,7 +49,7 @@ class Animator
 
         void traverseMatrices(const NodeData& node, const glm::mat4& parentTransform){
             glm::mat4 nodeTransform = node.transformation;
-            if (node.bone != nullptr && node.bone->animations.size() != 0)
+            if (node.bone != nullptr && node.bone->animations.size() != 0 && currentAnim != -1)
                 nodeTransform = currentMatrix(node.bone, currentTick);
 
             glm::mat4 globalTransform = parentTransform * nodeTransform;

@@ -1,28 +1,32 @@
 #include "Uniforms.hpp"
 
-std::pair<const char*, std::vector<glm::vec3> >  make_uni(const char* name, const glm::vec3& data){
-    std::vector<glm::vec3>  vec(1, data);
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, int flag){
+    flags |= flag;
 }
 
-std::pair<const char*, std::vector<glm::vec4> >  make_uni(const char* name, const glm::vec4& data){
-    std::vector<glm::vec4>  vec(1, data);
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, const glm::vec3& data){
+    std::vector<glm::vec3> vec(1, data);
+    vec3[name] = vec;
 }
 
-std::pair<const char*, std::vector<glm::mat4> >  make_uni(const char* name, const glm::mat4& data){
-    std::vector<glm::mat4>  vec(1, data);
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, const glm::vec4& data){
+    std::vector<glm::vec4> vec(1, data);
+    vec4[name] = vec;
 }
 
-std::pair<const char*, std::vector<glm::vec3> >  make_uni(const char* name, const std::vector<glm::vec3>& vec){
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, const glm::mat4& data){
+    std::vector<glm::mat4> vec(1, data);
+    mat4[name] = vec;
 }
 
-std::pair<const char*, std::vector<glm::vec4> >  make_uni(const char* name, const std::vector<glm::vec4>& vec){
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, const std::vector<glm::vec3>& vec){
+    vec3[name] = vec;
 }
 
-std::pair<const char*, std::vector<glm::mat4> >  make_uni(const char* name, const std::vector<glm::mat4>& vec){
-    return std::make_pair(name, vec);
+void Uniforms::add_uni(const char*name, const std::vector<glm::vec4>& vec){
+    vec4[name] = vec;
+}
+
+void Uniforms::add_uni(const char*name, const std::vector<glm::mat4>& vec){
+    mat4[name] = vec;
 }

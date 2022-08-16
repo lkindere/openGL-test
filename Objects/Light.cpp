@@ -15,15 +15,8 @@ void Light::draw(Shader& shader){
     }
     //Export lightColor to self + draw light
     Uniforms uni;
-    uni.vec3 = {
-        // make_uni("scale", glm::vec3(0.1f)),
-        make_uni("pos", pos)
-    };
-    uni.vec4 = {
-        make_uni("lightColor", color)
-    };
-    uni.mat4 = {
-        make_uni("camPos", camera.matrix())
-    };
+    uni.add_uni("pos", pos);
+    uni.add_uni("lightColor", color);
+    uni.add_uni("camPos", camera.matrix());
     _model.draw(shader, uni);
 }
