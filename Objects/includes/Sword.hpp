@@ -37,8 +37,6 @@ class Sword : public Weapon
                 // make_uni("rotation", rotation),
                 make_uni("camPos", camera.matrix())
 			};
-            std::cout << "Drawing at:\n";
-            settings.printvec(pos);
 			_model.draw(shader, uni);
 		}
 	private:

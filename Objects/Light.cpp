@@ -16,7 +16,7 @@ void Light::draw(Shader& shader){
     //Export lightColor to self + draw light
     Uniforms uni;
     uni.vec3 = {
-        make_uni("scale", glm::vec3(0.1f)),
+        // make_uni("scale", glm::vec3(0.1f)),
         make_uni("pos", pos)
     };
     uni.vec4 = {

@@ -84,7 +84,7 @@ Uniforms default_uniforms(){
 
 Uniforms light_uniforms(){
 	Uniforms lightDefault;
-    lightDefault.flags = 0;
+    lightDefault.flags = 1;
 	lightDefault.vec3 = {
 		make_uni("pos", glm::vec3(0.0f)),
 		make_uni("scale", glm::vec3(1.0f))
@@ -108,9 +108,9 @@ int main(void) {
         "Palm.L"
     };
 	Player player(importer("Models/PLAYER.fbx", limbs));
-	Light light(importer("Models/light.fbx"));
+	Light light(importer("Models/LIGHT.fbx"));
 
-	Object floor(importer("Models/floor.fbx"));
+	Object floor(importer("Models/FLOOR.fbx"));
 
 	player.setWeapon(new Sword(importer("Models/SWORD.fbx")));
 

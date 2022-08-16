@@ -43,7 +43,7 @@ class Player
 			direction = camera.mouseDirection();
             camera.setPosition(new_position);
             if (camera.mode() == first_person){
-                camera.setPosition(new_position + glm::vec3(0.0f, 4.0f, 0.0f) + (direction * glm::vec3(1.0f, 0.0f, 1.0f)));
+                camera.setPosition(new_position + glm::vec3(0.0f, 2.0f, 0.0f) + (direction * glm::vec3(0.1f, 0.0f, 0.1f)));
                 position = new_position;
                 physics();
             }
@@ -62,7 +62,6 @@ class Player
 		}
 
 		void setWeapon(Weapon* wep){
-            std::cout << "SEG\n";
 			delete weapon;
 			weapon = wep;
 		}

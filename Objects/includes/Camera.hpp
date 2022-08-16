@@ -49,7 +49,7 @@ class Camera {
 
 		const glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 		const glm::vec3 _front = glm::vec3(0.0f, 0.0f, -1.0f);
-		const float _FOV = 100.0f;
+		const float _FOV = 80.0f;
 		const float _near = 0.1f;
 		const float _far = 1000.0f;
         const float _speed = 0.05f;
