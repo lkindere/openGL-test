@@ -94,7 +94,6 @@ int main(void) {
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
 
     std::vector<std::string> limbs = {
-        "ArmBot.L",
         "Palm.L"
     };
 	Player player(importer("Models/PLAYER.fbx", limbs));

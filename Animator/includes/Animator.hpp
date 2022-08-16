@@ -36,20 +36,28 @@ class Animator
             return _matrices[ID];
         }
 
-        void setAnim(int anim){ currentAnim = anim; }
+        void setAnim(int anim) {
+            _anim = anim;
+            timeLast = glfwGetTime();
+        }
+
+        void setLoop(bool loop) { _loop = loop; }
 
     private:
 
         void updateTimers(){
             timeCurrent = glfwGetTime();
-            if ((timeCurrent - timeLast) * _timers[0].tps >= _timers[0].duration)
-                timeLast += _timers[0].duration / _timers[0].tps;
+            if ((timeCurrent - timeLast) * _timers[0].tps >= _timers[0].duration){
+                (_loop) ?
+                    timeLast += _timers[0].duration / _timers[0].tps
+                    :   _anim = -1;
+            }
             currentTick = (timeCurrent - timeLast) * _timers[0].tps;
         }
 
         void traverseMatrices(const NodeData& node, const glm::mat4& parentTransform){
             glm::mat4 nodeTransform = node.transformation;
-            if (node.bone != nullptr && node.bone->animations.size() != 0 && currentAnim != -1)
+            if (node.bone != nullptr && node.bone->animations.size() != 0 && _anim != -1)
                 nodeTransform = currentMatrix(node.bone, currentTick);
 
             glm::mat4 globalTransform = parentTransform * nodeTransform;
@@ -60,9 +68,9 @@ class Animator
         }
 
         glm::mat4 currentMatrix(const BoneData* bone, float time) const {
-            glm::mat4 pos = currentPos(bone->animations[0].positions, currentTick);
-            glm::mat4 rot = currentRot(bone->animations[0].rotations, currentTick);
-            glm::mat4 scale = currentScale(bone->animations[0].scales, currentTick);
+            glm::mat4 pos = currentPos(bone->animations[_anim].positions, currentTick);
+            glm::mat4 rot = currentRot(bone->animations[_anim].rotations, currentTick);
+            glm::mat4 scale = currentScale(bone->animations[_anim].scales, currentTick);
             return (pos * rot * scale);
         }
 
@@ -123,7 +131,8 @@ class Animator
 
 
 	private:
-        int currentAnim = -1;
+        int _anim = -1;
+        bool _loop = false;
         float timeLast = 0;
         float timeCurrent = 0;
         float currentTick = 0;

@@ -52,7 +52,8 @@ class Model
             return nullptr;
         }
 
-        void setAnim(int anim){ animator.setAnim(anim); }
+        void setAnim(int anim) { animator.setAnim(anim); }
+        void setLoop(bool loop) { animator.setLoop(loop); }
 
 	private:
 		ArrayObject VAO;

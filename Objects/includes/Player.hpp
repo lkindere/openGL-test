@@ -12,6 +12,8 @@
 extern Settings settings;
 extern Camera camera;
 
+#define ATTACK_ANIMATION 0
+
 class Player
 {
 	public:
@@ -19,6 +21,10 @@ class Player
 			: _model(model) {}
         
 		void input() {
+            if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+                _model.setAnim(ATTACK_ANIMATION);
+                _model.setLoop(false);
+            }
             glm::vec3 new_position = camera.position();
             if (camera.mode() == first_person){
 			    direction.y = 0;
@@ -82,9 +88,18 @@ class Player
                     return ;
                 }
                 const glm::mat4& transformation = _model.getBoneMatrix(limb->boneID);
+                glm::mat4 wat = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                glm::mat4 rot = {
+                    transformation[0][0], transformation[0][1], transformation[0][2], 0.0f,
+                    transformation[1][0], transformation[1][1], transformation[1][2], 0.0f,
+                    transformation[2][0], transformation[2][1], transformation[2][2], 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                };
+                rot = wat * rot;
                 glm::vec3 limbpos = transformation * glm::vec4(limb->position, 1.0f) * rotation;
                 limbpos += position;
                 uni.add_uni("pos", limbpos);
+                uni.add_uni("fRotation", rot);
 				weapon->draw(shader, uni);
             }
 		}
