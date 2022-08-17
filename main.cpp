@@ -56,14 +56,14 @@ void Init() {
 
 #include <string>
 
-Mob* inputPath(){
-    std::string str;
-    std::cout << "Input file: " << std::endl;
-    std::getline(std::cin, str);
-    str = "Models/" + str;
-    std::cout << "Loading: " << str << std::endl;
-    return new Mob(importer(str.data()));
-}
+// Mob* inputPath(){
+//     std::string str;
+//     std::cout << "Input file: " << std::endl;
+//     std::getline(std::cin, str);
+//     str = "Models/" + str;
+//     std::cout << "Loading: " << str << std::endl;
+//     return new Mob(importer(str.data()));
+// }
 
 Uniforms default_uniforms(){
     Uniforms uniDefault;
@@ -93,17 +93,22 @@ int main(void) {
     Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
 
-    std::vector<std::string> limbs = {
-        "Palm.L"
+    LoadingParameters params;
+    params.locateBones = {
+        "ArmTop.L",
+        "ArmTop.R",
+        "Palm.L",
+        "Palm.R",
     };
-	Player player(importer("Models/PLAYER.fbx", limbs));
+
+	Player player(importer("Models/PLAYER.fbx", params));
 	Light light(importer("Models/LIGHT.fbx"));
 
 	Object floor(importer("Models/FLOOR.fbx"));
 
 	player.setWeapon(new Sword(importer("Models/SWORD.fbx")));
 
-    // Mob* mob = inputPath();
+    Mob mob(importer("Models/enemy.fbx"));
 
 	light.addTarget(shader);
 
@@ -113,7 +118,7 @@ int main(void) {
 		light.draw(lightShader);
 		player.input();
 		player.draw(shader);
-		// mob->draw(shader);
+		mob.draw(shader);
         // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
         //     delete mob;
         //     mob = inputPath();

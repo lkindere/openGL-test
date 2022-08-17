@@ -4,6 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+//Iterating 3 times through the same nNumVertices here, optimize later
 static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 	std::vector<unsigned int>	indices;
 	indices.reserve(mesh->mNumFaces * 3);
@@ -125,27 +126,57 @@ static std::vector<AnimData> process_animations(const aiNode* node, const aiScen
     return animations;
 }
 
-static BoneData* process_bone(const aiNode* node, const aiScene* scene, const aiMesh* mesh){
+std::unique_ptr<glm::vec3> process_position(const aiBone* bone, const aiMesh* mesh,
+    const std::vector<std::string>& locateBones)
+{
+    if (std::find(locateBones.begin(), locateBones.end(), bone->mName.data) == locateBones.end())
+        return nullptr;
+    std::vector<unsigned int> vertices;
+    vertices.reserve(bone->mNumWeights);
+    std::cout << "Bone: " << bone->mName.data << std::endl;
+    for (auto i = 0; i < bone->mNumWeights; ++i)
+        vertices.push_back(bone->mWeights[i].mVertexId);
+    aiVector3D result;
+    for (auto i = 0; i < vertices.size(); ++i)
+        result += mesh->mVertices[vertices[i]];
+    result /= vertices.size();
+    return std::unique_ptr<glm::vec3>(new glm::vec3(toGLvec(result)));
+}
+
+static std::unique_ptr<BoneData> process_bone(const aiNode* node, const aiScene* scene, const aiMesh* mesh,
+    const LoadingParameters& parameters)
+{
     for (auto i = 0; i < mesh->mNumBones; ++i){
         if (mesh->mBones[i]->mName == node->mName){
             std::cout << "Bone: " << node->mName.data << " ID: " << i << std::endl;
-            BoneData* bone = new BoneData;
+            std::unique_ptr<BoneData> bone(new BoneData());
             bone->ID = i;
             bone->offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
             bone->animations = process_animations(node, scene);
+            bone->position = process_position(mesh->mBones[i], mesh, parameters.locateBones);
             return bone;
         }
     }
     return nullptr;
 }
 
-static void process_nodes(NodeData& node, const aiNode* root, const aiScene* scene, const aiMesh* mesh){
+static void recursive_nodes(NodeData& node, const aiNode* root, const aiScene* scene, const aiMesh* mesh,
+    const LoadingParameters& parameters)
+{
     node.name = root->mName.data;
-    node.bone = process_bone(root, scene, mesh);
+    node.bone = process_bone(root, scene, mesh, parameters);
     node.transformation = toGLmat(root->mTransformation);
     node.children.resize(root->mNumChildren);
     for (auto i = 0; i < root->mNumChildren; ++i)
-        process_nodes(node.children[i], root->mChildren[i], scene, mesh);
+        recursive_nodes(node.children[i], root->mChildren[i], scene, mesh, parameters);
+}
+
+static NodeData process_nodes(const aiScene* scene, const aiMesh* mesh,
+    const LoadingParameters& parameters)
+{
+    NodeData nodes;
+    recursive_nodes(nodes, scene->mRootNode, scene, mesh, parameters);
+    return nodes;
 }
 
 std::vector<AnimTimers> process_timers(const aiScene* scene){
@@ -172,7 +203,10 @@ TextureData process_textures(const aiScene* scene){
     return data;
 }
 
-MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* mesh){
+MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters){
+    const aiNode* root = scene->mRootNode;
+    const aiMesh* mesh = scene->mMeshes[0];
+
 	MeshData    data;
 	data.indices = process_indices(mesh);
 	std::vector<glm::vec3>	vertices = process_vertices(mesh);
@@ -183,7 +217,7 @@ MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* me
 		Vert vert;
 		vert.vertices = vertices[i];
 		vert.normals = normals[i];
-        (colors.size() != 0) ?
+        (colors.size() != 0) ?  //No need for colors in the future if everything is rexturized
 		    vert.colors = colors[i] : vert.colors = glm::vec4(1.0f);
         vert.textures = textures[i];
         process_weights(mesh, vert, i);
@@ -191,6 +225,6 @@ MeshData process_mesh(const aiNode* root, const aiScene* scene, const aiMesh* me
 	}
     data.texture = process_textures(scene);
     data.timers = process_timers(scene);
-    process_nodes(data.nodes, root, scene, mesh);
+    data.nodes = process_nodes(scene, mesh, parameters);
 	return data;
 }

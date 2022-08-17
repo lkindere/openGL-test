@@ -3,10 +3,19 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/quaternion.hpp>
+
+#include <iostream>
+
+//All names matching locateBones will calculate average position
+struct LoadingParameters
+{
+    std::vector<std::string>    locateBones;
+};
 
 struct KeyPosition
 {
@@ -55,30 +64,39 @@ struct AnimData
 
 struct BoneData
 {
-    unsigned short              ID;
+    short                       ID;
     glm::mat4                   offset;
     std::vector<AnimData>       animations;
+    std::unique_ptr<glm::vec3>  position = nullptr;
+    std::unique_ptr<glm::mat4>  postTransform = nullptr;
 };
 
 struct NodeData
 {
-    std::string             name;
-    BoneData*               bone = nullptr;
-    std::vector<NodeData>   children;
-    glm::mat4               transformation;
+    std::string                 name;
+    std::vector<NodeData>       children;
+    glm::mat4                   transformation;
+    std::unique_ptr<BoneData>   bone = nullptr;
+
+    public:
+        short ID() const {
+            assert(bone != nullptr);
+            return bone->ID;
+        }
+        glm::vec3 position() const {
+            assert(bone != nullptr && bone->position != nullptr);
+            return *(bone->position);
+        }
+        void postTransform(const glm::mat4& transform) const {
+            assert(bone != nullptr);
+            bone->postTransform = std::unique_ptr<glm::mat4>(new glm::mat4(transform));
+        }
 };
 
 struct AnimTimers
 {
     float duration;
     float tps;
-};
-
-struct LimbData
-{
-    std::string     name;
-    unsigned short  boneID;
-    glm::vec3       position;
 };
 
 struct MeshData
@@ -88,6 +106,5 @@ struct MeshData
     NodeData                            nodes;
     std::vector<AnimTimers>             timers;
     TextureData                         texture;
-    std::vector<LimbData>               limbs;
 };
 

@@ -8,7 +8,7 @@ extern Camera camera;
 class Object
 {
 	public:
-		Object(const Model& model);
+		Object(Model model);
 
     public:
         void draw(const Shader& shader, const glm::vec3& pos = glm::vec3(0.0f),

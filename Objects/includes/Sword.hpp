@@ -18,8 +18,8 @@ extern Camera camera;
 class Sword : public Weapon
 {		//
 	public:
-		Sword(const Model& model)
-			: _model(model) {}
+		Sword(Model model)
+			: _model(std::move(model)) {}
 
 		void draw(Shader& shader, const Uniforms& uni){
 			_model.draw(shader, uni);

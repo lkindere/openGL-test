@@ -12,7 +12,7 @@ extern Camera camera;
 class Mob
 {
 	public:
-		Mob(const Model& model);
+		Mob(Model model);
         
     public:
         void draw(const Shader& shader);

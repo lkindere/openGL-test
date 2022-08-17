@@ -1,6 +1,6 @@
 #include "Mob.hpp"
 
-Mob::Mob(const Model& model) : _model(model) {}
+Mob::Mob(Model model) : _model(std::move(model)) {}
 
 void Mob::draw(const Shader& shader){
     Uniforms uni;

@@ -18,10 +18,9 @@ extern Settings settings;
 class Model
 {
 	public:
-        Model(const MeshData& data, GLenum drawtype = GL_STATIC_DRAW){
+        Model(MeshData data, GLenum drawtype = GL_STATIC_DRAW){
             VAO.init(data, drawtype);
             animator.init(data);
-            limbs = data.limbs;
         }
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
@@ -44,19 +43,25 @@ class Model
             return animator.getBoneMatrix(ID);
         }
 
-        const LimbData* getLimbData(const char* name) const {
-            for (auto i = 0; i < limbs.size(); ++i){
-                if (limbs[i].name == name)
-                    return &limbs[i];
-            }
-            return nullptr;
-        }
+        // const LimbData* getLimbData(const char* name) const {
+        //     std::cout << "LIMBS SIZE: " << limbs.size() << std::endl;
+        //     for (auto i = 0; i < limbs.size(); ++i){
+        //         std::cout << "LIMB: " << limbs[i].name() << std::endl;
+        //     }
+        //     for (auto i = 0; i < limbs.size(); ++i){
+        //         std::cout << "Comparing: " << limbs[i].name() << " with: " << name << std::endl;
+        //         if (limbs[i].name() == name)
+        //             return &limbs[i];
+        //     }
+        //     return nullptr;
+        // }
 
+        void postTransform(int ID, const glm::mat4& transform) { animator.postTransform(ID, transform); }
+        const NodeData* findNode(const char* name) { return animator.findNode(name); }
         void setAnim(int anim) { animator.setAnim(anim); }
         void setLoop(bool loop) { animator.setLoop(loop); }
 
 	private:
 		ArrayObject VAO;
 		Animator	animator;
-        std::vector<LimbData> limbs;
 };

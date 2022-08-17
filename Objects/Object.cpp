@@ -1,6 +1,6 @@
 #include "Object.hpp"
 
-Object::Object(const Model& model) : _model(model) {}
+Object::Object(Model model) : _model(std::move(model)) {}
 
 void Object::draw(const Shader& shader, const glm::vec3& pos,
                     const glm::vec3& scale, const glm::mat4& rotation){

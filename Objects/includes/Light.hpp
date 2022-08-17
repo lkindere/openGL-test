@@ -11,7 +11,7 @@ extern Camera camera;
 class Light
 {
 	public:
-		Light(const Model& model);
+		Light(Model model);
 
     public:
 		void addTarget(Shader& target);

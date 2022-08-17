@@ -1,6 +1,6 @@
 #include "Light.hpp"
 
-Light::Light(const Model& model) : _model(model) {}
+Light::Light(Model model) : _model(std::move(model)) {}
 
 void Light::addTarget(Shader& target){
     _targets.push_back(target);

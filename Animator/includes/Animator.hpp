@@ -16,9 +16,9 @@ class Animator
 	public:
 		Animator() {}
 
-		void init(const MeshData& data){
-			_timers = data.timers;
-            _nodes = data.nodes;
+		void init(MeshData& data){
+			_timers = std::move(data.timers);
+            _nodes = std::move(data.nodes);
             _matrices = std::vector<glm::mat4>(30, glm::mat4(1.0f));
             timeCurrent = glfwGetTime();
             timeLast = timeCurrent;
@@ -32,8 +32,12 @@ class Animator
 			return _matrices;
 		}
         
-        const glm::mat4& getBoneMatrix(int ID) const {
+        const glm::mat4& getBoneMatrix(short ID) const {
             return _matrices[ID];
+        }
+
+        void postTransform(int ID, const glm::mat4& transform) {
+            _matrices[ID] = transform * _matrices[ID];
         }
 
         void setAnim(int anim) {
@@ -43,7 +47,21 @@ class Animator
 
         void setLoop(bool loop) { _loop = loop; }
 
+        const NodeData* findNode(const char* name){
+            return traverseNodes(name, _nodes);
+        }
+
     private:
+        const NodeData* traverseNodes(const char*name, const NodeData& node){
+            if (node.name == name)
+                return &node;
+            for (auto i = 0; i < node.children.size(); ++i){
+                const NodeData* ptr = traverseNodes(name, node.children[i]);
+                if (ptr != nullptr)
+                    return ptr;
+            }
+            return nullptr;
+        }
 
         void updateTimers(){
             timeCurrent = glfwGetTime();
@@ -57,8 +75,12 @@ class Animator
 
         void traverseMatrices(const NodeData& node, const glm::mat4& parentTransform){
             glm::mat4 nodeTransform = node.transformation;
-            if (node.bone != nullptr && node.bone->animations.size() != 0 && _anim != -1)
-                nodeTransform = currentMatrix(node.bone, currentTick);
+            if (node.bone != nullptr && node.bone->animations.size() != 0){
+                if (_anim != -1)
+                    nodeTransform = currentMatrix(node.bone.get(), currentTick);
+                else if (node.bone->postTransform != nullptr){
+                    nodeTransform *= *(node.bone->postTransform);
+            }
 
             glm::mat4 globalTransform = parentTransform * nodeTransform;
             if (node.bone != nullptr)
@@ -71,6 +93,8 @@ class Animator
             glm::mat4 pos = currentPos(bone->animations[_anim].positions, currentTick);
             glm::mat4 rot = currentRot(bone->animations[_anim].rotations, currentTick);
             glm::mat4 scale = currentScale(bone->animations[_anim].scales, currentTick);
+            if (bone->postTransform != nullptr)
+                return (*(bone->postTransform) * pos * rot * scale);
             return (pos * rot * scale);
         }
 
@@ -131,12 +155,14 @@ class Animator
 
 
 	private:
-        int _anim = -1;
-        bool _loop = false;
-        float timeLast = 0;
-        float timeCurrent = 0;
-        float currentTick = 0;
-        std::vector<AnimTimers> _timers;
+        int     _anim = -1;
+        bool    _loop = false;
+        float   timeLast = 0;
+        float   timeCurrent = 0;
+        float   currentTick = 0;
+
+    private:
         NodeData                _nodes;
+        std::vector<AnimTimers> _timers;
         std::vector<glm::mat4>  _matrices;
 };
