@@ -95,6 +95,8 @@ int main(void) {
 
     LoadingParameters params;
     params.locateBones = {
+        "ArmBot.L",
+        "ArmBot.R",
         "ArmTop.L",
         "ArmTop.R",
         "Palm.L",

@@ -1,5 +1,7 @@
 #pragma once
 
+// #include <cmath>
+
 #include "Sword.hpp"
 #include "Camera.hpp"
 
@@ -75,12 +77,17 @@ class Player
         void draw(Shader& shader){
             if (camera.mode() == first_person)
                 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f));
-            glm::mat4 limbRotL = glm::rotate(glm::mat4(1.0f), glm::radians(-(camera.pitch() + 30.0f)), glm::vec3(0.0f, 0.0f, 1.0f));
-            glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians(camera.pitch() + 30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            glm::mat4 limbUpL = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3((camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
+            glm::mat4 limbUpR = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-(camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
+            _model.findNode("ArmBot.L")->postTransform(limbUpL);
+            _model.findNode("ArmBot.R")->postTransform(limbUpR);
+
+            glm::mat4 limbRotL = glm::rotate(glm::mat4(1.0f), glm::radians(-(camera.pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians((camera.pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
             _model.findNode("ArmTop.L")->postTransform(limbRotL);
             _model.findNode("ArmTop.R")->postTransform(limbRotR);
-            // _model.postTransform(ArmL->ID(), limbRotation);
-            // _model.postTransform(ArmR->ID(), limbRotation);
+
             Uniforms uni;
             uni.add_uni("pos", position);
             uni.add_uni("rotation", rotation);

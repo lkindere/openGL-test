@@ -78,7 +78,7 @@ class Animator
             if (node.bone != nullptr && node.bone->animations.size() != 0){
                 if (_anim != -1)
                     nodeTransform = currentMatrix(node.bone.get(), currentTick);
-                else if (node.bone->postTransform != nullptr){
+                else if (node.bone->postTransform != nullptr)
                     nodeTransform *= *(node.bone->postTransform);
             }
 

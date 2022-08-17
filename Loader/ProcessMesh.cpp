@@ -4,7 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-//Iterating 3 times through the same nNumVertices here, optimize later
 static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 	std::vector<unsigned int>	indices;
 	indices.reserve(mesh->mNumFaces * 3);
@@ -13,42 +12,6 @@ static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 			indices.push_back(mesh->mFaces[i].mIndices[j]);
 	}
 	return indices;
-}
-
-static std::vector<glm::vec3> process_vertices(const aiMesh* mesh){
-	std::vector<glm::vec3>	vertices;
-	vertices.reserve(mesh->mNumVertices);
-	for (auto i = 0; i < mesh->mNumVertices; ++i)
-		vertices.push_back(toGLvec(mesh->mVertices[i]));
-	return vertices;
-}
-
-static std::vector<glm::vec3> process_normals(const aiMesh* mesh){
-	std::vector<glm::vec3>	normals;
-	normals.reserve(mesh->mNumVertices);
-	for (auto i = 0; i < mesh->mNumVertices; ++i)
-		normals.push_back(toGLvec(mesh->mNormals[i]));
-	return normals;
-}
-
-static std::vector<glm::vec4> process_colors(const aiMesh* mesh){
-	std::vector<glm::vec4> colors;
-    if (!mesh->HasVertexColors(0))
-        return colors;
-	colors.reserve(mesh->mNumVertices);
-	for (auto i = 0; i < mesh->mNumVertices; ++i)
-		colors.push_back(toGLvec(mesh->mColors[0][i]));
-	return colors;
-}
-
-static std::vector<glm::vec2> process_textures(const aiMesh* mesh){
-	std::vector<glm::vec2> textures;
-    if (!mesh->HasTextureCoords(0))
-        return textures;
-	textures.reserve(mesh->mNumVertices);
-	for (auto i = 0; i < mesh->mNumVertices; ++i)
-		textures.push_back(glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y));
-	return textures;
 }
 
 static void process_weights(const aiMesh* mesh, Vert& vert, int index){
@@ -69,6 +32,22 @@ static void process_weights(const aiMesh* mesh, Vert& vert, int index){
 	}
 	vert.bones = glm::ivec3(matches[0], matches[1], matches[2]);
 	vert.weights = glm::vec3(weights[0], weights[1], weights[2]);
+}
+
+static std::vector<Vert> process_verts(const aiMesh* mesh){
+    std::vector<Vert> data;
+	for (auto i = 0; i < mesh->mNumVertices; ++i){
+		Vert vert;
+		vert.vertices = toGLvec(mesh->mVertices[i]);
+		vert.normals = toGLvec(mesh->mNormals[i]);
+        mesh->HasVertexColors(0) ?  //No need for colors in the future if everything is rexturized
+		    vert.colors = toGLvec(mesh->mColors[0][i])
+            :   vert.colors = glm::vec4(1.0f);
+        vert.textures = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+        process_weights(mesh, vert, i);
+		data.push_back(vert);
+	}
+    return data;
 }
 
 static std::vector<KeyPosition> process_positions(aiNodeAnim* node){
@@ -204,25 +183,11 @@ TextureData process_textures(const aiScene* scene){
 }
 
 MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters){
-    const aiNode* root = scene->mRootNode;
     const aiMesh* mesh = scene->mMeshes[0];
 
 	MeshData    data;
 	data.indices = process_indices(mesh);
-	std::vector<glm::vec3>	vertices = process_vertices(mesh);
-	std::vector<glm::vec3>	normals = process_normals(mesh);
-	std::vector<glm::vec4>	colors = process_colors(mesh);
-    std::vector<glm::vec2>  textures = process_textures(mesh);
-	for (auto i = 0; i < vertices.size(); ++i){
-		Vert vert;
-		vert.vertices = vertices[i];
-		vert.normals = normals[i];
-        (colors.size() != 0) ?  //No need for colors in the future if everything is rexturized
-		    vert.colors = colors[i] : vert.colors = glm::vec4(1.0f);
-        vert.textures = textures[i];
-        process_weights(mesh, vert, i);
-		data.verts.push_back(vert);
-	}
+    data.verts = process_verts(mesh);
     data.texture = process_textures(scene);
     data.timers = process_timers(scene);
     data.nodes = process_nodes(scene, mesh, parameters);
