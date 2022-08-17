@@ -28,7 +28,6 @@ class Model
             if (VAO.hasTexture())
                 uniforms.flags |= hasTextures;
             uniforms.add_uni("BoneMatrices", boneMatrices);
-            // uniforms.mat4.insert(make_uni("BoneMatrices", boneMatrices));
 			VAO.bind();
 			shader.bind();
 			shader.update(uniforms);

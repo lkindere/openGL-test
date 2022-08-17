@@ -75,9 +75,23 @@ class Player
 		}
 
         void draw(Shader& shader){
-            if (camera.mode() == first_person)
+            if (camera.mode() == first_person){
                 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f));
+                postTransformHands();
+            }
+            Uniforms uni;
+            uni.add_uni("pos", position);
+            uni.add_uni("rotation", rotation);
+            uni.add_uni("camPos", camera.matrix());
+            _model.draw(shader, uni);
+			if (weapon){
+                weaponTransformation(uni);
+				weapon->draw(shader, uni);
+            }
+		}
 
+    private:
+        void postTransformHands(){
             glm::mat4 limbUpL = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3((camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
             glm::mat4 limbUpR = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-(camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
             _model.findNode("ArmBot.L")->postTransform(limbUpL);
@@ -87,28 +101,22 @@ class Player
             glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians((camera.pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
             _model.findNode("ArmTop.L")->postTransform(limbRotL);
             _model.findNode("ArmTop.R")->postTransform(limbRotR);
+        }
 
-            Uniforms uni;
-            uni.add_uni("pos", position);
-            uni.add_uni("rotation", rotation);
-            uni.add_uni("camPos", camera.matrix());
-            _model.draw(shader, uni);
-			if (weapon){
-                const NodeData* limb = _model.findNode("Palm.L");
-                const glm::mat4& transformation = _model.getBoneMatrix(limb->ID());
-                glm::mat4 rot = {
-                    transformation[0][0], transformation[0][1], transformation[0][2], 0.0f,
-                    transformation[1][0], transformation[1][1], transformation[1][2], 0.0f,
-                    transformation[2][0], transformation[2][1], transformation[2][2], 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f
-                };
-                rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                glm::vec3 limbpos = position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * rotation);
-                uni.add_uni("pos", limbpos);
-                uni.add_uni("fRotation", rot);
-				weapon->draw(shader, uni);
-            }
-		}
+        void weaponTransformation(Uniforms& uni){
+            const NodeData* limb = _model.findNode("Palm.L");
+            const glm::mat4& transformation = _model.getBoneMatrix(limb->ID());
+            glm::mat4 rot = {
+                transformation[0][0], transformation[0][1], transformation[0][2], 0.0f,
+                transformation[1][0], transformation[1][1], transformation[1][2], 0.0f,
+                transformation[2][0], transformation[2][1], transformation[2][2], 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+            };
+            rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::vec3 limbpos = position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * rotation);
+            uni.add_uni("pos", limbpos);
+            uni.add_uni("fRotation", rot);
+        }
 
 	private:
 		Player& operator=(const Player& p);

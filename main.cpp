@@ -110,7 +110,7 @@ int main(void) {
 
 	player.setWeapon(new Sword(importer("Models/SWORD.fbx")));
 
-    Mob mob(importer("Models/enemy.fbx"));
+    Mob mob(importer("Models/ENEMY.fbx"));
 
 	light.addTarget(shader);
 
