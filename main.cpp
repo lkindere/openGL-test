@@ -103,14 +103,14 @@ int main(void) {
         "Palm.R",
     };
 
-	Player player(importer("Models/PLAYER.fbx", params));
-	Light light(importer("Models/LIGHT.fbx"));
+	Player player(importer("Models/player.fbx", params));
+	Light light(importer("Models/light.fbx"));
 
-	Object floor(importer("Models/FLOOR.fbx"));
+	Object floor(importer("Models/floor.fbx"));
 
-	player.setWeapon(new Sword(importer("Models/SWORD.fbx")));
+	player.setWeapon(new Sword(importer("Models/sword.fbx")));
 
-    Mob mob(importer("Models/ENEMY.fbx"));
+    Mob mob(importer("Models/enemy.fbx"));
 
 	light.addTarget(shader);
 
