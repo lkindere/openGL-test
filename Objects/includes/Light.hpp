@@ -1,26 +1,17 @@
 #pragma once
 
-#include <glm/gtc/type_ptr.hpp>
+#include "Object.hpp"
 
-#include "Camera.hpp"
-#include "Model.hpp"
-
-extern Settings settings;
-extern Camera camera;
-
-class Light
+class Light : public Object
 {
 	public:
 		Light(Model model);
 
     public:
 		void addTarget(Shader& target);
-		void draw(Shader& shader);
+        void animate(Shader& target);
 
 	private:
 		std::vector<Shader>	_targets;
-		Model				_model;
-
-		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		glm::vec3 pos = glm::vec3(0.0f, 20.0f, 0.0f);
+		glm::vec4 _color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };

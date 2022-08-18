@@ -130,10 +130,10 @@ int main(void) {
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		light.draw(lightShader);
+		light.animate(lightShader);
 		player.input();
-		player.draw(shader);
-		mob.draw(shader);
+		player.animate(shader);
+		mob.animate(shader);
         // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
         //     delete mob;
         //     mob = inputPath();

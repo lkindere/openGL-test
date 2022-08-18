@@ -1,19 +1,18 @@
 #pragma once
 
-#include "settings.hpp"
-#include "Weapon.hpp"
-#include "ArrayObject.hpp"
+#include "Object.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-extern Settings settings;
-
-class Weapon
+class Weapon : public Object
 {
 	public:
-		Weapon() {}
+		Weapon(Model* model, short damage, short range, short speed)
+            : Object(model), _damage(damage), _range(range), _speed(speed) {}
 		virtual ~Weapon() {}
-		// virtual void attack()
-		virtual void draw(Shader& shader, const Uniforms& uni) = 0;
+
+        virtual void animate(const Shader& shader, Uniforms uni = Uniforms()) = 0;
+
+    protected:
+        const short _damage;
+        const short _range;
+        const short _speed;
 };

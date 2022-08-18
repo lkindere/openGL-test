@@ -38,7 +38,7 @@ void main()
     vec4 normal = check_bones() * vec4(aNorm, 0.0);
 	vec4 model = check_bones() * vec4(aModel, 1.0);
 
-	model = fRotation * model * rotation * vec4(scale, 1.0f);
+	model = rotation * model * vec4(scale, 1.0f);
 	model.xyz += pos.xyz + fOffset.xyz;
 
     gl_Position = camPos * model;

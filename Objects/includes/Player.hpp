@@ -1,95 +1,80 @@
 #pragma once
 
-// #include <cmath>
-
+#include "Object.hpp"
 #include "Sword.hpp"
-#include "Camera.hpp"
-
-#include "Model.hpp"
-
-#include "settings.hpp"
-
-#include <iostream>
-
-extern Settings settings;
-extern Camera camera;
 
 #define ATTACK_ANIMATION 0
 
-class Player
+class Player : public Object
 {
 	public:
 		Player(Model model)
-			: _model(std::move(model)) {}
+			: Object(std::move(&model)) {}
         
 		void input() {
             if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
                 _model.setAnim(ATTACK_ANIMATION);
                 _model.setLoop(false);
             }
-            glm::vec3 new_position = camera.position();
+            glm::vec3 newPos = camera.position();
             if (camera.mode() == first_person){
-			    direction.y = 0;
-                new_position = position;
+			    _direction.y = 0;
+                newPos = _position;
             }
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
-				new_position += speed * direction;
+				newPos += _speed * _direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
-				new_position -= speed * direction;
+				newPos -= _speed * _direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
-				new_position -= speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+				newPos -= _speed * glm::normalize(glm::cross(_direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
-				new_position += speed * glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+				newPos += _speed * glm::normalize(glm::cross(_direction, glm::vec3(0.0f, 1.0f, 0.0f)));
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-				speed = run;
+				_speed = _run;
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-				speed = walk;
-			if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS && collision.y){
-				collision.y = 0;
-				velocity.y = settings.gravity() * jump;
+				_speed = _walk;
+			if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS && _collision.y){
+				_collision.y = 0;
+				_velocity.y = settings.gravity() * _jump;
 			}
-			direction = camera.mouseDirection();
-            camera.setPosition(new_position);
+			_direction = camera.mouseDirection();
+            camera.setPosition(newPos);
             if (camera.mode() == first_person){
-                camera.setPosition(new_position + glm::vec3(0.0f, 2.0f, 0.0f) + (direction * glm::vec3(0.1f, 0.0f, 0.1f)));
-                position = new_position;
+                camera.setPosition(newPos + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
+                _position = newPos;
                 physics();
             }
 		}
         
 		void physics(){
-			if (!collision.y){
-				velocity.y -= settings.gravity();
-				position.y += velocity.y;
-				if (position.y < 0.0){
-					position.y = 0.0;
-					velocity.y = 0;
-					collision.y = 1;
+			if (!_collision.y){
+				_velocity.y -= settings.gravity();
+				_position.y += _velocity.y;
+				if (_position.y < 0.0){
+					_position.y = 0.0;
+					_velocity.y = 0;
+					_collision.y = 1;
 				}
 			}
 		}
 
 		void setWeapon(Weapon* wep){
-			delete weapon;
-			weapon = wep;
+			delete _weapon;
+			_weapon = wep;
 		}
 
-        void draw(Shader& shader){
+        void animate(Shader& shader){
             if (camera.mode() == first_person){
-                rotation = glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f));
+                _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
                 postTransformHands();
             }
-            Uniforms uni;
-            uni.add_uni("pos", position);
-            uni.add_uni("rotation", rotation);
-            uni.add_uni("camPos", camera.matrix());
-            _model.updateHitbox(glm::inverse(rotation));
-            _model.draw(shader, uni);
-			if (weapon){
+            _model.updateHitbox(_rotation);
+            Uniforms uni = draw(shader);
+			if (_weapon){
                 weaponTransformation(uni);
-				weapon->draw(shader, uni);
+				_weapon->animate(shader);
             }
-		}
+        }
 
     private:
         void postTransformHands(){
@@ -114,33 +99,25 @@ class Player
                 0.0f, 0.0f, 0.0f, 1.0f
             };
             rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-            glm::vec3 limbpos = position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * rotation);
-            uni.add_uni("pos", limbpos);
-            uni.add_uni("fRotation", rot);
+            rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::vec3 limbpos = _position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * glm::inverse(_rotation));
+            _weapon->setPosition(limbpos);
+            _weapon->setRotation(_rotation * rot);
+            // uni.add_uni("pos", limbpos);
+            // uni.add_uni("fRotation", rot);s
         }
 
 	private:
-		Player& operator=(const Player& p);
-		Player(const Player& p);
+		Weapon* _weapon = nullptr;
+
+		short _health = 10;
+		short _energy = 10;
+        float _speed = 0.1;
+		float _walk = 0.1;
+		float _run = 0.2;
+		short _jump = 30;
 
 	private:
-		Weapon* weapon = nullptr;
-		short health = 10;
-		short energy = 10;
-        float speed = 0.1;
-		float walk = 0.1;
-		float run = 0.2;
-		short jump = 30;
-    
-    private:
-        glm::vec3 position = glm::vec3(0.0f);
-		glm::vec3 direction = glm::vec3(1.0f, 0.0f, 0.0f);
-        glm::mat4 rotation = glm::mat4(1.0f);
-        glm::mat4 rightHand = glm::mat4(1.0f);
-
-		Model	_model;
-
-	private:
-		glm::vec3 velocity = glm::vec3(0.0f);
-		glm::vec3 collision = glm::vec3(0.0f); //Don't really need floats for this
+		glm::vec3 _velocity = glm::vec3(0.0f);
+		glm::vec3 _collision = glm::vec3(0.0f); //Don't really need floats for this
 };
