@@ -11,6 +11,8 @@
 #include "Animator.hpp"
 #include "ArrayObject.hpp"
 
+#include "Hitbox.hpp"
+
 #include "settings.hpp"
 
 extern Settings settings;
@@ -21,7 +23,13 @@ class Model
         Model(MeshData data, GLenum drawtype = GL_STATIC_DRAW){
             VAO.init(data, drawtype);
             animator.init(data);
+            hitbox.init(data.hitbox);
         }
+
+        void updateHitbox(const glm::mat4& transformation){
+            hitbox.updateHitbox(transformation);
+        }
+
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
             const std::vector<glm::mat4> boneMatrices = animator.updateMatrices();
@@ -36,24 +44,12 @@ class Model
 
 			shader.unbind();
 			VAO.unbind();
+            hitbox.draw(shader, uniforms);
 		}
 
         const glm::mat4& getBoneMatrix(int ID) const {
             return animator.getBoneMatrix(ID);
         }
-
-        // const LimbData* getLimbData(const char* name) const {
-        //     std::cout << "LIMBS SIZE: " << limbs.size() << std::endl;
-        //     for (auto i = 0; i < limbs.size(); ++i){
-        //         std::cout << "LIMB: " << limbs[i].name() << std::endl;
-        //     }
-        //     for (auto i = 0; i < limbs.size(); ++i){
-        //         std::cout << "Comparing: " << limbs[i].name() << " with: " << name << std::endl;
-        //         if (limbs[i].name() == name)
-        //             return &limbs[i];
-        //     }
-        //     return nullptr;
-        // }
 
         void postTransform(int ID, const glm::mat4& transform) { animator.postTransform(ID, transform); }
         const NodeData* findNode(const char* name) { return animator.findNode(name); }
@@ -63,4 +59,5 @@ class Model
 	private:
 		ArrayObject VAO;
 		Animator	animator;
+        Hitbox      hitbox;
 };

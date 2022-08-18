@@ -5,8 +5,8 @@
 #include "debug.hpp"
 
 MeshData process_scene(const aiScene* scene, const LoadingParameters& parameters){
-    if (scene->mNumMeshes != 1)
-        throw(std::runtime_error("Number of meshes != 1"));
+    // if (scene->mNumMeshes != 1)
+    //     throw(std::runtime_error("Number of meshes != 1"));
     MeshData data = process_mesh(scene, parameters);
     return data;
 }

@@ -99,6 +99,12 @@ struct AnimTimers
     float tps;
 };
 
+struct HitboxData
+{
+    std::vector<glm::vec3>      vertices;
+    std::vector<unsigned int>   indices;
+};
+
 struct MeshData
 {
     std::vector<Vert>                   verts;
@@ -106,5 +112,6 @@ struct MeshData
     NodeData                            nodes;
     std::vector<AnimTimers>             timers;
     TextureData                         texture;
+    HitboxData                          hitbox;
 };
 

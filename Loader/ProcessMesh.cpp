@@ -182,6 +182,20 @@ TextureData process_textures(const aiScene* scene){
     return data;
 }
 
+HitboxData process_hitbox(const aiScene* scene){
+    if (scene->mNumMeshes < 2)
+        return HitboxData();
+    const aiMesh* mesh = scene->mMeshes[1];
+    HitboxData data;
+    data.vertices.reserve(mesh->mNumVertices);
+    for (auto i = 0; i < mesh->mNumVertices; ++i){
+        glm::vec3 vec(toGLvec(mesh->mVertices[i]));
+        if (std::find(data.vertices.begin(), data.vertices.end(), vec) == data.vertices.end())
+            data.vertices.push_back(vec);
+    }
+    return data;
+}
+
 MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters){
     const aiMesh* mesh = scene->mMeshes[0];
 
@@ -191,5 +205,6 @@ MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters)
     data.texture = process_textures(scene);
     data.timers = process_timers(scene);
     data.nodes = process_nodes(scene, mesh, parameters);
+    data.hitbox = process_hitbox(scene);
 	return data;
 }

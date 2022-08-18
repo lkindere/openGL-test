@@ -56,14 +56,6 @@ void Init() {
 
 #include <string>
 
-// Mob* inputPath(){
-//     std::string str;
-//     std::cout << "Input file: " << std::endl;
-//     std::getline(std::cin, str);
-//     str = "Models/" + str;
-//     std::cout << "Loading: " << str << std::endl;
-//     return new Mob(importer(str.data()));
-// }
 
 Uniforms default_uniforms(){
     Uniforms uniDefault;
@@ -88,10 +80,31 @@ Uniforms light_uniforms(){
     return lightDefault;
 }
 
+Uniforms hitbox_uniforms(){
+    Uniforms hitboxDefault;
+    hitboxDefault.add_uni("pos", glm::vec3(0.0f));
+    hitboxDefault.add_uni("camPos", glm::mat4(1.0f));
+    return hitboxDefault;
+}
+
+// Mob* inputPath(){
+//     std::string str;
+//     std::cout << "Input file: " << std::endl;
+//     std::getline(std::cin, str);
+//     str = "Models/" + str;
+//     std::cout << "Loading: " << str << std::endl;
+//     return new Mob(importer(str.data()));
+// }
+
+Shader* g_hitboxShader;
+
 int main(void) {
     Init();
     Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
+    
+    Shader hitboxShader = Shader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
+    g_hitboxShader = &hitboxShader;
 
     LoadingParameters params;
     params.locateBones = {

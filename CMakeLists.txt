@@ -15,6 +15,7 @@ add_subdirectory(_external/glm)
 add_subdirectory(Loader)
 add_subdirectory(Animator)
 add_subdirectory(Objects)
+add_subdirectory(Physics)
 
 add_definitions(-std=c++11 -DDEBUG)
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -22,6 +23,7 @@ add_definitions(-std=c++11 -DDEBUG)
 target_include_directories(${PROJECT_NAME}
     PUBLIC Loader/includes
     PUBLIC Objects/includes
+    PUBLIC Physics/includes
 	PUBLIC _external/glfw/include
 	PUBLIC _external/glfw/deps
 	PUBLIC _external/glm
@@ -36,4 +38,5 @@ target_link_libraries(${PROJECT_NAME}
 	Loader
     Animator
 	Objects
+    Physics
 )

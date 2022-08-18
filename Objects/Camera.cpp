@@ -26,14 +26,20 @@ glm::vec3 Camera::mouseDirection() {
 	glfwSetCursorPos(settings.window(), (settings.width() / 2), (settings.height() / 2)); 
 	_yaw += offsetX;
 	_pitch += offsetY;
-		if(_pitch > 35.0f)
-	_pitch =  35.0f;
-		if(_pitch < -35.0f)
-	_pitch = -35.0f;
+	if (_mode == first_person && _pitch > 35.0f)
+	        _pitch =  35.0f;
+    else if (_pitch > 80.0f)
+        _pitch = 80.0f;
+	if(_mode == first_person && _pitch < -35.0f)
+	    _pitch = -35.0f;
+    else if (_pitch < -80.0f)
+        _pitch = -80.0f;
 	_direction = glm::vec3(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
 		sin(glm::radians(_pitch)), sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
 	return glm::normalize(_direction);
 }
+
+void                Camera::setMode(cameraMode mode){ _mode = mode; }
 
 const glm::vec3&    Camera::position() const { return _position; }
 const glm::vec3&    Camera::direction() const { return _direction; }

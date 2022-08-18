@@ -69,6 +69,7 @@ void ArrayObject::bind() const {
     if (_texture != -1)
         glBindTexture(GL_TEXTURE_2D, _texture);
 }
+
 void ArrayObject::unbind() const {
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

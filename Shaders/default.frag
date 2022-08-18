@@ -10,7 +10,7 @@ in vec3 _normal;
 in vec2 _texCoords;
 in vec4 _color;
 
-const vec4 ambient = vec4(0.5f);
+const vec4 ambient = vec4(0.3f);
 
 uniform vec4 lightColor;
 uniform vec3 lightPos;

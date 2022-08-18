@@ -26,9 +26,8 @@ class Camera {
 		glm::vec3   mouseDirection();
 
 	public:
-        void                setMode(cameraMode mode){
-            _mode = mode;
-        }
+        void                setMode(cameraMode mode);
+        
         cameraMode          mode() const { return _mode; }
         const glm::vec3&    position() const;
         const glm::vec3&    direction() const;

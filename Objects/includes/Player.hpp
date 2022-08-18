@@ -83,6 +83,7 @@ class Player
             uni.add_uni("pos", position);
             uni.add_uni("rotation", rotation);
             uni.add_uni("camPos", camera.matrix());
+            _model.updateHitbox(glm::inverse(rotation));
             _model.draw(shader, uni);
 			if (weapon){
                 weaponTransformation(uni);
