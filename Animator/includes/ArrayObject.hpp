@@ -9,6 +9,7 @@
 class ArrayObject {
 	public:
 		ArrayObject();
+        ~ArrayObject();
 		void init(const MeshData& data, GLenum type);
 
 	public:

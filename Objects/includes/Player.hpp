@@ -16,46 +16,25 @@ class Player : public Object
                 _model.setAnim(ATTACK_ANIMATION);
                 _model.setLoop(false);
             }
-            glm::vec3 newPos = camera.position();
-            if (camera.mode() == first_person){
+            if (camera.mode() == first_person)
 			    _direction.y = 0;
-                newPos = _position;
-            }
 			if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
-				newPos += _speed * _direction;
+                _velocity += _speed * _direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
-				newPos -= _speed * _direction;
+                _velocity += _speed * -_direction;
 			if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
-				newPos -= _speed * glm::normalize(glm::cross(_direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+                _velocity += _speed * glm::normalize(glm::cross(-_direction, _up));
 			if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
-				newPos += _speed * glm::normalize(glm::cross(_direction, glm::vec3(0.0f, 1.0f, 0.0f)));
+                _velocity += _speed * glm::normalize(glm::cross(_direction, _up));
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 				_speed = _run;
 			if (glfwGetKey(settings.window(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
 				_speed = _walk;
-			if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS && _collision.y){
-				_collision.y = 0;
-				_velocity.y = settings.gravity() * _jump;
-			}
+			if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS && _position.y == 0.0f)
+				_velocity += _jump * _up;
+            move();
 			_direction = camera.mouseDirection();
-            camera.setPosition(newPos);
-            if (camera.mode() == first_person){
-                camera.setPosition(newPos + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
-                _position = newPos;
-                physics();
-            }
-		}
-        
-		void physics(){
-			if (!_collision.y){
-				_velocity.y -= settings.gravity();
-				_position.y += _velocity.y;
-				if (_position.y < 0.0){
-					_position.y = 0.0;
-					_velocity.y = 0;
-					_collision.y = 1;
-				}
-			}
+            camera.setPosition(_position + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
 		}
 
 		void setWeapon(Weapon* wep){
@@ -68,7 +47,7 @@ class Player : public Object
                 _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
                 postTransformHands();
             }
-            _model.updateHitbox(_rotation);
+            setHitboxPosition(_position);
             Uniforms uni = draw(shader);
 			if (_weapon){
                 weaponTransformation(uni);
@@ -103,8 +82,6 @@ class Player : public Object
             glm::vec3 limbpos = _position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * glm::inverse(_rotation));
             _weapon->setPosition(limbpos);
             _weapon->setRotation(_rotation * rot);
-            // uni.add_uni("pos", limbpos);
-            // uni.add_uni("fRotation", rot);s
         }
 
 	private:
@@ -112,12 +89,13 @@ class Player : public Object
 
 		short _health = 10;
 		short _energy = 10;
+
         float _speed = 0.1;
 		float _walk = 0.1;
 		float _run = 0.2;
-		short _jump = 30;
+		float _jump = 0.5;
 
 	private:
-		glm::vec3 _velocity = glm::vec3(0.0f);
+		// glm::vec3 _velocity = glm::vec3(0.0f);
 		glm::vec3 _collision = glm::vec3(0.0f); //Don't really need floats for this
 };

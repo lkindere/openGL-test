@@ -15,7 +15,13 @@ class Object
         virtual ~Object();
 
     public:
+        void move();
         Uniforms draw(const Shader& shader, Uniforms uni = Uniforms());
+
+    public:
+        bool checkCollision(Object& target);
+    private:
+        void collisionPhysics(Object& target);
 
     public:
         const glm::vec3&    front() const ;
@@ -23,6 +29,7 @@ class Object
         const glm::vec3&    direction() const ;
         const glm::mat4&    rotation() const ;
         const Model&        model() const ;
+        const Hitbox&       hitbox() const ;
 
         void setFront(const glm::vec3& vec);
         void setFront(float x, float y, float z);
@@ -31,12 +38,22 @@ class Object
         void setDirection(const glm::vec3& vec);
         void setDirection(float x, float y, float z);
         void setRotation(const glm::mat4& mat);
+        void setHitboxPosition(const glm::vec3& vec);
+        void setHitboxPosition(float x, float y, float z);
+        void setVelocity(const glm::vec3& vec);
+        void setVelocity(float x, float y, float z);
+        void setWeight(float x);
 
     protected:
-        glm::vec3 _front = glm::vec3(0.0f, 0.0f, 1.0f);
-        glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 _direction = glm::vec3(0.0f, 0.0f, 1.0f);
-        glm::mat4 _rotation = glm::mat4(1.0f);
+        glm::vec3   _up = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3   _front = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3   _position = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3   _direction = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::mat4   _rotation = glm::mat4(1.0f);
+
+    protected:
+        float       _weight = 0.5f;
+        glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
 		Model _model;

@@ -17,13 +17,15 @@ class Mob : public Object
         
     public:
         void animate(const Shader& shader);
-        void move(Uniforms& uni);
+
+    private:
+        void facePlayer();
 
 	private:
 		Weapon* weapon = nullptr;
 
     private:
-		short health = 10;
-		short energy = 10;
-        float speed = 0.1;
+		short _health = 10;
+		short _energy = 10;
+        float _speed = 0.1;
 };

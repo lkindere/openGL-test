@@ -4,6 +4,10 @@
 
 ArrayObject::ArrayObject() : _nIndices(0) {}
 
+ArrayObject::~ArrayObject() {
+    // glDeleteVertexArrays(1, &_VAO);
+}
+
 void ArrayObject::init(const MeshData& data, GLenum type = GL_STATIC_DRAW){
     const std::vector<Vert>&            vertices = data.verts;
     const std::vector<unsigned int>&    indices = data.indices;

@@ -187,11 +187,21 @@ HitboxData process_hitbox(const aiScene* scene){
         return HitboxData();
     const aiMesh* mesh = scene->mMeshes[1];
     HitboxData data;
-    data.vertices.reserve(mesh->mNumVertices);
-    for (auto i = 0; i < mesh->mNumVertices; ++i){
-        glm::vec3 vec(toGLvec(mesh->mVertices[i]));
-        if (std::find(data.vertices.begin(), data.vertices.end(), vec) == data.vertices.end())
-            data.vertices.push_back(vec);
+    data.min = toGLvec(mesh->mVertices[0]);
+    data.max = toGLvec(mesh->mVertices[0]);
+    for (auto i = 1; i < mesh->mNumVertices; ++i){
+        if (mesh->mVertices[i].x < data.min.x)
+            data.min.x = mesh->mVertices[i].x;
+        else if (mesh->mVertices[i].x > data.max.x)
+            data.max.x = mesh->mVertices[i].x;
+        if (mesh->mVertices[i].y < data.min.y)
+            data.min.y = mesh->mVertices[i].y;
+        else if (mesh->mVertices[i].y > data.max.y)
+            data.max.y = mesh->mVertices[i].y;
+        if (mesh->mVertices[i].z < data.min.z)
+            data.min.z = mesh->mVertices[i].z;
+        else if (mesh->mVertices[i].z > data.max.z)
+            data.max.z = mesh->mVertices[i].z;
     }
     return data;
 }

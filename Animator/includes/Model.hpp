@@ -30,10 +30,6 @@ class Model
             return _hitbox.checkCollision(_hitbox);
         }
 
-        void updateHitbox(const glm::mat4& transformation){
-            _hitbox.updateHitbox(transformation);
-        }
-
 		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms){
             const std::vector<glm::mat4> boneMatrices = _animator.updateMatrices();
@@ -54,11 +50,17 @@ class Model
         const glm::mat4& getBoneMatrix(int ID) const {
             return _animator.getBoneMatrix(ID);
         }
-
         void postTransform(int ID, const glm::mat4& transform) { _animator.postTransform(ID, transform); }
         const NodeData* findNode(const char* name) { return _animator.findNode(name); }
         void setAnim(int anim) { _animator.setAnim(anim); }
         void setLoop(bool loop) { _animator.setLoop(loop); }
+
+        const Hitbox& hitbox() const { return _hitbox; }
+
+    public:
+        void setHitboxPosition(const glm::vec3& vec){
+            _hitbox.setPosition(vec);
+        }
 
 	private:
 		ArrayObject _VAO;

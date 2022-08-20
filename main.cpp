@@ -25,7 +25,7 @@ Camera camera;
 void Init_settings(){
 	settings.setWidth(1000);
 	settings.setHeight(1000);
-	settings.setGravity(0.01);
+	settings.setGravity(0.1);
     camera.updateProjection();
 }
 
@@ -134,6 +134,8 @@ int main(void) {
 		player.input();
 		player.animate(shader);
 		mob.animate(shader);
+        std::cout << "Collision:\n";
+        std::cout << player.checkCollision(mob) << std::endl;
         // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
         //     delete mob;
         //     mob = inputPath();
