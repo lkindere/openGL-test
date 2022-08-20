@@ -10,20 +10,20 @@ Mob::Mob(Model model)
     : Object(&model) {
     _model.setAnim(0);
     _model.setLoop(true);
+    setPosition(0.1f, 0.0f, 0.1f);
 }
 
 void Mob::animate(const Shader& shader){
     facePlayer();
     _velocity += _direction * _speed;
     move();
-    setHitboxPosition(_position);
     draw(shader);
 }
 
 void Mob::facePlayer(){
     static glm::quat lastQuat;
 
-    _direction = glm::normalize(noY(camera.position()) - noY(_position));
+    _direction = glm::normalize(noY(settings.playerPosition()) - noY(_position));
     float angle = glm::orientedAngle(glm::vec3(0.0f, 0.0f, 1.0f), _direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::quat newQuat = glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f));

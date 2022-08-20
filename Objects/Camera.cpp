@@ -2,6 +2,18 @@
 
 Camera::Camera() {}
 
+void Camera::input(){
+    if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
+        _position += _speed * _direction;
+    if (glfwGetKey(settings.window(), GLFW_KEY_S) == GLFW_PRESS)
+        _position += _speed * -_direction;
+    if (glfwGetKey(settings.window(), GLFW_KEY_A) == GLFW_PRESS)
+        _position += _speed * glm::normalize(glm::cross(-_direction, _up));
+    if (glfwGetKey(settings.window(), GLFW_KEY_D) == GLFW_PRESS)
+        _position += _speed * glm::normalize(glm::cross(_direction, _up));
+    mouseDirection();
+}
+
 void Camera::updateProjection() {
     _projection = glm::perspective(
 	    glm::radians(_FOV), (float)settings.width() / settings.height(), _near, _far);

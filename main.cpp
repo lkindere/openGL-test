@@ -1,6 +1,3 @@
-#include <exception>
-#include <iostream>
-
 #include "settings.hpp"
 #include "callbacks.hpp"
 
@@ -9,7 +6,6 @@
 #include "Light.hpp"
 
 #include "Player.hpp"
-#include "Object.hpp"
 #include "Mob.hpp"
 
 #include "Importer.hpp"
@@ -117,6 +113,7 @@ int main(void) {
     };
 
 	Player player(importer("Models/player.fbx", params));
+    settings.setPlayer(&player);
 	Light light(importer("Models/light.fbx"));
 
 	Object floor(importer("Models/floor.fbx"));

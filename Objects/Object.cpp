@@ -9,7 +9,6 @@ Object::Object(Model* model)
 Object::~Object() {}
 
 void Object::move(){
-    _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
     if (_position.y > 0.0f)
         _velocity.y -= settings.gravity() * _weight;
     _position += _velocity;
@@ -17,6 +16,8 @@ void Object::move(){
         _position.y = 0.0f;
         _velocity.y = 0.0f;   
     }
+    _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
+    setHitboxPosition(_position);
 }
 
 //Returns uniform used in previous draw call
@@ -30,8 +31,8 @@ Uniforms Object::draw(const Shader& shader, Uniforms uni){
 }
 
 void Object::collisionPhysics(Object& target){
-    _position += (_velocity - target._velocity);
-    target._position += (target._velocity - _velocity);
+    _velocity = glm::mix(_velocity, target._velocity, 0.5);
+    target._velocity = glm::mix(target._velocity, _velocity, 0.5);
 }
 
 bool Object::checkCollision(Object& target){

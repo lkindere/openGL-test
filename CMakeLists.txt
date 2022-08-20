@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 add_executable(${PROJECT_NAME}
 	main.cpp
+    settings.cpp
 	callbacks.cpp
 )
 

@@ -18,6 +18,7 @@ class Camera {
 		Camera();
 
 	public:
+        void input();
 		void setPosition(const glm::vec3& position);
         void updateProjection();
 
@@ -38,7 +39,7 @@ class Camera {
 
 	private:
         cameraMode  _mode = first_person;
-		glm::mat4 _projection = glm::mat4(1.0f);
+		glm::mat4   _projection = glm::mat4(1.0f);
 
 		glm::vec3 _position = glm::vec3(0.0f);
 		glm::vec3 _direction = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -51,5 +52,5 @@ class Camera {
 		const float _FOV = 80.0f;
 		const float _near = 0.1f;
 		const float _far = 1000.0f;
-        const float _speed = 0.05f;
+        const float _speed = 0.1f;
 };

@@ -1,7 +1,8 @@
 project(Objects)
 
 add_library(Objects
-	Camera.cpp
+    Camera.cpp
+    Player.cpp
     Light.cpp
 	Shader.cpp
     Uniforms.cpp
