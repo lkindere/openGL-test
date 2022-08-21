@@ -6,6 +6,7 @@
 Settings settings;
 
 #include "Importer.hpp"
+#include "debug.hpp"
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
@@ -88,10 +89,10 @@ Shader* g_hitboxShader;
 int main(void) {
     Init();
     Scene scene;
-    Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
-	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
-    Shader hitboxShader = Shader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
-    g_hitboxShader = &hitboxShader;
+    int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
+    int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
+    int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
+    g_hitboxShader = &scene.shader(hitboxShader);
     
     LoadingParameters params;
     params.locateBones = {
@@ -106,43 +107,48 @@ int main(void) {
     scene.camera().updateProjection();
     scene.loadObject(PLAYER, "Models/player.fbx", params);
     scene.player().setWeapon(new Sword(importer("Models/sword.fbx"), &scene));
-    scene.loadObject(LIGHT, "Models/light.fbx");
-    scene.light(0).addTarget(shader);
+    int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
+    scene.light(lightID).addTarget(scene.shader(defaultShader));
     int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
+    int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
 
+    for (auto i = 0; i < scene.nObjects(); ++i)
+        scene.object(i).setShader(defaultShader);
+    scene.player().setShader(defaultShader);
+    scene.light(lightID).setShader(lightShader);
+
+    scene.player().setName("Player");
+    scene.object(mobID).setName("Mob");
+    scene.object(wallID).setPosition(5.0f, 0.0f, 5.0f);
+    scene.object(wallID).setName("Wall");
+    scene.object(mobID).setCollide(true);
+    scene.object(wallID).setCollide(true);
+    scene.object(wallID).setWeight(1.0f);
+    scene.player().setCollide(true);
     std::cout << "Lights: " << scene.nLights() << std::endl;
     std::cout << "Objects: " << scene.nObjects() << std::endl;
-
-	// Player player(importer("Models/player.fbx", params));
-    // settings.setPlayer(&player);
-	// Light light(importer("Models/light.fbx"));
-
-	// Object floor(importer("Models/floor.fbx"));
-
-	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
-
-    // Mob mob(importer("Models/enemy.fbx"));
-
-	// light.addTarget(shader);
+    std::cout << "Shader: " << scene.nShaders() << std::endl;
 
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		scene.light(0).animate(lightShader);
-		scene.player().input();
-		scene.player().animate(shader);
-		scene.object(mobID).animate(shader);
-        scene.object(floorID).animate(shader);
+        scene.animate();
+		// scene.light(0).animate(scene.shader(lightShader));
+		// scene.player().animate(scene.shader(defaultShader));
+		// scene.object(mobID).animate(scene.shader(defaultShader));
+        // scene.object(floorID).animate(scene.shader(defaultShader));
         // std::cout << "Collision:\n";
         // std::cout << player.checkCollision(mob) << std::endl;
         // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
         //     delete mob;
         //     mob = inputPath();
         // }
-        if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
+        if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS)
             scene.camera().setMode(first_person);
-        if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
+        if (glfwGetKey(settings.window(), GLFW_KEY_2) == GLFW_PRESS)
+            scene.camera().setMode(third_person);
+        if (glfwGetKey(settings.window(), GLFW_KEY_3) == GLFW_PRESS)
             scene.camera().setMode(detached);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();

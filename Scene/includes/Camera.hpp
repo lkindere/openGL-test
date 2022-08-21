@@ -9,8 +9,9 @@ extern Settings settings;
 
 enum cameraMode
 {
-    first_person = 0,
-    detached = 1
+    first_person,
+    third_person,
+    detached
 };
 
 class Camera {

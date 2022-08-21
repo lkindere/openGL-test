@@ -13,7 +13,7 @@ void Player::input() {
         _model.setAnim(ATTACK_ANIMATION);
         _model.setLoop(false);
     }
-    if (_scene->camera().mode() == first_person)
+    if (_scene->camera().mode() != detached)
         _direction.y = 0;
     if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
         _velocity += _speed * _direction;
@@ -38,9 +38,15 @@ void Player::setWeapon(Weapon* wep){
 }
 
 void Player::animate(const Shader& shader, Uniforms uni){
+    input();
     move();
     if (_scene->camera().mode() == first_person){
         _scene->camera().setPosition(_position + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
+        _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(_scene->camera().yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
+        postTransformHands();
+    }
+    else if (_scene->camera().mode() == third_person){
+        _scene->camera().setPosition(_position + glm::vec3(0.0f, 3.0f, 0.0f) + (-_direction * glm::vec3(2.0f, 0.0f, 2.0f)));
         _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(_scene->camera().yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
         postTransformHands();
     }

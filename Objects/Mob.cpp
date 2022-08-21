@@ -11,12 +11,12 @@ Mob::Mob(Model model, Scene* scene)
     : Object(&model, scene) {
     _model.setAnim(0);
     _model.setLoop(true);
-    setPosition(0.1f, 0.0f, 0.1f);
+    setPosition(1.0f, 0.0f, 1.0f);
 }
 
 void Mob::animate(const Shader& shader, Uniforms uni){
     facePlayer();
-    _velocity += _direction * _speed;
+    // _velocity += _direction * _speed;
     move();
     draw(shader, uni);
 }

@@ -12,13 +12,13 @@ class Player : public Object
 	public:
 		Player(Model model, Scene* scene);
         
-		void input();
 
 		void setWeapon(Weapon* wep);
 
         void animate(const Shader& shader, Uniforms uni = Uniforms());
 
     private:
+		void input();
         void postTransformHands();
 
         void weaponTransformation(Uniforms& uni);

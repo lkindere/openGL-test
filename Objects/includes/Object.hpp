@@ -16,12 +16,14 @@ class Object
         Uniforms draw(const Shader& shader, Uniforms uni = Uniforms());
         virtual void animate(const Shader& shader, Uniforms uni = Uniforms());
 
-    public:
-        bool checkCollision(Object& target);
     private:
+        bool checkCollision();
         void collisionPhysics(Object& target);
 
     public:
+        const std::string&  name() const ;
+        bool                collide() const ;
+        unsigned int        shader() const ;
         const glm::vec3&    front() const ;
         const glm::vec3&    position() const ;
         const glm::vec3&    direction() const ;
@@ -29,6 +31,9 @@ class Object
         const Model&        model() const ;
         const Hitbox&       hitbox() const ;
 
+        void setName(const std::string& name);
+        void setCollide(bool b);
+        void setShader(unsigned int ID);
         void setFront(const glm::vec3& vec);
         void setFront(float x, float y, float z);
         void setPosition(const glm::vec3& vec);
@@ -54,6 +59,11 @@ class Object
         glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
+        std::string     _name;
+        bool            _collide = false;
+        unsigned int    _shader = 0;
+
+
         Scene*  _scene = nullptr;
 		Model   _model;
 };

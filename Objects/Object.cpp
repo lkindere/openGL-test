@@ -2,23 +2,28 @@
 #include "Scene.hpp"
 
 Object::Object(Model model, Scene* scene)
-    : _model(std::move(model)), _scene(scene) {}
+    : _model(std::move(model)), _scene(scene) {
+    setHitboxPosition(_position);
+}
 
 Object::Object(Model* model, Scene* scene)
-    : _model(std::move(*model)), _scene(scene) {}
+    : _model(std::move(*model)), _scene(scene) {
+    setHitboxPosition(_position);
+}
 
 Object::~Object() {}
 
 void Object::move(){
     if (_position.y > 0.0f)
         _velocity.y -= _scene->gravity() * _weight;
+    setHitboxPosition(_position + _velocity);
+    checkCollision();
     _position += _velocity;
     if (_position.y < 0.0f){
         _position.y = 0.0f;
         _velocity.y = 0.0f;   
     }
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
-    setHitboxPosition(_position);
 }
 
 void Object::animate(const Shader& shader, Uniforms uni){
@@ -36,23 +41,66 @@ Uniforms Object::draw(const Shader& shader, Uniforms uni){
 }
 
 void Object::collisionPhysics(Object& target){
-    _velocity = glm::mix(_velocity, target._velocity, 0.5);
-    target._velocity = glm::mix(target._velocity, _velocity, 0.5);
+    if (glfwGetKey(settings.window(), GLFW_KEY_F) == GLFW_PRESS)
+        return ;
+    std::cout << _name << " collided with " << target._name << std::endl;
+    float dot = glm::dot(_velocity, target._position - _position);
+    std::cout << "Dot: " << dot << std::endl;
+    if (dot <= 0.0f)
+        return ;
+    _velocity = glm::mix(_velocity, glm::vec3(0.0f), target._weight);
+    target._velocity = glm::mix(target._velocity, glm::vec3(0.0f), _weight);
+    glm::vec3 temp = _velocity;
+    target._velocity = glm::mix(target._velocity, temp, 0.5);
+    if (!target.checkCollision())
+        _velocity = glm::mix(_velocity, target._velocity, 0.5);
+    else
+        _velocity = glm::vec3(0.0f);
 }
 
-bool Object::checkCollision(Object& target){
-    if (hitbox().checkCollision(target.hitbox()) == false)
+bool Object::checkCollision(){
+    if (_collide == false)
         return false;
-    collisionPhysics(target);
-    return true;
+    bool collision = false;
+    if (&_scene->player() != this){
+        if (hitbox().checkCollision(_scene->player().hitbox()) == true){
+            collisionPhysics(_scene->player());
+            collision = true;
+        }
+    }
+    for (auto i = 0; i < _scene->nObjects(); ++i){
+        if (&_scene->object(i) == this || _scene->object(i).collide() == false)
+            continue ;
+        if (hitbox().checkCollision(_scene->object(i).hitbox()) == false)
+            continue ;
+        collisionPhysics(_scene->object(i));
+        collision = true;
+    }
+    return collision;
 }
 
+const std::string&  Object::name() const { return _name; }
+bool                Object::collide() const { return _collide; }
+unsigned int        Object::shader() const { return _shader; }
 const glm::vec3&    Object::front() const { return _front; }
 const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
 const Model&        Object::model() const { return _model; }
 const Hitbox&       Object::hitbox() const { return _model.hitbox(); }
+
+
+void Object::setName(const std::string& name) {
+    _name = name;
+}
+
+void    Object::setCollide(bool b) {
+    _collide = b;
+}
+
+void    Object::setShader(unsigned int ID) {
+    _shader = ID;
+}
 
 void    Object::setFront(const glm::vec3& vec) {
     _front = vec;
@@ -64,10 +112,12 @@ void    Object::setFront(float x, float y, float z) {
 
 void    Object::setPosition(const glm::vec3& vec) {
     _position = vec;
+    setHitboxPosition(_position);
 }
 
 void    Object::setPosition(float x, float y, float z) {
     _position.x = x; _position.y = y; _position.z = z;
+    setHitboxPosition(x, y, z);
 }
 
 void    Object::setDirection(const glm::vec3& vec) {
