@@ -31,7 +31,7 @@ class Model
         }
 
 		//All required uniforms need to be set beforehand from calling class
-		void draw(const Shader& shader, Uniforms uniforms){
+		void draw(const Shader& shader, Uniforms uniforms = Uniforms()){
             const std::vector<glm::mat4> boneMatrices = _animator.updateMatrices();
             if (_VAO.hasTexture())
                 uniforms.flags |= hasTextures;

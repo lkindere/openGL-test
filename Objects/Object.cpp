@@ -1,16 +1,17 @@
 #include "Object.hpp"
+#include "Scene.hpp"
 
-Object::Object(Model model)
-    : _model(std::move(model)) {}
+Object::Object(Model model, Scene* scene)
+    : _model(std::move(model)), _scene(scene) {}
 
-Object::Object(Model* model)
-    : _model(std::move(*model)) {}
+Object::Object(Model* model, Scene* scene)
+    : _model(std::move(*model)), _scene(scene) {}
 
 Object::~Object() {}
 
 void Object::move(){
     if (_position.y > 0.0f)
-        _velocity.y -= settings.gravity() * _weight;
+        _velocity.y -= _scene->gravity() * _weight;
     _position += _velocity;
     if (_position.y < 0.0f){
         _position.y = 0.0f;
@@ -20,12 +21,16 @@ void Object::move(){
     setHitboxPosition(_position);
 }
 
+void Object::animate(const Shader& shader, Uniforms uni){
+    draw(shader, uni);
+}
+
 //Returns uniform used in previous draw call
 //Alternative would be to store last used uni on class and use a getter
 Uniforms Object::draw(const Shader& shader, Uniforms uni){
     uni.add_uni("pos", _position);
     uni.add_uni("rotation", _rotation);
-    uni.add_uni("camPos", camera.matrix());
+    uni.add_uni("camPos", _scene->camera().matrix());
     _model.draw(shader, uni);
     return uni;
 }

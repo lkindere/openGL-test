@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 add_executable(${PROJECT_NAME}
 	main.cpp
+    debug.cpp
     settings.cpp
 	callbacks.cpp
 )
@@ -14,6 +15,7 @@ add_subdirectory(_external/glfw)
 add_subdirectory(_external/glm)
 
 add_subdirectory(Loader)
+add_subdirectory(Scene)
 add_subdirectory(Animator)
 add_subdirectory(Objects)
 add_subdirectory(Physics)
@@ -23,6 +25,7 @@ add_definitions(-std=c++11 -DDEBUG)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC Loader/includes
+    PUBLIC Scene/includes
     PUBLIC Objects/includes
     PUBLIC Physics/includes
 	PUBLIC _external/glfw/include
@@ -37,6 +40,7 @@ target_link_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
 	glfw
 	Loader
+    Scene
     Animator
 	Objects
     Physics

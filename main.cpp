@@ -1,12 +1,9 @@
 #include "settings.hpp"
 #include "callbacks.hpp"
 
-#include "Shader.hpp"
-#include "Camera.hpp"
-#include "Light.hpp"
+#include "Scene.hpp"
 
-#include "Player.hpp"
-#include "Mob.hpp"
+Settings settings;
 
 #include "Importer.hpp"
 
@@ -15,14 +12,11 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-Settings settings;
-Camera camera;
-
 void Init_settings(){
 	settings.setWidth(1000);
 	settings.setHeight(1000);
-	settings.setGravity(0.1);
-    camera.updateProjection();
+	// settings.setGravity(0.1);
+    // camera.updateProjection();
 }
 
 void Init() {
@@ -49,9 +43,6 @@ void Init() {
 	std::cout << glGetString(GL_VERSION) << '\n' << std::endl;
 #endif
 }
-
-#include <string>
-
 
 Uniforms default_uniforms(){
     Uniforms uniDefault;
@@ -96,12 +87,12 @@ Shader* g_hitboxShader;
 
 int main(void) {
     Init();
+    Scene scene;
     Shader shader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
 	Shader lightShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
-    
     Shader hitboxShader = Shader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
     g_hitboxShader = &hitboxShader;
-
+    
     LoadingParameters params;
     params.locateBones = {
         "ArmBot.L",
@@ -112,36 +103,47 @@ int main(void) {
         "Palm.R",
     };
 
-	Player player(importer("Models/player.fbx", params));
-    settings.setPlayer(&player);
-	Light light(importer("Models/light.fbx"));
+    scene.camera().updateProjection();
+    scene.loadObject(PLAYER, "Models/player.fbx", params);
+    scene.player().setWeapon(new Sword(importer("Models/sword.fbx"), &scene));
+    scene.loadObject(LIGHT, "Models/light.fbx");
+    scene.light(0).addTarget(shader);
+    int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
+    int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
 
-	Object floor(importer("Models/floor.fbx"));
+    std::cout << "Lights: " << scene.nLights() << std::endl;
+    std::cout << "Objects: " << scene.nObjects() << std::endl;
 
-	player.setWeapon(new Sword(importer("Models/sword.fbx")));
+	// Player player(importer("Models/player.fbx", params));
+    // settings.setPlayer(&player);
+	// Light light(importer("Models/light.fbx"));
 
-    Mob mob(importer("Models/enemy.fbx"));
+	// Object floor(importer("Models/floor.fbx"));
 
-	light.addTarget(shader);
+	// player.setWeapon(new Sword(importer("Models/sword.fbx")));
+
+    // Mob mob(importer("Models/enemy.fbx"));
+
+	// light.addTarget(shader);
 
     while (!glfwWindowShouldClose(settings.window())) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		light.animate(lightShader);
-		player.input();
-		player.animate(shader);
-		mob.animate(shader);
-        std::cout << "Collision:\n";
-        std::cout << player.checkCollision(mob) << std::endl;
+		scene.light(0).animate(lightShader);
+		scene.player().input();
+		scene.player().animate(shader);
+		scene.object(mobID).animate(shader);
+        scene.object(floorID).animate(shader);
+        // std::cout << "Collision:\n";
+        // std::cout << player.checkCollision(mob) << std::endl;
         // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
         //     delete mob;
         //     mob = inputPath();
         // }
         if (glfwGetKey(settings.window(), GLFW_KEY_Q) == GLFW_PRESS)
-            camera.setMode(first_person);
+            scene.camera().setMode(first_person);
         if (glfwGetKey(settings.window(), GLFW_KEY_E) == GLFW_PRESS)
-            camera.setMode(detached);
-		floor.draw(shader);
+            scene.camera().setMode(detached);
         glfwSwapBuffers(settings.window());
         glfwPollEvents();
     }

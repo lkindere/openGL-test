@@ -1,28 +1,18 @@
 #pragma once
 
-#include "Model.hpp"
-
 #include "Object.hpp"
-#include "Weapon.hpp"
-#include "Camera.hpp"
-#include "settings.hpp"
 
-extern Settings settings;
-extern Camera camera;
+class Scene;
 
 class Mob : public Object
 {
 	public:
-		Mob(Model model);
+		Mob(Model model, Scene* scene);
         
-    public:
-        void animate(const Shader& shader);
+        void animate(const Shader& shader, Uniforms uni = Uniforms());
 
     private:
         void facePlayer();
-
-	private:
-		Weapon* weapon = nullptr;
 
     private:
 		short _health = 10;

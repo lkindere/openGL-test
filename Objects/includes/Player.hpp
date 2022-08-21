@@ -4,16 +4,19 @@
 #include "Sword.hpp"
 
 #define ATTACK_ANIMATION 0
+
+class Scene;
+
 class Player : public Object
 {
 	public:
-		Player(Model model);
+		Player(Model model, Scene* scene);
         
 		void input();
 
 		void setWeapon(Weapon* wep);
 
-        void animate(Shader& shader);
+        void animate(const Shader& shader, Uniforms uni = Uniforms());
 
     private:
         void postTransformHands();

@@ -11,6 +11,7 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC ../
     PUBLIC ../Loader/includes
     PUBLIC ../Loader/_external/assimp/include
+    PUBLIC ../Scene/includes
     PUBLIC ../Objects/includes
     PUBLIC ../Animator/includes
 	PUBLIC ../_external/glfw/include

@@ -27,11 +27,11 @@ bool Hitbox::checkCollision(const Hitbox& target) const {
 void Hitbox::init(HitboxData& data){
     _min = std::move(data.min);
     _max = std::move(data.max);
-    std::cout << "Min:\n";
-    settings.printvec(_min);
-    std::cout << "Max:\n";
-    settings.printvec(_max);
-    std::cout << std::endl;
+    // std::cout << "Min:\n";
+    // settings.printvec(_min);
+    // std::cout << "Max:\n";
+    // settings.printvec(_max);
+    // std::cout << std::endl;
 }
 
 void Hitbox::setPosition(const glm::vec3& position){

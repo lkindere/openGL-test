@@ -1,10 +1,10 @@
-project(Objects)
+project(Scene)
 
-add_library(Objects
-    Player.cpp
-    Light.cpp
-    Object.cpp
-    Mob.cpp
+add_library(Scene
+    Scene.cpp
+    Camera.cpp
+	Shader.cpp
+    Uniforms.cpp
 )
 
 add_definitions(-std=c++11)
@@ -13,7 +13,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC includes
 	PUBLIC ../
     PUBLIC ../Loader/includes
-    PUBLIC ../Scene/includes
+    PUBLIC ../Objects/includes
     PUBLIC ../Animator/includes
     PUBLIC ../Physics/includes
 	PUBLIC ../_external/glfw/include

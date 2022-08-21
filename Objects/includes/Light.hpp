@@ -5,11 +5,11 @@
 class Light : public Object
 {
 	public:
-		Light(Model model);
+		Light(Model model, Scene* scene);
 
     public:
 		void addTarget(Shader& target);
-        void animate(Shader& target);
+        void animate(const Shader& shader, Uniforms uni = Uniforms());
 
 	private:
 		std::vector<Shader>	_targets;

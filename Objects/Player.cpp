@@ -1,18 +1,19 @@
 #include "Player.hpp"
+#include "Scene.hpp"
 
-Player::Player(Model model)
-    : Object(std::move(&model)) {}
+Player::Player(Model model, Scene* scene)
+    : Object(std::move(&model), scene) {}
 
 void Player::input() {
-    if (camera.mode() == detached){
-        camera.input();
+    if (_scene->camera().mode() == detached){
+        _scene->camera().input();
         return ;
     }
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
         _model.setAnim(ATTACK_ANIMATION);
         _model.setLoop(false);
     }
-    if (camera.mode() == first_person)
+    if (_scene->camera().mode() == first_person)
         _direction.y = 0;
     if (glfwGetKey(settings.window(), GLFW_KEY_W) == GLFW_PRESS)
         _velocity += _speed * _direction;
@@ -28,8 +29,7 @@ void Player::input() {
         _speed = _walk;
     if (glfwGetKey(settings.window(), GLFW_KEY_SPACE) == GLFW_PRESS && _position.y == 0.0f)
         _velocity += _jump * _up;
-    _direction = camera.mouseDirection();
-    camera.setPosition(_position + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
+    _direction = _scene->camera().mouseDirection();
 }
 
 void Player::setWeapon(Weapon* wep){
@@ -37,27 +37,28 @@ void Player::setWeapon(Weapon* wep){
     _weapon = wep;
 }
 
-void Player::animate(Shader& shader){
+void Player::animate(const Shader& shader, Uniforms uni){
     move();
-    if (camera.mode() == first_person){
-        _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(camera.yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
+    if (_scene->camera().mode() == first_person){
+        _scene->camera().setPosition(_position + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
+        _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(_scene->camera().yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
         postTransformHands();
     }
-    Uniforms uni = draw(shader);
+    uni = draw(shader);
     if (_weapon){
         weaponTransformation(uni);
-        _weapon->animate(shader);
+        _weapon->animate(shader, uni);
     }
 }
 
 void Player::postTransformHands(){
-    glm::mat4 limbUpL = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3((camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
-    glm::mat4 limbUpR = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-(camera.pitch() + 30.0f) / 100, 0.0f, 0.0f)));
+    glm::mat4 limbUpL = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3((_scene->camera().pitch() + 30.0f) / 100, 0.0f, 0.0f)));
+    glm::mat4 limbUpR = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-(_scene->camera().pitch() + 30.0f) / 100, 0.0f, 0.0f)));
     _model.findNode("ArmBot.L")->postTransform(limbUpL);
     _model.findNode("ArmBot.R")->postTransform(limbUpR);
 
-    glm::mat4 limbRotL = glm::rotate(glm::mat4(1.0f), glm::radians(-(camera.pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians((camera.pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::mat4 limbRotL = glm::rotate(glm::mat4(1.0f), glm::radians(-(_scene->camera().pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians((_scene->camera().pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
     _model.findNode("ArmTop.L")->postTransform(limbRotL);
     _model.findNode("ArmTop.R")->postTransform(limbRotR);
 }

@@ -1,22 +1,20 @@
 #pragma once
 
-#include "settings.hpp"
-#include "Camera.hpp"
 #include "Model.hpp"
 
-extern Settings settings;
-extern Camera camera;
+class Scene;
 
 class Object
 {
 	public:
-		Object(Model model);
-        Object(Model* model);
+		Object(Model model, Scene* scene);
+        Object(Model* model, Scene* scene);
         virtual ~Object();
 
     public:
         void move();
         Uniforms draw(const Shader& shader, Uniforms uni = Uniforms());
+        virtual void animate(const Shader& shader, Uniforms uni = Uniforms());
 
     public:
         bool checkCollision(Object& target);
@@ -56,5 +54,6 @@ class Object
         glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
-		Model _model;
+        Scene*  _scene = nullptr;
+		Model   _model;
 };
