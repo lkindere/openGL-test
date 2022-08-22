@@ -10,7 +10,7 @@ class Scene;
 class Player : public Object
 {
 	public:
-		Player(Model model, Scene* scene);
+		Player(MeshData data, Scene* scene);
         
 
 		void setWeapon(Weapon* wep);

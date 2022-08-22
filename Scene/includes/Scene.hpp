@@ -17,6 +17,7 @@ enum object_types
     LIGHT,
     PLAYER,
     MOB,
+    DETAIL,
 };
 
 class Scene
@@ -33,12 +34,14 @@ class Scene
         Player& player();
         Light&  light(unsigned int ID);
         Object& object(unsigned int ID);
+        Model& detail(unsigned int ID);
         Shader& shader(unsigned int ID);
         const Camera& camera() const;
         const Player& player() const;
         const Light&  light(unsigned int ID) const;
         const Object& object(unsigned int ID) const;
         const Shader& shader(unsigned int ID) const;
+        const Model& detail(unsigned int ID) const;
 
         float& gravity();
         float gravity() const;
@@ -56,5 +59,6 @@ class Scene
         Player*                 _player = nullptr;
         std::vector<Light*>     _lights;
         std::vector<Object*>    _objects;
+        std::vector<Model*>     _details;
         std::vector<Shader>     _shaders;
 };

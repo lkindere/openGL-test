@@ -1,21 +1,12 @@
 #pragma once
 
-#include <vector>
-
 #include <glad/gl.h>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Structs.hpp"
-
 #include "Shader.hpp"
 #include "Animator.hpp"
 #include "ArrayObject.hpp"
-
-#include "Hitbox.hpp"
-
-#include "settings.hpp"
-
-extern Settings settings;
 
 class Model
 {
@@ -23,11 +14,6 @@ class Model
         Model(MeshData data, GLenum drawtype = GL_STATIC_DRAW){
             _VAO.init(data, drawtype);
             _animator.init(data);
-            _hitbox.init(data.hitbox);
-        }
-
-        bool checkCollision(const Hitbox& _hitbox) const {
-            return _hitbox.checkCollision(_hitbox);
         }
 
 		//All required uniforms need to be set beforehand from calling class
@@ -44,7 +30,6 @@ class Model
 
 			shader.unbind();
 			_VAO.unbind();
-            _hitbox.draw(shader, uniforms);
 		}
 
         const glm::mat4& getBoneMatrix(int ID) const {
@@ -55,15 +40,7 @@ class Model
         void setAnim(int anim) { _animator.setAnim(anim); }
         void setLoop(bool loop) { _animator.setLoop(loop); }
 
-        const Hitbox& hitbox() const { return _hitbox; }
-
-    public:
-        void setHitboxPosition(const glm::vec3& vec){
-            _hitbox.setPosition(vec);
-        }
-
 	private:
 		ArrayObject _VAO;
 		Animator	_animator;
-        Hitbox      _hitbox;
 };

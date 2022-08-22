@@ -112,7 +112,9 @@ int main(void) {
     int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
-
+    int mobID2 = scene.loadObject(MOB, "Models/enemy.fbx");
+    int mobID3 = scene.loadObject(MOB, "Models/enemy.fbx");
+    int mobID4 = scene.loadObject(MOB, "Models/enemy.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)
         scene.object(i).setShader(defaultShader);
     scene.player().setShader(defaultShader);
@@ -122,10 +124,20 @@ int main(void) {
     scene.object(mobID).setName("Mob");
     scene.object(wallID).setPosition(5.0f, 0.0f, 5.0f);
     scene.object(wallID).setName("Wall");
+    scene.object(mobID).setPosition(5.0f, 0.0f, 5.0f);
     scene.object(mobID).setCollide(true);
+        scene.object(mobID2).setPosition(-5.0f, 0.0f, -5.0f);
+        scene.object(mobID2).setCollide(true);
+            scene.object(mobID3).setPosition(-5.0f, 0.0f, 5.0f);
+            scene.object(mobID3).setCollide(true);
+                scene.object(mobID4).setPosition(5.0f, 0.0f, -5.0f);
+                scene.object(mobID4).setCollide(true);
     scene.object(wallID).setCollide(true);
     scene.object(wallID).setWeight(1.0f);
     scene.player().setCollide(true);
+
+    int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
+    
     std::cout << "Lights: " << scene.nLights() << std::endl;
     std::cout << "Objects: " << scene.nObjects() << std::endl;
     std::cout << "Shader: " << scene.nShaders() << std::endl;

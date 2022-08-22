@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Model.hpp"
+#include "Hitbox.hpp"
 
 class Scene;
 
 class Object
 {
 	public:
-		Object(Model model, Scene* scene);
-        Object(Model* model, Scene* scene);
+		Object(MeshData data, Scene* scene);
+        Object(MeshData* data, Scene* scene);
         virtual ~Object();
 
     public:
@@ -41,8 +42,8 @@ class Object
         void setDirection(const glm::vec3& vec);
         void setDirection(float x, float y, float z);
         void setRotation(const glm::mat4& mat);
-        void setHitboxPosition(const glm::vec3& vec);
-        void setHitboxPosition(float x, float y, float z);
+        void setHitboxPosition(const glm::vec3& vec, const glm::mat4& rotation = glm::mat4(1.0f));
+        void setHitboxPosition(float x, float y, float z, const glm::mat4& rotation = glm::mat4(1.0f));
         void setVelocity(const glm::vec3& vec);
         void setVelocity(float x, float y, float z);
         void setWeight(float x);
@@ -66,4 +67,5 @@ class Object
 
         Scene*  _scene = nullptr;
 		Model   _model;
+        Hitbox  _hitbox;
 };

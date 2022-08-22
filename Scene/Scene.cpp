@@ -33,6 +33,9 @@ int Scene::loadObject(object_types type, const char* path, const LoadingParamete
         case MOB:
             _objects.push_back(new Mob(importer(path, params), this));
             return _objects.size() - 1;
+        case DETAIL:
+            _details.push_back(new Model(importer(path, params)));
+            return _details.size() - 1;
         default:
             assert(0);
     }
@@ -58,10 +61,13 @@ Object& Scene::object(unsigned int ID){
 }
 
 Shader& Scene::shader(unsigned int ID) {
-    std::cout << "assert\n";
     assert(ID < _shaders.size());
-    std::cout << "wat\n";
     return _shaders[ID];
+}
+
+Model& Scene::detail(unsigned int ID) {
+    assert(ID < _details.size());
+    return *_details[ID];
 }
 
 const Camera& Scene::camera() const {
@@ -84,10 +90,13 @@ const Object& Scene::object(unsigned int ID) const {
 }
 
 const Shader& Scene::shader(unsigned int ID) const {
-    std::cout << "assert\n";
     assert(ID < _shaders.size());
-    std::cout << "wat\n";
     return _shaders[ID];
+}
+
+const Model& Scene::detail(unsigned int ID) const {
+    assert(ID < _details.size());
+    return *_details[ID];
 }
 
 float& Scene::gravity() {

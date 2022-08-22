@@ -5,7 +5,7 @@
 class Light : public Object
 {
 	public:
-		Light(Model model, Scene* scene);
+		Light(MeshData data, Scene* scene);
 
     public:
 		void addTarget(Shader& target);

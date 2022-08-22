@@ -1,8 +1,8 @@
 #include "Player.hpp"
 #include "Scene.hpp"
 
-Player::Player(Model model, Scene* scene)
-    : Object(std::move(&model), scene) {}
+Player::Player(MeshData data, Scene* scene)
+    : Object(&data, scene) {}
 
 void Player::input() {
     if (_scene->camera().mode() == detached){
@@ -12,6 +12,9 @@ void Player::input() {
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
         _model.setAnim(ATTACK_ANIMATION);
         _model.setLoop(false);
+        if (!_weapon)
+            return ;
+        _weapon->
     }
     if (_scene->camera().mode() != detached)
         _direction.y = 0;
@@ -82,5 +85,6 @@ void Player::weaponTransformation(Uniforms& uni){
     rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::vec3 limbpos = _position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * glm::inverse(_rotation));
     _weapon->setPosition(limbpos);
+    _weapon->setDirection(_direction);
     _weapon->setRotation(_rotation * rot);
 }

@@ -1,7 +1,7 @@
 #include "Light.hpp"
 
-Light::Light(Model model, Scene* scene)
-    : Object(&model, scene){
+Light::Light(MeshData data, Scene* scene)
+    : Object(&data, scene){
     setPosition(0.0f, 20.0f, 0.0f);
 }
 

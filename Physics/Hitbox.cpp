@@ -3,7 +3,8 @@
 
 extern Shader* g_hitboxShader;
 
-Hitbox::Hitbox() {}
+Hitbox::Hitbox(const HitboxData& data)
+    : _min(data.min), _max(data.max) {}
 
 bool Hitbox::checkCollision(const Hitbox& target) const {
     glm::vec3 min = _position + _min;
@@ -24,8 +25,8 @@ bool Hitbox::checkCollision(const Hitbox& target) const {
 // }
 
 void Hitbox::init(HitboxData& data){
-    _min = std::move(data.min);
-    _max = std::move(data.max);
+    _min = data.min;
+    _max = data.max;
     std::cout << "Min:\n";
     printvec(_min);
     std::cout << "Max:\n";
@@ -33,25 +34,29 @@ void Hitbox::init(HitboxData& data){
     std::cout << std::endl;
 }
 
-void Hitbox::setPosition(const glm::vec3& position){
+void Hitbox::setPosition(const glm::vec3& position, const glm::mat4& rotation){
     _position = position;
+    _rotation = rotation;
 }
 
-void Hitbox::setPosition(float x, float y, float z){
+void Hitbox::setPosition(float x, float y, float z, const glm::mat4& rotation){
     _position.x = x; _position.y = y; _position.z = z;
+    _rotation = rotation;
 }
 
-void Hitbox::draw(const Shader& shader, Uniforms uniforms) const{
+void Hitbox::draw(const Uniforms& uni) const{
+    glm::vec3 min = _rotation * _min;
+    glm::vec3 max = _rotation * _max;
     std::vector<glm::vec3> vertices = {
-        glm::vec3(_min.x, _min.y, _min.z),
-        glm::vec3(_min.x, _max.y, _min.z),
-        glm::vec3(_min.x, _min.y, _max.z),
-        glm::vec3(_min.x, _max.y, _max.z),
+        glm::vec3(min.x, min.y, min.z),
+        glm::vec3(min.x, max.y, min.z),
+        glm::vec3(min.x, min.y, max.z),
+        glm::vec3(min.x, max.y, max.z),
 
-        glm::vec3(_max.x, _min.y, _min.z),
-        glm::vec3(_max.x, _max.y, _min.z),
-        glm::vec3(_max.x, _min.y, _max.z),
-        glm::vec3(_max.x, _max.y, _max.z),
+        glm::vec3(max.x, min.y, min.z),
+        glm::vec3(max.x, max.y, min.z),
+        glm::vec3(max.x, min.y, max.z),
+        glm::vec3(max.x, max.y, max.z),
     };
     std::vector<GLuint> indices = {
         0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
@@ -65,7 +70,7 @@ void Hitbox::draw(const Shader& shader, Uniforms uniforms) const{
         7, 4, 7, 5, 7, 6, 7, 0, 7, 1, 7, 2, 7, 3,
     };
     g_hitboxShader->bind();
-    g_hitboxShader->update(uniforms);
+    g_hitboxShader->update(uni);
 
     GLuint temp;
     glGenVertexArrays(1, &temp);
