@@ -40,6 +40,10 @@ class Model
         void setAnim(int anim) { _animator.setAnim(anim); }
         void setLoop(bool loop) { _animator.setLoop(loop); }
 
+
+        int anim() const { return _animator.anim(); }
+        bool loop() const { return _animator.loop(); }
+
 	private:
 		ArrayObject _VAO;
 		Animator	_animator;

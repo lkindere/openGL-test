@@ -19,6 +19,7 @@ class Player : public Object
 
     private:
 		void input();
+        void attack();
         void postTransformHands();
 
         void weaponTransformation(Uniforms& uni);
@@ -33,6 +34,7 @@ class Player : public Object
 		float _walk = 0.1;
 		float _run = 0.2;
 		float _jump = 0.5;
+        bool  _attacking = false;
 
 	private:
 		glm::vec3 _collision = glm::vec3(0.0f); //Don't really need floats for this

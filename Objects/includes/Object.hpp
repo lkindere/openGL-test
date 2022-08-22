@@ -16,6 +16,7 @@ class Object
         void move();
         Uniforms draw(const Shader& shader, Uniforms uni = Uniforms());
         virtual void animate(const Shader& shader, Uniforms uni = Uniforms());
+        virtual void damage(short dmg);
 
     private:
         bool checkCollision();
@@ -63,7 +64,6 @@ class Object
         std::string     _name;
         bool            _collide = false;
         unsigned int    _shader = 0;
-
 
         Scene*  _scene = nullptr;
 		Model   _model;

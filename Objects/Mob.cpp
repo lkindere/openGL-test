@@ -19,10 +19,18 @@ void Mob::animate(const Shader& shader, Uniforms uni){
     _velocity += _direction * _speed;
     move();
     uni = draw(shader, uni);
-    float barSize = (float)_maxHealth / _health;
+    float barSize = (float)_health / _maxHealth;
     uni.add_uni("scale", glm::vec3(barSize, 1.0f, barSize));
     uni.add_uni("pos", _position + glm::vec3(0.0f, 2.5f, 0.0f));
     _scene->detail(0).draw(shader, uni);
+}
+
+void Mob::damage(short dmg){
+    _health -= dmg;
+    //Temp
+    if (_health < _maxHealth){
+        this->~Mob();
+    }
 }
 
 void Mob::facePlayer(){
@@ -36,3 +44,5 @@ void Mob::facePlayer(){
 
     _rotation = toMat4(lastQuat);
 }
+
+Mob::~Mob() {}

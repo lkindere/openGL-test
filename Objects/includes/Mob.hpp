@@ -8,8 +8,10 @@ class Mob : public Object
 {
 	public:
 		Mob(MeshData data, Scene* scene);
+        ~Mob();
         
         void animate(const Shader& shader, Uniforms uni = Uniforms());
+        void damage(short dmg);
 
     private:
         void facePlayer();

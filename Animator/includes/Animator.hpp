@@ -47,6 +47,9 @@ class Animator
 
         void setLoop(bool loop) { _loop = loop; }
 
+        bool loop() const { return _loop; }
+        int anim() const { return _anim; }
+
         const NodeData* findNode(const char* name){
             return traverseNodes(name, _nodes);
         }

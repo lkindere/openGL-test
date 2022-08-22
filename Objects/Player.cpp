@@ -10,11 +10,11 @@ void Player::input() {
         return ;
     }
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-        _model.setAnim(ATTACK_ANIMATION);
-        _model.setLoop(false);
-        if (!_weapon)
-            return ;
-        _weapon->
+        if (_model.anim() != ATTACK_ANIMATION){
+            _model.setAnim(ATTACK_ANIMATION);
+            _model.setLoop(false);
+            attack();
+        }
     }
     if (_scene->camera().mode() != detached)
         _direction.y = 0;
@@ -38,6 +38,17 @@ void Player::input() {
 void Player::setWeapon(Weapon* wep){
     delete _weapon;
     _weapon = wep;
+}
+
+void Player::attack(){
+    if (!_weapon)
+        return;
+    for (auto i = 0; i < _scene->nObjects(); ++i){
+        if (_scene->object(i).collide() == false)
+            continue ;
+        if (glm::distance(_scene->object(i).position(), _position) < _weapon->range())
+            _scene->object(i).damage(_weapon->damage());
+    }
 }
 
 void Player::animate(const Shader& shader, Uniforms uni){

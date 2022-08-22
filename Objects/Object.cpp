@@ -30,6 +30,8 @@ void Object::animate(const Shader& shader, Uniforms uni){
     draw(shader, uni);
 }
 
+void Object::damage(short dmg) { return; }
+
 //Returns uniform used in previous draw call
 //Alternative would be to store last used uni on class and use a getter
 Uniforms Object::draw(const Shader& shader, Uniforms uni){

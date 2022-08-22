@@ -29,10 +29,15 @@ class Shader {
 		void unbind() const;
 		void destroy();
 
+        void setRecalculate(Uniforms (*f) (void)){
+            _recalculate = f;
+        }
+
     public:
 		GLuint ID() const;
 
 	private:
         GLuint      _ID;
         Uniforms    _default;
+        Uniforms (*_recalculate) (void);
 };

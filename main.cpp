@@ -75,6 +75,19 @@ Uniforms hitbox_uniforms(){
     return hitboxDefault;
 }
 
+Uniforms wat_uniforms(){
+    Uniforms uniWat;
+    uniWat.flags = 0;
+    uniWat.add_uni("pos", glm::vec3(0.0f));
+    uniWat.add_uni("scale", glm::vec3(1.0f));
+    uniWat.add_uni("fOffset", glm::vec3(0.0f));
+    uniWat.add_uni("camPos", glm::mat4(1.0f));
+    uniWat.add_uni("rotation", glm::mat4(1.0f));
+    uniWat.add_uni("fRotation", glm::mat4(1.0f));
+    uniWat.add_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)));
+    return uniWat;
+}
+
 // Mob* inputPath(){
 //     std::string str;
 //     std::cout << "Input file: " << std::endl;
@@ -92,6 +105,7 @@ int main(void) {
     int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
     int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
     int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
+    int watShader = scene.loadShader("Shaders/wat.vert", "Shaders/wat.frag", wat_uniforms());
     g_hitboxShader = &scene.shader(hitboxShader);
     
     LoadingParameters params;
@@ -111,10 +125,10 @@ int main(void) {
     scene.light(lightID).addTarget(scene.shader(defaultShader));
     int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
-    int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID2 = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID3 = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID4 = scene.loadObject(MOB, "Models/enemy.fbx");
+    int mobID = scene.loadObject(MOB, "Models/wall.fbx");
+    int mobID2 = scene.loadObject(MOB, "Models/wall.fbx");
+    int mobID3 = scene.loadObject(MOB, "Models/wall.fbx");
+    int mobID4 = scene.loadObject(MOB, "Models/wall.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)
         scene.object(i).setShader(defaultShader);
     scene.player().setShader(defaultShader);
