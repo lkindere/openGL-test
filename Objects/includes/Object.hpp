@@ -25,7 +25,8 @@ class Object
     public:
         const std::string&  name() const ;
         bool                collide() const ;
-        unsigned int        shader() const ;
+        int                 shader() const ;
+        int                 flags() const;
         const glm::vec3&    front() const ;
         const glm::vec3&    position() const ;
         const glm::vec3&    direction() const ;
@@ -35,7 +36,8 @@ class Object
 
         void setName(const std::string& name);
         void setCollide(bool b);
-        void setShader(unsigned int ID);
+        void setShader(int ID);
+        void setFlags(int flags);
         void setFront(const glm::vec3& vec);
         void setFront(float x, float y, float z);
         void setPosition(const glm::vec3& vec);
@@ -61,9 +63,12 @@ class Object
         glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
+        int _shader = 0;
+        int _flags = 0;
+
+    protected:
         std::string     _name;
         bool            _collide = false;
-        unsigned int    _shader = 0;
 
         Scene*  _scene = nullptr;
 		Model   _model;

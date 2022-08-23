@@ -82,7 +82,8 @@ bool Object::checkCollision(){
 
 const std::string&  Object::name() const { return _name; }
 bool                Object::collide() const { return _collide; }
-unsigned int        Object::shader() const { return _shader; }
+int                 Object::shader() const { return _shader; }
+int                 Object::flags() const { return _flags; }
 const glm::vec3&    Object::front() const { return _front; }
 const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
@@ -99,8 +100,12 @@ void    Object::setCollide(bool b){
     _collide = b;
 }
 
-void    Object::setShader(unsigned int ID){
+void    Object::setShader(int ID){
     _shader = ID;
+}
+
+void    Object::setFlags(int flags){
+    _flags = flags;
 }
 
 void    Object::setFront(const glm::vec3& vec){

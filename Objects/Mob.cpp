@@ -18,6 +18,10 @@ void Mob::animate(const Shader& shader, Uniforms uni){
     facePlayer();
     _velocity += _direction * _speed;
     move();
+    uni.add_uni("flags", _flags);
+    std::cout << "uTime: " << (float)glfwGetTime() << std::endl;
+    uni.add_uni("uTime", (float)glfwGetTime());
+    std::cout << "Uni uTime: " << uni.f1.find("uTime")->second << std::endl;
     uni = draw(shader, uni);
     float barSize = (float)_health / _maxHealth;
     uni.add_uni("scale", glm::vec3(barSize, 1.0f, barSize));
@@ -28,9 +32,8 @@ void Mob::animate(const Shader& shader, Uniforms uni){
 void Mob::damage(short dmg){
     _health -= dmg;
     //Temp
-    if (_health < _maxHealth){
-        this->~Mob();
-    }
+    if (_health < _maxHealth)
+        _flags = _flags | 2;
 }
 
 void Mob::facePlayer(){

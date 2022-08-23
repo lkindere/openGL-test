@@ -4,6 +4,10 @@ void Uniforms::add_uni(const char*name, int flag){
     flags |= flag;
 }
 
+void Uniforms::add_uni(const char*name, float f){
+    f1[name] = f;
+}
+
 void Uniforms::add_uni(const char*name, const glm::vec3& data){
     std::vector<glm::vec3> vec(1, data);
     vec3[name] = vec;

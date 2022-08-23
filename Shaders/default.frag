@@ -2,6 +2,8 @@
 
 const int hasTexture = 1;
 
+const vec4 ambient = vec4(0.3f);
+
 out vec4 FragColor;
 
 in mat4 _camPos;
@@ -10,12 +12,11 @@ in vec3 _normal;
 in vec2 _texCoords;
 in vec4 _color;
 
-const vec4 ambient = vec4(0.3f);
+uniform int flags;
 
 uniform vec4 lightColor;
 uniform vec3 lightPos;
 
-uniform int flags;
 uniform sampler2D image;
 
 void main()
