@@ -4,14 +4,22 @@
 Object::Object(MeshData data, Scene* scene)
     : _hitbox(data.hitbox), _model(std::move(data)), _scene(scene){
     setHitboxPosition(_position);
+    setDefaultUniforms();
 }
 
 Object::Object(MeshData* data, Scene* scene)
     : _hitbox(data->hitbox), _model(std::move(*data)), _scene(scene){
     setHitboxPosition(_position);
+    setDefaultUniforms();
 }
 
-Object::~Object() {}
+void Object::setDefaultUniforms(){
+    _uniforms.flags = 0;
+    _uniforms.add_uni("pos", _position);
+    _uniforms.add_uni("scale", _scale);
+    _uniforms.add_uni("rotation", _rotation);
+    _uniforms.add_uni("camPos", _scene->camera().matrix());
+}
 
 void Object::move(){
     if (_position.y > 0.0f)
@@ -26,21 +34,16 @@ void Object::move(){
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
 }
 
-void Object::animate(const Shader& shader, Uniforms uni){
-    draw(shader, uni);
+void Object::animate(){
+    draw();
 }
 
 void Object::damage(short dmg) { return; }
 
-//Returns uniform used in previous draw call
-//Alternative would be to store last used uni on class and use a getter
-Uniforms Object::draw(const Shader& shader, Uniforms uni){
-    uni.add_uni("pos", _position);
-    uni.add_uni("rotation", _rotation);
-    uni.add_uni("camPos", _scene->camera().matrix());
-    _model.draw(shader, uni);
-    _hitbox.draw(uni);
-    return uni;
+void Object::draw(){
+    setDefaultUniforms();
+    _model.draw(_scene->shader(_shader), _uniforms);
+    _hitbox.draw(_uniforms);
 }
 
 void Object::collisionPhysics(Object& target){
@@ -87,6 +90,7 @@ int                 Object::flags() const { return _flags; }
 const glm::vec3&    Object::front() const { return _front; }
 const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
+const glm::vec3&    Object::scale() const { return _scale; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
 const Model&        Object::model() const { return _model; }
 const Hitbox&       Object::hitbox() const { return _hitbox; }
@@ -134,6 +138,14 @@ void    Object::setDirection(float x, float y, float z){
     _direction.x = x; _direction.y = y; _direction.z = z;
 }
 
+void Object::setScale(const glm::vec3& vec) {
+    _scale = vec;
+}
+
+void Object::setScale(float x, float y, float z) {
+    _scale.x = x; _scale.y = y; _scale.z = z;
+}
+
 void Object::setRotation(const glm::mat4& mat){
     _rotation = mat;
 }
@@ -157,3 +169,5 @@ void Object::setVelocity(float x, float y, float z){
 void Object::setWeight(float x){
     _weight = x;
 }
+
+Object::~Object() {}

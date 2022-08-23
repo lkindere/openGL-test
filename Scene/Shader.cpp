@@ -4,88 +4,51 @@
 #include <iostream>
 #endif
 
-Shader::Shader(const char* vertPath, const char* fragPath, const Uniforms& defaults) {
-    // Read and convert to usable format
-    std::ifstream vertStream(vertPath), fragStream(fragPath);
-    std::stringstream vertData, fragData;
-    vertData << vertStream.rdbuf();
-    fragData << fragStream.rdbuf();
-    std::string f = fragData.str();
-    std::string v = vertData.str();
-    const GLchar* frag = f.c_str();
-    const GLchar* vert = v.c_str();
+GLuint Shader::compileShader(shader_type type, const char* path){
+    std::ifstream input(path);
+    std::stringstream sstream;
+    sstream << input.rdbuf();
+    std::string str(sstream.str());
+    const GLchar* data = str.c_str();
+    GLuint ID = glCreateShader(type);
+    glShaderSource(ID, 1, &data, NULL);
+    glCompileShader(ID);
+    return ID;
+}
 
-    // Compile shaders and link ID
-    GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(vertShader, 1, &vert, NULL);
-    glShaderSource(fragShader, 1, &frag, NULL);
-    glCompileShader(vertShader);
-    glCompileShader(fragShader);
-	_default = defaults;
-
-#ifdef DEBUG
-    GLint status;
-    glGetShaderiv(vertShader, GL_COMPILE_STATUS, &status);
-    std::cout << "\nVert shader compiled: " << (status == GL_TRUE) << '\n';
-    glGetShaderiv(fragShader, GL_COMPILE_STATUS, &status);
-    std::cout << "\nFrag shader compiled: " << (status == GL_TRUE) << '\n'
-              << std::endl;
-#endif
-
+Shader::Shader(const char* vertPath, const char* fragPath, const char* geoPath) {
     _ID = glCreateProgram();
-    glAttachShader(_ID, vertShader);
-    glAttachShader(_ID, fragShader);
-    glDeleteShader(vertShader);
-    glDeleteShader(fragShader);
+
+    GLuint vert = compileShader(VERTEX, vertPath);
+    GLuint frag = compileShader(FRAGMENT, fragPath);
+    if (geoPath){
+        GLuint geo = compileShader(GEOMETRY, geoPath);
+        glAttachShader(_ID, geo);
+        glDeleteShader(geo);
+    }
+    glAttachShader(_ID, vert);
+    glAttachShader(_ID, frag);
+    glDeleteShader(frag);
+    glDeleteShader(vert);
+
     glLinkProgram(_ID);
 }
 
-const Uniforms& Shader::bind() const {
+void Shader::bind() const {
 	glUseProgram(_ID);
-	return _default;
 }
 
 //Exports provided uniforms to shader or defaults if not specified
 void Shader::update(const Uniforms& uniforms) const {
     glUniform1i(glGetUniformLocation(_ID, "flags"), uniforms.flags);
-    for (auto dit = _default.f1.begin(); dit != _default.f1.end(); ++dit){
-		auto it = uniforms.f1.find(dit->first);
-		(it != uniforms.f1.end()) ?
-			glUniform1f(glGetUniformLocation(_ID, it->first), it->second)
-			:	glUniform1f(glGetUniformLocation(_ID, dit->first), dit->second);
-	}
-	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit){
-		auto it = uniforms.vec3.find(dit->first);
-		(it != uniforms.vec3.end()) ?
-			glUniform3fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]))
-			:	glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
-	}
-	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit){
-		auto it = uniforms.vec4.find(dit->first);
-		(it != uniforms.vec4.end()) ?
-			glUniform4fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]))
-			:	glUniform4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
-	}
-	for (auto dit = _default.mat4.begin(); dit != _default.mat4.end(); ++dit){
-		auto it = uniforms.mat4.find(dit->first);
-		(it != uniforms.mat4.end()) ?
-			glUniformMatrix4fv(glGetUniformLocation(_ID, it->first), it->second.size(), GL_FALSE, glm::value_ptr(it->second.data()[0]))
-			:	glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), GL_FALSE, glm::value_ptr(dit->second.data()[0]));
-	}
-}
-
-//Exports default uniforms to shader
-void Shader::update() const {
-    glUniform1i(glGetUniformLocation(_ID, "flags"), _default.flags);
-    for (auto dit = _default.f1.begin(); dit != _default.f1.end(); ++dit)
-		glUniform1f(glGetUniformLocation(_ID, dit->first), dit->second);
-	for (auto dit = _default.vec3.begin(); dit != _default.vec3.end(); ++dit)
-		glUniform3fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
-	for (auto dit = _default.vec4.begin(); dit != _default.vec4.end(); ++dit)
-		glUniform4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), glm::value_ptr(dit->second.data()[0]));
-	for (auto dit = _default.mat4.begin(); dit != _default.mat4.end(); ++dit)
-		glUniformMatrix4fv(glGetUniformLocation(_ID, dit->first), dit->second.size(), GL_FALSE, glm::value_ptr(dit->second.data()[0]));
+    for (auto it = uniforms.f1.begin(); it != uniforms.f1.end(); ++it)
+		glUniform1f(glGetUniformLocation(_ID, it->first), it->second);
+	for (auto it = uniforms.vec3.begin(); it != uniforms.vec3.end(); ++it)
+		glUniform3fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]));
+	for (auto it = uniforms.vec4.begin(); it != uniforms.vec4.end(); ++it)
+		glUniform4fv(glGetUniformLocation(_ID, it->first), it->second.size(), glm::value_ptr(it->second.data()[0]));
+	for (auto it = uniforms.mat4.begin(); it != uniforms.mat4.end(); ++it)
+		glUniformMatrix4fv(glGetUniformLocation(_ID, it->first), it->second.size(), GL_FALSE, glm::value_ptr(it->second.data()[0]));
 }
 
 void Shader::unbind() const { glUseProgram(0); }

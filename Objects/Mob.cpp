@@ -14,19 +14,18 @@ Mob::Mob(MeshData data, Scene* scene)
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
-void Mob::animate(const Shader& shader, Uniforms uni){
+void Mob::animate(){
     facePlayer();
     _velocity += _direction * _speed;
     move();
-    uni.add_uni("flags", _flags);
-    std::cout << "uTime: " << (float)glfwGetTime() << std::endl;
-    uni.add_uni("uTime", (float)glfwGetTime());
-    std::cout << "Uni uTime: " << uni.f1.find("uTime")->second << std::endl;
-    uni = draw(shader, uni);
+    // std::cout << "uTime: " << (float)glfwGetTime() << std::endl;
+    // uni.add_uni("uTime", (float)glfwGetTime());
+    // std::cout << "Uni uTime: " << uni.f1.find("uTime")->second << std::endl;
+    draw();
     float barSize = (float)_health / _maxHealth;
-    uni.add_uni("scale", glm::vec3(barSize, 1.0f, barSize));
-    uni.add_uni("pos", _position + glm::vec3(0.0f, 2.5f, 0.0f));
-    _scene->detail(0).draw(shader, uni);
+    // uni.add_uni("scale", glm::vec3(barSize, 1.0f, barSize));
+    // uni.add_uni("pos", _position + glm::vec3(0.0f, 2.5f, 0.0f));
+    // _scene->detail(0).draw();
 }
 
 void Mob::damage(short dmg){

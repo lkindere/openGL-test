@@ -10,7 +10,7 @@ class Mob : public Object
 		Mob(MeshData data, Scene* scene);
         ~Mob();
         
-        void animate(const Shader& shader, Uniforms uni = Uniforms());
+        void animate();
         void damage(short dmg);
 
     private:

@@ -51,7 +51,7 @@ void Player::attack(){
     }
 }
 
-void Player::animate(const Shader& shader, Uniforms uni){
+void Player::animate(){
     input();
     move();
     if (_scene->camera().mode() == first_person){
@@ -64,10 +64,10 @@ void Player::animate(const Shader& shader, Uniforms uni){
         _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(_scene->camera().yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
         postTransformHands();
     }
-    uni = draw(shader);
+    draw();
     if (_weapon){
-        weaponTransformation(uni);
-        _weapon->animate(shader, uni);
+        weaponTransformation();
+        _weapon->animate();
     }
 }
 
@@ -83,7 +83,7 @@ void Player::postTransformHands(){
     _model.findNode("ArmTop.R")->postTransform(limbRotR);
 }
 
-void Player::weaponTransformation(Uniforms& uni){
+void Player::weaponTransformation(){
     const NodeData* limb = _model.findNode("Palm.L");
     const glm::mat4& transformation = _model.getBoneMatrix(limb->ID());
     glm::mat4 rot = {

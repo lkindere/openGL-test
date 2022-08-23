@@ -11,18 +11,17 @@ class Player : public Object
 {
 	public:
 		Player(MeshData data, Scene* scene);
-        
-
+ 
 		void setWeapon(Weapon* wep);
 
-        void animate(const Shader& shader, Uniforms uni = Uniforms());
+        void animate();
 
     private:
 		void input();
         void attack();
         void postTransformHands();
 
-        void weaponTransformation(Uniforms& uni);
+        void weaponTransformation();
 
 	private:
 		Weapon* _weapon = nullptr;

@@ -12,8 +12,4 @@ class Sword : public Weapon
 
         ~Sword() {}
 
-		void animate(const Shader& shader, Uniforms uni = Uniforms()){
-            draw(shader, uni);
-		}
-
 };

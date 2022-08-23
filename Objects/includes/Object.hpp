@@ -14,9 +14,12 @@ class Object
 
     public:
         void move();
-        Uniforms draw(const Shader& shader, Uniforms uni = Uniforms());
-        virtual void animate(const Shader& shader, Uniforms uni = Uniforms());
+        void draw();
+        virtual void animate();
         virtual void damage(short dmg);
+
+    protected:
+        virtual void setDefaultUniforms();
 
     private:
         bool checkCollision();
@@ -30,6 +33,7 @@ class Object
         const glm::vec3&    front() const ;
         const glm::vec3&    position() const ;
         const glm::vec3&    direction() const ;
+        const glm::vec3&    scale() const ;
         const glm::mat4&    rotation() const ;
         const Model&        model() const ;
         const Hitbox&       hitbox() const ;
@@ -44,6 +48,8 @@ class Object
         void setPosition(float x, float y, float z);
         void setDirection(const glm::vec3& vec);
         void setDirection(float x, float y, float z);
+        void setScale(const glm::vec3& vec);
+        void setScale(float x, float y, float z);
         void setRotation(const glm::mat4& mat);
         void setHitboxPosition(const glm::vec3& vec, const glm::mat4& rotation = glm::mat4(1.0f));
         void setHitboxPosition(float x, float y, float z, const glm::mat4& rotation = glm::mat4(1.0f));
@@ -56,6 +62,7 @@ class Object
         glm::vec3   _front = glm::vec3(0.0f, 0.0f, 1.0f);
         glm::vec3   _position = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::vec3   _direction = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3   _scale = glm::vec3(1.0f);
         glm::mat4   _rotation = glm::mat4(1.0f);
 
     protected:
@@ -70,7 +77,8 @@ class Object
         std::string     _name;
         bool            _collide = false;
 
-        Scene*  _scene = nullptr;
-		Model   _model;
-        Hitbox  _hitbox;
+        Scene*      _scene = nullptr;
+        Uniforms    _uniforms;
+		Model       _model;
+        Hitbox      _hitbox;
 };

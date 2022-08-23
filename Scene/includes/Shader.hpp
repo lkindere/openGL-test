@@ -16,22 +16,28 @@
 
 #include "Uniforms.hpp"
 
+enum shader_type
+{
+    VERTEX = 0x8B31,
+    FRAGMENT = 0x8B30,
+    GEOMETRY = 0x8DD9,
+};
+
 class Shader {
     public:
-		Shader(const char* vertPath, const char* fragPath, const Uniforms& defaults);
+		Shader(const char* vertPath, const char* fragPath, const char* geoPath = nullptr);
     
     public:
         //Binds current shader and returns default uniforms
-		const Uniforms& bind() const;
+		void bind() const;
         //Exports uniforms to shader
-        void update() const ;
+        // void update() const ;
         void update(const Uniforms& uniforms) const;
 		void unbind() const;
 		void destroy();
 
-        void setRecalculate(Uniforms (*f) (void)){
-            _recalculate = f;
-        }
+    private:
+        GLuint compileShader(shader_type type, const char* path);
 
     public:
 		GLuint ID() const;
@@ -39,5 +45,4 @@ class Shader {
 	private:
         GLuint      _ID;
         Uniforms    _default;
-        Uniforms (*_recalculate) (void);
 };

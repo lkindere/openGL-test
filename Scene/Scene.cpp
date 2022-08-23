@@ -5,15 +5,16 @@ Scene::Scene() {}
 
 
 void Scene::animate(){
+
     for (auto i = 0; i < _lights.size(); ++i)
-        _lights[i]->animate(_shaders[_lights[i]->shader()]);
-    _player->animate(_shaders[_player->shader()]);
+        _lights[i]->animate();
+    _player->animate();
     for (auto i = 0; i < _objects.size(); ++i)
-        _objects[i]->animate(_shaders[_objects[i]->shader()]);
+        _objects[i]->animate();
 }
 
-int Scene::loadShader(const char* vert, const char* frag, const Uniforms& uniforms){
-    _shaders.push_back(Shader(vert, frag, uniforms));
+int Scene::loadShader(const char* vert, const char* frag, const char* geo){
+    _shaders.push_back(Shader(vert, frag, geo));
     return _shaders.size() - 1;
 }
 

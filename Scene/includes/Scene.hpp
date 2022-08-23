@@ -26,7 +26,7 @@ class Scene
         Scene();
 
         void animate();
-        int loadShader(const char* vert, const char* frag, const Uniforms& uniforms);
+        int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
         int loadObject(object_types type, const char* path, const LoadingParameters& params = LoadingParameters());
         void animate() const;
         

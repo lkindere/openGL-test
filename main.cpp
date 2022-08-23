@@ -45,35 +45,6 @@ void Init() {
 #endif
 }
 
-Uniforms default_uniforms(){
-    Uniforms uniDefault;
-    uniDefault.flags = 0;
-    uniDefault.add_uni("uTime", 0.0f);
-    uniDefault.add_uni("pos", glm::vec3(0.0f));
-    uniDefault.add_uni("scale", glm::vec3(1.0f));
-    uniDefault.add_uni("camPos", glm::mat4(1.0f));
-    uniDefault.add_uni("rotation", glm::mat4(1.0f));
-    uniDefault.add_uni("BoneMatrices", std::vector<glm::mat4>(20, glm::mat4(0.0f)));
-    return uniDefault;
-}
-
-Uniforms light_uniforms(){
-	Uniforms lightDefault;
-    lightDefault.flags = 1;
-    lightDefault.add_uni("pos", glm::vec3(0.0f));
-    lightDefault.add_uni("scale", glm::vec3(1.0f));
-    lightDefault.add_uni("lightColor", glm::vec4(1.0f));
-    lightDefault.add_uni("camPos", glm::mat4(1.0f));
-    return lightDefault;
-}
-
-Uniforms hitbox_uniforms(){
-    Uniforms hitboxDefault;
-    hitboxDefault.add_uni("pos", glm::vec3(0.0f));
-    hitboxDefault.add_uni("camPos", glm::mat4(1.0f));
-    return hitboxDefault;
-}
-
 // Mob* inputPath(){
 //     std::string str;
 //     std::cout << "Input file: " << std::endl;
@@ -88,9 +59,9 @@ Shader* g_hitboxShader;
 int main(void) {
     Init();
     Scene scene;
-    int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", default_uniforms());
-    int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag", light_uniforms());
-    int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag", hitbox_uniforms());
+    int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag");
+    int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag");
+    int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag");
     g_hitboxShader = &scene.shader(hitboxShader);
     
     LoadingParameters params;
@@ -145,16 +116,6 @@ int main(void) {
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.animate();
-		// scene.light(0).animate(scene.shader(lightShader));
-		// scene.player().animate(scene.shader(defaultShader));
-		// scene.object(mobID).animate(scene.shader(defaultShader));
-        // scene.object(floorID).animate(scene.shader(defaultShader));
-        // std::cout << "Collision:\n";
-        // std::cout << player.checkCollision(mob) << std::endl;
-        // if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS){
-        //     delete mob;
-        //     mob = inputPath();
-        // }
         if (glfwGetKey(settings.window(), GLFW_KEY_1) == GLFW_PRESS)
             scene.camera().setMode(first_person);
         if (glfwGetKey(settings.window(), GLFW_KEY_2) == GLFW_PRESS)

@@ -9,7 +9,10 @@ class Light : public Object
 
     public:
 		void addTarget(Shader& target);
-        void animate(const Shader& shader, Uniforms uni = Uniforms());
+        void animate();
+
+    private:
+        void setDefaultUniforms();
 
 	private:
 		std::vector<Shader>	_targets;
