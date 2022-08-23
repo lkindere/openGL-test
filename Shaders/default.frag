@@ -4,32 +4,33 @@ const int hasTexture = 1;
 
 const vec4 ambient = vec4(0.3f);
 
-out vec4 FragColor;
-
-in mat4 _camPos;
-in vec3 _pos;
-in vec3 _normal;
-in vec2 _texCoords;
-in vec4 _color;
-
 uniform int flags;
-
+uniform mat4 camPos;
 uniform vec4 lightColor;
 uniform vec3 lightPos;
-
 uniform sampler2D image;
+
+in data
+{
+    vec3 pos;
+    vec3 normal;
+    vec4 color;
+    vec2 texCoords;
+} data_in;
+
+out vec4 FragColor;
 
 void main()
 {
 	vec3 lpos = lightPos;
-	vec3 normal = normalize(_normal);
-	vec3 lightDir = normalize(lpos - _pos);
+	vec3 normal = normalize(data_in.normal);
+	vec3 lightDir = normalize(lpos - data_in.pos);
 
-	float diffuse = max(dot(_normal, lightDir), 0.0f);
+	float diffuse = max(dot(data_in.normal, lightDir), 0.0f);
 
     vec4 texColor = vec4(1.0f);
     if ((flags & hasTexture) != 0)
-        texColor = texture(image, _texCoords);
+        texColor = texture(image, data_in.texCoords);
     
-	FragColor = _color * lightColor * diffuse + ambient * texColor;
+	FragColor = data_in.color * lightColor * diffuse + ambient * texColor;
 }

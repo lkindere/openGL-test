@@ -59,7 +59,7 @@ Shader* g_hitboxShader;
 int main(void) {
     Init();
     Scene scene;
-    int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag");
+    int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", "Shaders/default.geom");
     int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag");
     int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag");
     g_hitboxShader = &scene.shader(hitboxShader);

@@ -23,9 +23,9 @@ void Mob::animate(){
     // std::cout << "Uni uTime: " << uni.f1.find("uTime")->second << std::endl;
     draw();
     float barSize = (float)_health / _maxHealth;
-    // uni.add_uni("scale", glm::vec3(barSize, 1.0f, barSize));
-    // uni.add_uni("pos", _position + glm::vec3(0.0f, 2.5f, 0.0f));
-    // _scene->detail(0).draw();
+    _uniforms.add_uni("pos", _position + glm::vec3(0.0f, 2.5f, 0.0f));
+    _uniforms.add_uni("scale", glm::vec3((float)_health / _maxHealth, 1.0f, (float)_health / _maxHealth));
+    _scene->detail(0).draw(_scene->shader(_shader), _uniforms);
 }
 
 void Mob::damage(short dmg){

@@ -14,7 +14,8 @@ Object::Object(MeshData* data, Scene* scene)
 }
 
 void Object::setDefaultUniforms(){
-    _uniforms.flags = 0;
+    _uniforms.flags = _flags;
+    _uniforms.add_uni("uTime", (float)glfwGetTime());
     _uniforms.add_uni("pos", _position);
     _uniforms.add_uni("scale", _scale);
     _uniforms.add_uni("rotation", _rotation);

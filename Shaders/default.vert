@@ -13,20 +13,20 @@ const int deformOn = 2;
 const int MAX_BONES = 30;
 uniform mat4 BoneMatrices[MAX_BONES];
 
-out mat4 _camPos;
-out vec3 _pos;
-out vec3 _normal;
-out vec4 _color;
-out vec2 _texCoords;
-
 uniform float uTime;
 uniform int flags;
-
 uniform vec3 pos;
 uniform vec3 scale;
-
 uniform mat4 camPos;
 uniform mat4 rotation;
+
+out data
+{
+    vec3 pos;
+    vec3 normal;
+    vec4 color;
+    vec2 texCoords;
+} data_out;
 
 mat4 check_bones(){
     if (aWeights[0] == 0.0f)
@@ -58,9 +58,8 @@ void main()
 
     gl_Position = camPos * model;
 
-	_pos = vec3(model.xyz);
-	_normal = normal.xyz;
-	_color = aColor;
-    _texCoords = aTextures;
-	_camPos = camPos;
+	data_out.pos = vec3(model.xyz);
+	data_out.normal = normal.xyz;
+	data_out.color = aColor;
+    data_out.texCoords = aTextures;
 }

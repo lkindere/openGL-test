@@ -5,6 +5,7 @@ add_library(Objects
     Light.cpp
     Object.cpp
     Mob.cpp
+    ../Scene/Uniforms.cpp
 )
 
 add_definitions(-std=c++11)

@@ -7,7 +7,7 @@ Light::Light(MeshData data, Scene* scene)
 }
 
 void Light::setDefaultUniforms(){
-    _uniforms.flags = 0;
+    _uniforms.flags = _flags;
     _uniforms.add_uni("pos", _position);
     _uniforms.add_uni("scale", _scale);
     _uniforms.add_uni("lightColor", _color);
