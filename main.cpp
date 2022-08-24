@@ -54,6 +54,8 @@ void Init() {
 //     return new Mob(importer(str.data()));
 // }
 
+#include "Spawner.hpp"
+
 Shader* g_hitboxShader;
 
 int main(void) {
@@ -64,26 +66,13 @@ int main(void) {
     int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag");
     g_hitboxShader = scene.shader(hitboxShader);
     
-    LoadingParameters params;
-    params.locateBones = {
-        "ArmBot.L",
-        "ArmBot.R",
-        "ArmTop.L",
-        "ArmTop.R",
-        "Palm.L",
-        "Palm.R",
-    };
-
     scene.camera().updateProjection();
-    scene.loadObject(PLAYER, "Models/player.fbx", params);
+    scene.loadObject(PLAYER, "Models/player.fbx");
     scene.player()->setWeapon(new Sword(importer("Models/sword.fbx"), &scene, -1));
     int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
     int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID2 = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID3 = scene.loadObject(MOB, "Models/enemy.fbx");
-    int mobID4 = scene.loadObject(MOB, "Models/enemy.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)
         scene.object(i)->setShader(defaultShader);
     scene.player()->setShader(defaultShader);
@@ -94,27 +83,15 @@ int main(void) {
     scene.object(wallID)->setPosition(5.0f, 0.0f, 5.0f);
     scene.object(wallID)->setName("Wall");
     scene.object(mobID)->setPosition(5.0f, 0.0f, 5.0f);
-    scene.object(mobID)->setCollide(true);
-        scene.object(mobID2)->setPosition(-5.0f, 0.0f, -5.0f);
-        scene.object(mobID2)->setCollide(true);
-            scene.object(mobID3)->setPosition(-5.0f, 0.0f, 5.0f);
-            scene.object(mobID3)->setCollide(true);
-                scene.object(mobID4)->setPosition(5.0f, 0.0f, -5.0f);
-                scene.object(mobID4)->setCollide(true);
+
     scene.object(wallID)->setCollide(true);
     scene.object(wallID)->setWeight(1.0f);
     scene.player()->setCollide(true);
 
-
-    int mobID5 = scene.loadInstance(MOB, mobID);
-    int mobID6 = scene.loadInstance(MOB, mobID);
-    int mobID7 = scene.loadInstance(MOB, mobID);
-    scene.object(mobID5)->setPosition(2.5f, 50.0f, 2.5f);
-    scene.object(mobID5)->setCollide(true);
-    scene.object(mobID6)->setPosition(10.0f, 100.0f, 10.0f);
-    scene.object(mobID6)->setCollide(true);
-    scene.object(mobID7)->setPosition(20.0f, 200.0f, 20.0f);
-    scene.object(mobID7)->setCollide(true);
+    Spawner spawner(scene.object(mobID)->model(), &scene);
+    spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+    spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
+    scene.addSpawner(&spawner);
 
     int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     

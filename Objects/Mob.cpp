@@ -9,15 +9,13 @@ glm::vec3 noY(const glm::vec3& vec){
 
 Mob::Mob(MeshData data, Scene* scene, int ID)
     : Object(&data, scene, ID) {
-    _model->setAnim(0);
-    _model->setLoop(true);
+    _collide = true;
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
 Mob::Mob(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {
-    _model->setAnim(0);
-    _model->setLoop(true);
+    _collide = true;
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
@@ -31,7 +29,6 @@ bool Mob::checkDeath(){
     if (lastTick != 0)
         currentTick += (time - lastTick);
     lastTick = time;
-    std::cout << "uTime: " << currentTick << std::endl;
     _uniforms.add_uni("uTime", currentTick);
     draw();
     if (currentTick > 1.0f)

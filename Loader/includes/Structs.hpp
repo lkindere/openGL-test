@@ -11,12 +11,6 @@
 
 #include <iostream>
 
-//All names matching locateBones will calculate average position
-struct LoadingParameters
-{
-    std::vector<std::string>    locateBones;
-};
-
 struct KeyPosition
 {
 	glm::vec3	position;
@@ -66,8 +60,8 @@ struct BoneData
 {
     short                       ID;
     glm::mat4                   offset;
+    glm::vec3                   position;
     std::vector<AnimData>       animations;
-    std::unique_ptr<glm::vec3>  position = nullptr;
     std::unique_ptr<glm::mat4>  postTransform = nullptr;
 };
 
@@ -84,8 +78,8 @@ struct NodeData
             return bone->ID;
         }
         glm::vec3 position() const {
-            assert(bone != nullptr && bone->position != nullptr);
-            return *(bone->position);
+            assert(bone != nullptr);
+            return bone->position;
         }
         void postTransform(const glm::mat4& transform) const {
             assert(bone != nullptr);

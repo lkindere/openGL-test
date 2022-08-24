@@ -4,13 +4,11 @@
 Object::Object(MeshData data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
         _scene(scene), _ID(ID) {
-    _model->setHitboxPosition(_position);
 }
 
 Object::Object(MeshData* data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
         _scene(scene), _ID(ID) {
-    _model->setHitboxPosition(_position);
 }
 
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
@@ -23,12 +21,12 @@ void Object::setDefaultUniforms(){
     _uniforms.add_uni("scale", _scale);
     _uniforms.add_uni("rotation", _rotation);
     _uniforms.add_uni("camPos", _scene->camera().matrix());
+    _uniforms.add_uni("BoneMatrices", _model->getMatrices());
 }
 
 void Object::move(){
     if (_position.y > 0.0f)
         _velocity.y -= _scene->gravity() * _weight;
-    _model->setHitboxPosition(_position + _velocity, _rotation);
     checkCollision();
     _position += _velocity;
     if (_position.y < 0.0f){
@@ -42,12 +40,11 @@ void Object::animate(){
     draw();
 }
 
-void Object::damage(short dmg) { return; }
+void Object::damage(short dmg) {}
 
 void Object::draw(){
     setDefaultUniforms();
     _model->draw(*_scene->shader(_shader), _uniforms);
-    _model->setHitboxPosition(_position);
     hitbox().draw(_uniforms);
 }
 
@@ -72,15 +69,20 @@ bool Object::checkCollision(){
         return false;
     bool collision = false;
     if (_scene->player() != this){
-        if (hitbox().checkCollision(_scene->player()->hitbox()) == true){
+        if (hitbox().checkCollision(*this, *_scene->player()) == true){
             collisionPhysics(*_scene->player());
             collision = true;
+            // if (collision){
+            //     Mob* mob = dynamic_cast<Mob*>(this);
+            //     if (mob != nullptr)
+            //         mob->_model->setAnim(0);
+            // }
         }
     }
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false || it->second == this)
             continue ;
-        if (hitbox().checkCollision(it->second->hitbox()) == false)
+        if (hitbox().checkCollision(*this, *it->second) == false)
             continue ;
         collisionPhysics(*it->second);
         collision = true;
@@ -96,6 +98,7 @@ int                 Object::flags() const { return _flags; }
 const glm::vec3&    Object::front() const { return _front; }
 const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
+const glm::vec3&    Object::velocity() const { return _velocity; }
 const glm::vec3&    Object::scale() const { return _scale; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
 const Hitbox&       Object::hitbox() const { return _model->hitbox(); }
@@ -129,12 +132,10 @@ void    Object::setFront(float x, float y, float z){
 
 void    Object::setPosition(const glm::vec3& vec){
     _position = vec;
-    _model->setHitboxPosition(_position);
 }
 
 void    Object::setPosition(float x, float y, float z){
     _position.x = x; _position.y = y; _position.z = z;
-    _model->setHitboxPosition(x, y, z);
 }
 
 void    Object::setDirection(const glm::vec3& vec){

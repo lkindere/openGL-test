@@ -9,6 +9,8 @@
 #include "Mob.hpp"
 #include "Light.hpp"
 
+#include "Spawner.hpp"
+
 #include "debug.hpp"
 
 enum object_types
@@ -33,16 +35,22 @@ class Scene
 
         void animate();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
-        int loadObject(object_types type, const char* path, const LoadingParameters& params = LoadingParameters());
+        int loadObject(object_types type, const char* path);
         int loadInstance(object_types type, int modelID);
         void animate() const;
+    
+    public:
+        //Spawner
+        int addSpawner(Spawner* spawner);
+        int getID() const;
+        int addObject(Object* object);
 
     private:
         void checkRemovals();
-        int loadLight(const char* path, const LoadingParameters& params);
-        int loadStatic(const char* path, const LoadingParameters& params);
-        int loadMob(const char* path, const LoadingParameters& params);
-        int loadDetail(const char* path, const LoadingParameters& params);
+        int loadLight(const char* path);
+        int loadStatic(const char* path);
+        int loadMob(const char* path);
+        int loadDetail(const char* path);
         int loadLightInstance(int modelID);
         int loadStaticInstance(int modelID);
         int loadMobInstance(int modelID);
@@ -55,12 +63,14 @@ class Scene
         Player* player();
         Object* object(int ID);
         Model* detail(int ID);
+        Spawner* spawner(int ID);
         Shader* shader(int ID);
         const Camera& camera() const;
         const Player* player() const;
         const Object* object(int ID) const;
-        const Shader* shader(int ID) const;
         const Model* detail(int ID) const;
+        const Spawner* spawner(int ID) const;
+        const Shader* shader(int ID) const;
 
         float& gravity();
         float gravity() const;
@@ -84,6 +94,7 @@ class Scene
         Player*                 _player = nullptr;
         std::map<int, Object*>  _objects;
         std::map<int, Model*>   _details;
+        std::map<int, Spawner*> _spawners;
         std::vector<Shader>     _shaders;
         std::vector<int>        _removals;
 };

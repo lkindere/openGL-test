@@ -18,16 +18,12 @@ class Model
             _animator.init(data);
         }
 
-        ~Model(){
-            
-        }
+        ~Model(){}
 
-		//All required uniforms need to be set beforehand from calling class
 		void draw(const Shader& shader, Uniforms uniforms = Uniforms()){
             const std::vector<glm::mat4> boneMatrices = _animator.updateMatrices();
             if (_VAO.hasTexture())
                 uniforms.flags |= hasTextures;
-            uniforms.add_uni("BoneMatrices", boneMatrices);
 			_VAO.bind();
 			shader.bind();
 			shader.update(uniforms);
@@ -50,15 +46,8 @@ class Model
         int anim() const { return _animator.anim(); }
         bool loop() const { return _animator.loop(); }
 
-        void setHitboxPosition(const glm::vec3& position, const glm::mat4& rotation = glm::mat4(1.0f)){
-            _hitbox.setPosition(position, rotation);
-        }
-        
-        void setHitboxPosition(float x, float y, float z, const glm::mat4& rotation = glm::mat4(1.0f)){
-            _hitbox.setPosition(x, y, z, rotation);
-        }
-
         const Hitbox& hitbox() const { return _hitbox; }
+        const std::vector<glm::mat4>& getMatrices() { return _animator.updateMatrices(); } 
 
 	private:
 		ArrayObject _VAO;

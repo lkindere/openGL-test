@@ -40,7 +40,7 @@ static std::vector<Vert> process_verts(const aiMesh* mesh){
 		Vert vert;
 		vert.vertices = toGLvec(mesh->mVertices[i]);
 		vert.normals = toGLvec(mesh->mNormals[i]);
-        mesh->HasVertexColors(0) ?  //No need for colors in the future if everything is rexturized
+        mesh->HasVertexColors(0) ?  //No need for colors in the future if everything is texturized
 		    vert.colors = toGLvec(mesh->mColors[0][i])
             :   vert.colors = glm::vec4(1.0f);
         vert.textures = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
@@ -105,11 +105,7 @@ static std::vector<AnimData> process_animations(const aiNode* node, const aiScen
     return animations;
 }
 
-std::unique_ptr<glm::vec3> process_position(const aiBone* bone, const aiMesh* mesh,
-    const std::vector<std::string>& locateBones)
-{
-    if (std::find(locateBones.begin(), locateBones.end(), bone->mName.data) == locateBones.end())
-        return nullptr;
+glm::vec3 process_position(const aiBone* bone, const aiMesh* mesh){
     std::vector<unsigned int> vertices;
     vertices.reserve(bone->mNumWeights);
     std::cout << "Bone: " << bone->mName.data << std::endl;
@@ -119,12 +115,10 @@ std::unique_ptr<glm::vec3> process_position(const aiBone* bone, const aiMesh* me
     for (auto i = 0; i < vertices.size(); ++i)
         result += mesh->mVertices[vertices[i]];
     result /= vertices.size();
-    return std::unique_ptr<glm::vec3>(new glm::vec3(toGLvec(result)));
+    return toGLvec(result);
 }
 
-static std::unique_ptr<BoneData> process_bone(const aiNode* node, const aiScene* scene, const aiMesh* mesh,
-    const LoadingParameters& parameters)
-{
+static std::unique_ptr<BoneData> process_bone(const aiNode* node, const aiScene* scene, const aiMesh* mesh){
     for (auto i = 0; i < mesh->mNumBones; ++i){
         if (mesh->mBones[i]->mName == node->mName){
             std::cout << "Bone: " << node->mName.data << " ID: " << i << std::endl;
@@ -132,29 +126,27 @@ static std::unique_ptr<BoneData> process_bone(const aiNode* node, const aiScene*
             bone->ID = i;
             bone->offset = toGLmat(mesh->mBones[i]->mOffsetMatrix);
             bone->animations = process_animations(node, scene);
-            bone->position = process_position(mesh->mBones[i], mesh, parameters.locateBones);
+            bone->position = process_position(mesh->mBones[i], mesh);
             return bone;
         }
     }
     return nullptr;
 }
 
-static void recursive_nodes(NodeData& node, const aiNode* root, const aiScene* scene, const aiMesh* mesh,
-    const LoadingParameters& parameters)
+static void recursive_nodes(NodeData& node, const aiNode* root, const aiScene* scene, const aiMesh* mesh)
 {
     node.name = root->mName.data;
-    node.bone = process_bone(root, scene, mesh, parameters);
+    node.bone = process_bone(root, scene, mesh);
     node.transformation = toGLmat(root->mTransformation);
     node.children.resize(root->mNumChildren);
     for (auto i = 0; i < root->mNumChildren; ++i)
-        recursive_nodes(node.children[i], root->mChildren[i], scene, mesh, parameters);
+        recursive_nodes(node.children[i], root->mChildren[i], scene, mesh);
 }
 
-static NodeData process_nodes(const aiScene* scene, const aiMesh* mesh,
-    const LoadingParameters& parameters)
+static NodeData process_nodes(const aiScene* scene, const aiMesh* mesh)
 {
     NodeData nodes;
-    recursive_nodes(nodes, scene->mRootNode, scene, mesh, parameters);
+    recursive_nodes(nodes, scene->mRootNode, scene, mesh);
     return nodes;
 }
 
@@ -206,7 +198,7 @@ HitboxData process_hitbox(const aiScene* scene){
     return data;
 }
 
-MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters){
+MeshData process_mesh(const aiScene* scene){
     const aiMesh* mesh = scene->mMeshes[0];
 
 	MeshData    data;
@@ -214,7 +206,7 @@ MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters)
     data.verts = process_verts(mesh);
     data.texture = process_textures(scene);
     data.timers = process_timers(scene);
-    data.nodes = process_nodes(scene, mesh, parameters);
+    data.nodes = process_nodes(scene, mesh);
     data.hitbox = process_hitbox(scene);
 	return data;
 }

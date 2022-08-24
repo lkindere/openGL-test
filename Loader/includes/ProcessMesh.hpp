@@ -15,4 +15,4 @@
 #include "Structs.hpp"
 #include "Conversions.hpp"
 
-MeshData process_mesh(const aiScene* scene, const LoadingParameters& parameters);
+MeshData process_mesh(const aiScene* scene);

@@ -5,6 +5,8 @@ Scene::Scene() {}
 
 
 void Scene::checkRemovals(){
+    for (auto i = 0; i < _spawners.size(); ++i)
+        _spawners[i]->checkRemovals(_removals);
     for (auto i = 0; i < _removals.size(); ++i){
         auto it = _objects.find(_removals[i]);
         delete it->second;
@@ -14,6 +16,8 @@ void Scene::checkRemovals(){
 }
 
 void Scene::animate(){
+    for (auto i = 0; i < _spawners.size(); ++i)
+        _spawners[i]->animate();
     _player->animate();
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
         it->second->animate();
@@ -26,20 +30,20 @@ int Scene::loadShader(const char* vert, const char* frag, const char* geo){
 }
 
 //Loads an object and returns object ID
-int Scene::loadObject(object_types type, const char* path, const LoadingParameters& params){
+int Scene::loadObject(object_types type, const char* path){
     switch(type){
         case PLAYER:
             assert(!_player);
-            _player = new Player(importer(path, params), this);
+            _player = new Player(importer(path), this);
             return -1;
         case LIGHT:
-            return (loadLight(path, params));
+            return (loadLight(path));
         case STATIC:
-            return (loadStatic(path, params));
+            return (loadStatic(path));
         case MOB:
-            return (loadMob(path, params));
+            return (loadMob(path));
         case DETAIL:
-            return (loadDetail(path, params));
+            return (loadDetail(path));
         default:
             assert(0);
     }
@@ -53,42 +57,40 @@ int Scene::loadInstance(object_types type, int modelID){
             return (loadStaticInstance(modelID));
         case MOB:
             return (loadMobInstance(modelID));
-        // case DETAIL:
-        //     return (loadDetail(path, params));
         default:
             assert(0);
     }
 }
 
-int Scene::loadLight(const char* path, const LoadingParameters& params){
+int Scene::loadLight(const char* path){
     int ID = 0;
     if (_objects.size() != 0)
         ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Light(importer(path, params), this, ID)));
+    _objects.insert(std::make_pair(ID, new Light(importer(path), this, ID)));
     return ID;
 }
 
-int Scene::loadStatic(const char* path, const LoadingParameters& params){
+int Scene::loadStatic(const char* path){
     int ID = 0;
     if (_objects.size() != 0)
         ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Object(importer(path, params), this, ID)));
+    _objects.insert(std::make_pair(ID, new Object(importer(path), this, ID)));
     return ID;
 }
 
-int Scene::loadMob(const char* path, const LoadingParameters& params){
+int Scene::loadMob(const char* path){
     int ID = 0;
     if (_objects.size() != 0)
         ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Mob(importer(path, params), this, ID)));
+    _objects.insert(std::make_pair(ID, new Mob(importer(path), this, ID)));
     return ID;
 }
 
-int Scene::loadDetail(const char* path, const LoadingParameters& params){
+int Scene::loadDetail(const char* path){
     int ID = 0;
     if (_details.size() != 0)
         ID = _details.rbegin()->first + 1;
-    _details.insert(std::make_pair(ID, new Model(importer(path, params))));
+    _details.insert(std::make_pair(ID, new Model(importer(path))));
     return ID;
 }
 
@@ -116,6 +118,30 @@ int Scene::loadMobInstance(int modelID){
     return ID;
 }
 
+int Scene::addSpawner(Spawner* spawner){
+    assert(spawner != nullptr);
+    int ID = 0;
+    if (_spawners.size() != 0)
+        ID = _spawners.rbegin()->first + 1;
+    _spawners.insert(std::make_pair(ID, spawner));
+    return ID;
+}
+
+int Scene::addObject(Object* object){
+    assert(object != nullptr);
+    int ID = 0;
+    if (_objects.size() != 0)
+        ID = _objects.rbegin()->first + 1;
+    _objects.insert(std::make_pair(ID, object));
+    return ID;
+}
+
+int Scene::getID() const{
+    if (_objects.size() == 0)
+        return 0;
+    return _objects.rbegin()->first + 1;
+}
+
 void Scene::removeObject(int ID){
     _removals.push_back(ID);
 }
@@ -136,16 +162,23 @@ Object* Scene::object(int ID){
     return it->second;
 }
 
-Shader* Scene::shader(int ID) {
-    assert(ID < _shaders.size() && ID >= 0);
-    return &_shaders[ID];
-}
-
 Model* Scene::detail(int ID) {
     auto it = _details.find(ID);
     if (it == _details.end())
         return nullptr;
     return it->second;
+}
+
+Spawner* Scene::spawner(int ID) {
+    auto it = _spawners.find(ID);
+    if (it == _spawners.end())
+        return nullptr;
+    return it->second;
+}
+
+Shader* Scene::shader(int ID) {
+    assert(ID < _shaders.size() && ID >= 0);
+    return &_shaders[ID];
 }
 
 const Camera& Scene::camera() const {
@@ -160,6 +193,13 @@ const Player* Scene::player() const {
 const Object* Scene::object(int ID) const {
     auto it = _objects.find(ID);
     if (it == _objects.end())
+        return nullptr;
+    return it->second;
+}
+
+const Spawner* Scene::spawner(int ID) const {
+    auto it = _spawners.find(ID);
+    if (it == _spawners.end())
         return nullptr;
     return it->second;
 }

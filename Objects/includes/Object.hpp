@@ -39,6 +39,7 @@ class Object
         const glm::vec3&    front() const ;
         const glm::vec3&    position() const ;
         const glm::vec3&    direction() const ;
+        const glm::vec3&    velocity() const ;
         const glm::vec3&    scale() const ;
         const glm::mat4&    rotation() const ;
         const Hitbox&       hitbox() const ;
@@ -87,4 +88,5 @@ class Object
         Uniforms    _uniforms;
 
 		std::shared_ptr<Model>  _model;
+    
 };

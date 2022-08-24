@@ -5,6 +5,7 @@ add_library(Scene
     Camera.cpp
 	Shader.cpp
     Uniforms.cpp
+    Spawner.cpp
 )
 
 add_definitions(-std=c++11)

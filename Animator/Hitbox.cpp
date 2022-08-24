@@ -1,17 +1,18 @@
 #include "Hitbox.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
+#include "Object.hpp"
 
 extern Shader* g_hitboxShader;
 
 Hitbox::Hitbox(const HitboxData& data)
     : _min(data.min), _max(data.max) {}
 
-bool Hitbox::checkCollision(const Hitbox& target) const {
-    glm::vec3 min = _position + _min;
-    glm::vec3 max = _position + _max;
-    glm::vec3 min2 = target._position + target._min;
-    glm::vec3 max2 = target._position + target._max;
+bool Hitbox::checkCollision(const Object& obj, const Object& target) const {
+    glm::vec3 min = obj.position() + obj.velocity() + _min;
+    glm::vec3 max = obj.position() + obj.velocity() + _max;
+    glm::vec3 min2 = target.position() + target.velocity() + target.hitbox()._min;
+    glm::vec3 max2 = target.position() + target.velocity() + target.hitbox()._max;
     if (!(min.x <= max2.x && max.x >= min2.x))
         return false;
     if (!(min.y <= max2.y && max.y >= min2.y))
@@ -19,30 +20,6 @@ bool Hitbox::checkCollision(const Hitbox& target) const {
     if (!(min.z <= max2.z && max.z >= min2.z))
         return false;
     return true;
-}
-
-// void Hitbox::updateHitbox(const glm::mat4& transformation){
-//     // _transformation = transformation;
-// }
-
-// void Hitbox::init(HitboxData& data){
-//     _min = data.min;
-//     _max = data.max;
-//     // std::cout << "Min:\n";
-//     // printvec(_min);
-//     // std::cout << "Max:\n";
-//     // printvec(_max);
-//     // std::cout << std::endl;
-// }
-
-void Hitbox::setPosition(const glm::vec3& position, const glm::mat4& rotation){
-    _position = position;
-    _rotation = rotation;
-}
-
-void Hitbox::setPosition(float x, float y, float z, const glm::mat4& rotation){
-    _position.x = x; _position.y = y; _position.z = z;
-    _rotation = rotation;
 }
 
 void Hitbox::draw(const Uniforms& uni) const{
