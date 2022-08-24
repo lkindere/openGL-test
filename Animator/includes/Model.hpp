@@ -7,13 +7,19 @@
 #include "Shader.hpp"
 #include "Animator.hpp"
 #include "ArrayObject.hpp"
+#include "Hitbox.hpp"
 
 class Model
 {
 	public:
-        Model(MeshData data, GLenum drawtype = GL_STATIC_DRAW){
+        Model(MeshData data, GLenum drawtype = GL_STATIC_DRAW)
+            : _hitbox(data.hitbox) {
             _VAO.init(data, drawtype);
             _animator.init(data);
+        }
+
+        ~Model(){
+            
         }
 
 		//All required uniforms need to be set beforehand from calling class
@@ -44,7 +50,18 @@ class Model
         int anim() const { return _animator.anim(); }
         bool loop() const { return _animator.loop(); }
 
+        void setHitboxPosition(const glm::vec3& position, const glm::mat4& rotation = glm::mat4(1.0f)){
+            _hitbox.setPosition(position, rotation);
+        }
+        
+        void setHitboxPosition(float x, float y, float z, const glm::mat4& rotation = glm::mat4(1.0f)){
+            _hitbox.setPosition(x, y, z, rotation);
+        }
+
+        const Hitbox& hitbox() const { return _hitbox; }
+
 	private:
 		ArrayObject _VAO;
 		Animator	_animator;
+        Hitbox      _hitbox;
 };

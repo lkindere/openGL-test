@@ -8,6 +8,7 @@ layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
 //Flags
+// const int hasTexture = 1;
 const int deformOn = 2;
 
 const int MAX_BONES = 30;
@@ -37,13 +38,6 @@ mat4 check_bones(){
     return boneTransform;
 }
 
-vec4 deform(vec4 model){
-    model.x += sin(uTime);
-    model.y += cos(uTime);
-    model.z += sin(uTime);
-    return model;
-}
-
 void main()
 {
     vec4 normal = check_bones() * vec4(aNorm, 0.0);
@@ -52,9 +46,6 @@ void main()
 
 	model = rotation * model * vec4(scale, 1.0f);
 	model.xyz += pos.xyz;
-
-    if ((flags & deformOn) != 0)
-        normal = deform(normal);
 
     gl_Position = camPos * model;
 

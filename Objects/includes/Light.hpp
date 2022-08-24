@@ -5,16 +5,15 @@
 class Light : public Object
 {
 	public:
-		Light(MeshData data, Scene* scene);
+		Light(MeshData data, Scene* scene, int ID);
+        Light(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
 
     public:
-		void addTarget(Shader& target);
         void animate();
 
     private:
         void setDefaultUniforms();
 
 	private:
-		std::vector<Shader>	_targets;
 		glm::vec4 _color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 };

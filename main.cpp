@@ -16,8 +16,6 @@ Settings settings;
 void Init_settings(){
 	settings.setWidth(1000);
 	settings.setHeight(1000);
-	// settings.setGravity(0.1);
-    // camera.updateProjection();
 }
 
 void Init() {
@@ -39,6 +37,8 @@ void Init() {
     gladLoadGL(glfwGetProcAddress);
     glViewport(0, 0, settings.width(), settings.height());
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// glDebugMessageCallback(GLdebug_callback, NULL);	//4.3 + 
 #if DEBUG > 0
 	std::cout << glGetString(GL_VERSION) << '\n' << std::endl;
@@ -62,7 +62,7 @@ int main(void) {
     int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", "Shaders/default.geom");
     int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag");
     int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag");
-    g_hitboxShader = &scene.shader(hitboxShader);
+    g_hitboxShader = scene.shader(hitboxShader);
     
     LoadingParameters params;
     params.locateBones = {
@@ -76,9 +76,8 @@ int main(void) {
 
     scene.camera().updateProjection();
     scene.loadObject(PLAYER, "Models/player.fbx", params);
-    scene.player().setWeapon(new Sword(importer("Models/sword.fbx"), &scene));
+    scene.player()->setWeapon(new Sword(importer("Models/sword.fbx"), &scene, -1));
     int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
-    scene.light(lightID).addTarget(scene.shader(defaultShader));
     int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
@@ -86,29 +85,39 @@ int main(void) {
     int mobID3 = scene.loadObject(MOB, "Models/enemy.fbx");
     int mobID4 = scene.loadObject(MOB, "Models/enemy.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)
-        scene.object(i).setShader(defaultShader);
-    scene.player().setShader(defaultShader);
-    scene.light(lightID).setShader(lightShader);
+        scene.object(i)->setShader(defaultShader);
+    scene.player()->setShader(defaultShader);
+    scene.object(lightID)->setShader(lightShader);
 
-    scene.player().setName("Player");
-    scene.object(mobID).setName("Mob");
-    scene.object(wallID).setPosition(5.0f, 0.0f, 5.0f);
-    scene.object(wallID).setName("Wall");
-    scene.object(mobID).setPosition(5.0f, 0.0f, 5.0f);
-    scene.object(mobID).setCollide(true);
-        scene.object(mobID2).setPosition(-5.0f, 0.0f, -5.0f);
-        scene.object(mobID2).setCollide(true);
-            scene.object(mobID3).setPosition(-5.0f, 0.0f, 5.0f);
-            scene.object(mobID3).setCollide(true);
-                scene.object(mobID4).setPosition(5.0f, 0.0f, -5.0f);
-                scene.object(mobID4).setCollide(true);
-    scene.object(wallID).setCollide(true);
-    scene.object(wallID).setWeight(1.0f);
-    scene.player().setCollide(true);
+    scene.player()->setName("Player");
+    scene.object(mobID)->setName("Mob");
+    scene.object(wallID)->setPosition(5.0f, 0.0f, 5.0f);
+    scene.object(wallID)->setName("Wall");
+    scene.object(mobID)->setPosition(5.0f, 0.0f, 5.0f);
+    scene.object(mobID)->setCollide(true);
+        scene.object(mobID2)->setPosition(-5.0f, 0.0f, -5.0f);
+        scene.object(mobID2)->setCollide(true);
+            scene.object(mobID3)->setPosition(-5.0f, 0.0f, 5.0f);
+            scene.object(mobID3)->setCollide(true);
+                scene.object(mobID4)->setPosition(5.0f, 0.0f, -5.0f);
+                scene.object(mobID4)->setCollide(true);
+    scene.object(wallID)->setCollide(true);
+    scene.object(wallID)->setWeight(1.0f);
+    scene.player()->setCollide(true);
+
+
+    int mobID5 = scene.loadInstance(MOB, mobID);
+    int mobID6 = scene.loadInstance(MOB, mobID);
+    int mobID7 = scene.loadInstance(MOB, mobID);
+    scene.object(mobID5)->setPosition(2.5f, 50.0f, 2.5f);
+    scene.object(mobID5)->setCollide(true);
+    scene.object(mobID6)->setPosition(10.0f, 100.0f, 10.0f);
+    scene.object(mobID6)->setCollide(true);
+    scene.object(mobID7)->setPosition(20.0f, 200.0f, 20.0f);
+    scene.object(mobID7)->setCollide(true);
 
     int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     
-    std::cout << "Lights: " << scene.nLights() << std::endl;
     std::cout << "Objects: " << scene.nObjects() << std::endl;
     std::cout << "Shader: " << scene.nShaders() << std::endl;
 

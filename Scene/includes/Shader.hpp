@@ -28,10 +28,7 @@ class Shader {
 		Shader(const char* vertPath, const char* fragPath, const char* geoPath = nullptr);
     
     public:
-        //Binds current shader and returns default uniforms
 		void bind() const;
-        //Exports uniforms to shader
-        // void update() const ;
         void update(const Uniforms& uniforms) const;
 		void unbind() const;
 		void destroy();

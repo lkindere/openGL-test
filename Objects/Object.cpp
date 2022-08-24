@@ -1,21 +1,24 @@
 #include "Object.hpp"
 #include "Scene.hpp"
 
-Object::Object(MeshData data, Scene* scene)
-    : _hitbox(data.hitbox), _model(std::move(data)), _scene(scene){
-    setHitboxPosition(_position);
-    setDefaultUniforms();
+Object::Object(MeshData data, Scene* scene, int ID)
+    : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
+        _scene(scene), _ID(ID) {
+    _model->setHitboxPosition(_position);
 }
 
-Object::Object(MeshData* data, Scene* scene)
-    : _hitbox(data->hitbox), _model(std::move(*data)), _scene(scene){
-    setHitboxPosition(_position);
-    setDefaultUniforms();
+Object::Object(MeshData* data, Scene* scene, int ID)
+    : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
+        _scene(scene), _ID(ID) {
+    _model->setHitboxPosition(_position);
+}
+
+Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
+    : _model(modelptr), _scene(scene), _ID(ID) {
 }
 
 void Object::setDefaultUniforms(){
     _uniforms.flags = _flags;
-    _uniforms.add_uni("uTime", (float)glfwGetTime());
     _uniforms.add_uni("pos", _position);
     _uniforms.add_uni("scale", _scale);
     _uniforms.add_uni("rotation", _rotation);
@@ -25,7 +28,7 @@ void Object::setDefaultUniforms(){
 void Object::move(){
     if (_position.y > 0.0f)
         _velocity.y -= _scene->gravity() * _weight;
-    setHitboxPosition(_position + _velocity, _rotation);
+    _model->setHitboxPosition(_position + _velocity, _rotation);
     checkCollision();
     _position += _velocity;
     if (_position.y < 0.0f){
@@ -43,8 +46,9 @@ void Object::damage(short dmg) { return; }
 
 void Object::draw(){
     setDefaultUniforms();
-    _model.draw(_scene->shader(_shader), _uniforms);
-    _hitbox.draw(_uniforms);
+    _model->draw(*_scene->shader(_shader), _uniforms);
+    _model->setHitboxPosition(_position);
+    hitbox().draw(_uniforms);
 }
 
 void Object::collisionPhysics(Object& target){
@@ -67,23 +71,24 @@ bool Object::checkCollision(){
     if (_collide == false)
         return false;
     bool collision = false;
-    if (&_scene->player() != this){
-        if (hitbox().checkCollision(_scene->player().hitbox()) == true){
-            collisionPhysics(_scene->player());
+    if (_scene->player() != this){
+        if (hitbox().checkCollision(_scene->player()->hitbox()) == true){
+            collisionPhysics(*_scene->player());
             collision = true;
         }
     }
-    for (auto i = 0; i < _scene->nObjects(); ++i){
-        if (&_scene->object(i) == this || _scene->object(i).collide() == false)
+    for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
+        if (it->second->collide() == false || it->second == this)
             continue ;
-        if (hitbox().checkCollision(_scene->object(i).hitbox()) == false)
+        if (hitbox().checkCollision(it->second->hitbox()) == false)
             continue ;
-        collisionPhysics(_scene->object(i));
+        collisionPhysics(*it->second);
         collision = true;
     }
     return collision;
 }
 
+int                 Object::ID() const { return _ID; }
 const std::string&  Object::name() const { return _name; }
 bool                Object::collide() const { return _collide; }
 int                 Object::shader() const { return _shader; }
@@ -93,8 +98,9 @@ const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
 const glm::vec3&    Object::scale() const { return _scale; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
-const Model&        Object::model() const { return _model; }
-const Hitbox&       Object::hitbox() const { return _hitbox; }
+const Hitbox&       Object::hitbox() const { return _model->hitbox(); }
+
+const std::shared_ptr<Model>&   Object::model() const { return _model; }
 
 
 void Object::setName(const std::string& name){
@@ -123,12 +129,12 @@ void    Object::setFront(float x, float y, float z){
 
 void    Object::setPosition(const glm::vec3& vec){
     _position = vec;
-    setHitboxPosition(_position);
+    _model->setHitboxPosition(_position);
 }
 
 void    Object::setPosition(float x, float y, float z){
     _position.x = x; _position.y = y; _position.z = z;
-    setHitboxPosition(x, y, z);
+    _model->setHitboxPosition(x, y, z);
 }
 
 void    Object::setDirection(const glm::vec3& vec){
@@ -149,14 +155,6 @@ void Object::setScale(float x, float y, float z) {
 
 void Object::setRotation(const glm::mat4& mat){
     _rotation = mat;
-}
-
-void Object::setHitboxPosition(const glm::vec3& vec, const glm::mat4& rotation){
-    _hitbox.setPosition(vec, rotation);
-}
-
-void Object::setHitboxPosition(float x, float y, float z, const glm::mat4& rotation){
-    _hitbox.setPosition(x, y, z, rotation);
 }
 
 void Object::setVelocity(const glm::vec3& vec){

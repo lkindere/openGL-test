@@ -1,8 +1,13 @@
 #include "Light.hpp"
 #include "Scene.hpp"
 
-Light::Light(MeshData data, Scene* scene)
-    : Object(&data, scene){
+Light::Light(MeshData data, Scene* scene, int ID)
+    : Object(&data, scene, ID){
+    setPosition(0.0f, 20.0f, 0.0f);
+}
+
+Light::Light(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
+    : Object(modelptr, scene, ID){
     setPosition(0.0f, 20.0f, 0.0f);
 }
 
@@ -14,17 +19,12 @@ void Light::setDefaultUniforms(){
     _uniforms.add_uni("camPos", _scene->camera().matrix());
 }
 
-void Light::addTarget(Shader& target){
-    _targets.push_back(target);
-}
-
 void Light::animate()
 {
-    for (auto it = _targets.begin(); it != _targets.end(); ++it){
-        it->bind();
-        glUniform3fv(glGetUniformLocation(it->ID(), "lightPos"), 1, glm::value_ptr(_position));
-        glUniform4fv(glGetUniformLocation(it->ID(), "lightColor"), 1, glm::value_ptr(_color));
+    for (auto i = 0; i < _scene->nShaders(); ++i){
+        _scene->shader(i)->bind();
+        glUniform3fv(glGetUniformLocation(_scene->shader(i)->ID(), "lightPos"), 1, glm::value_ptr(_position));
+        glUniform4fv(glGetUniformLocation(_scene->shader(i)->ID(), "lightColor"), 1, glm::value_ptr(_color));
     }
-    glUseProgram(0);
     draw();
 }

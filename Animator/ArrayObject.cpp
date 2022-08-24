@@ -5,7 +5,7 @@
 ArrayObject::ArrayObject() : _nIndices(0) {}
 
 ArrayObject::~ArrayObject() {
-    // glDeleteVertexArrays(1, &_VAO);
+    destroy();
 }
 
 void ArrayObject::init(const MeshData& data, GLenum type = GL_STATIC_DRAW){
@@ -54,15 +54,12 @@ void ArrayObject::init(const MeshData& data, GLenum type = GL_STATIC_DRAW){
 }
 
 void ArrayObject::initTexture(const TextureData& texture){
-    if (texture.data == nullptr){
-        std::cout << "NO TEXTURE\n";
+    if (texture.data == nullptr)
         return ;
-    }
     glGenTextures(1, &_texture);
     glBindTexture(GL_TEXTURE_2D, _texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture.data);
     glGenerateMipmap(GL_TEXTURE_2D);
-
 }
 
 bool           ArrayObject::hasTexture() const { return _texture != -1; }
@@ -77,4 +74,8 @@ void ArrayObject::bind() const {
 void ArrayObject::unbind() const {
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void ArrayObject::destroy() {
+    glDeleteVertexArrays(1, &_VAO);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Model.hpp"
 #include "Hitbox.hpp"
 
@@ -8,8 +10,11 @@ class Scene;
 class Object
 {
 	public:
-		Object(MeshData data, Scene* scene);
-        Object(MeshData* data, Scene* scene);
+        //Unique instancing
+		Object(MeshData data, Scene* scene, int ID);
+        Object(MeshData* data, Scene* scene, int ID);
+        // Shared model instancing
+        Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
         virtual ~Object();
 
     public:
@@ -26,6 +31,7 @@ class Object
         void collisionPhysics(Object& target);
 
     public:
+        int                 ID() const ;
         const std::string&  name() const ;
         bool                collide() const ;
         int                 shader() const ;
@@ -35,8 +41,9 @@ class Object
         const glm::vec3&    direction() const ;
         const glm::vec3&    scale() const ;
         const glm::mat4&    rotation() const ;
-        const Model&        model() const ;
         const Hitbox&       hitbox() const ;
+
+        const std::shared_ptr<Model>& model() const ;
 
         void setName(const std::string& name);
         void setCollide(bool b);
@@ -51,8 +58,6 @@ class Object
         void setScale(const glm::vec3& vec);
         void setScale(float x, float y, float z);
         void setRotation(const glm::mat4& mat);
-        void setHitboxPosition(const glm::vec3& vec, const glm::mat4& rotation = glm::mat4(1.0f));
-        void setHitboxPosition(float x, float y, float z, const glm::mat4& rotation = glm::mat4(1.0f));
         void setVelocity(const glm::vec3& vec);
         void setVelocity(float x, float y, float z);
         void setWeight(float x);
@@ -74,11 +79,12 @@ class Object
         int _flags = 0;
 
     protected:
+        int             _ID;
         std::string     _name;
         bool            _collide = false;
 
         Scene*      _scene = nullptr;
         Uniforms    _uniforms;
-		Model       _model;
-        Hitbox      _hitbox;
+
+		std::shared_ptr<Model>  _model;
 };

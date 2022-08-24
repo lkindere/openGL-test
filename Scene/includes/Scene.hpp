@@ -20,6 +20,12 @@ enum object_types
     DETAIL,
 };
 
+enum shader_flags
+{
+    hasTexture = 1,
+    deformOn = 2,
+};
+
 class Scene
 {
     public:
@@ -28,28 +34,47 @@ class Scene
         void animate();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
         int loadObject(object_types type, const char* path, const LoadingParameters& params = LoadingParameters());
+        int loadInstance(object_types type, int modelID);
         void animate() const;
-        
+
+    private:
+        void checkRemovals();
+        int loadLight(const char* path, const LoadingParameters& params);
+        int loadStatic(const char* path, const LoadingParameters& params);
+        int loadMob(const char* path, const LoadingParameters& params);
+        int loadDetail(const char* path, const LoadingParameters& params);
+        int loadLightInstance(int modelID);
+        int loadStaticInstance(int modelID);
+        int loadMobInstance(int modelID);
+        // int Scene::loadDetailInstance(int modelID);
+    
+    public:
+        void removeObject(int ID);
+
         Camera& camera();
-        Player& player();
-        Light&  light(unsigned int ID);
-        Object& object(unsigned int ID);
-        Model& detail(unsigned int ID);
-        Shader& shader(unsigned int ID);
+        Player* player();
+        Object* object(int ID);
+        Model* detail(int ID);
+        Shader* shader(int ID);
         const Camera& camera() const;
-        const Player& player() const;
-        const Light&  light(unsigned int ID) const;
-        const Object& object(unsigned int ID) const;
-        const Shader& shader(unsigned int ID) const;
-        const Model& detail(unsigned int ID) const;
+        const Player* player() const;
+        const Object* object(int ID) const;
+        const Shader* shader(int ID) const;
+        const Model* detail(int ID) const;
 
         float& gravity();
         float gravity() const;
 
     public:
-        unsigned int nLights() const;
         unsigned int nObjects() const;
         unsigned int nShaders() const;
+
+    public:
+        std::map<int, Object*>::iterator        oBegin();
+        std::map<int, Object*>::const_iterator  oBegin() const;
+        std::map<int, Object*>::iterator        oEnd();
+        std::map<int, Object*>::const_iterator  oEnd() const;
+
 
     private:
         float _gravity = 0.2f;
@@ -57,8 +82,8 @@ class Scene
     private:
         Camera                  _camera;
         Player*                 _player = nullptr;
-        std::vector<Light*>     _lights;
-        std::vector<Object*>    _objects;
-        std::vector<Model*>     _details;
+        std::map<int, Object*>  _objects;
+        std::map<int, Model*>   _details;
         std::vector<Shader>     _shaders;
+        std::vector<int>        _removals;
 };

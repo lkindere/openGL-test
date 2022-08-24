@@ -16,7 +16,6 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ../Loader/includes
     PUBLIC ../Scene/includes
     PUBLIC ../Animator/includes
-    PUBLIC ../Physics/includes
 	PUBLIC ../_external/glfw/include
 	PUBLIC ../_external/glfw/deps
 	PUBLIC ../_external/glm

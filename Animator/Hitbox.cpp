@@ -1,5 +1,6 @@
 #include "Hitbox.hpp"
 #include "Scene.hpp"
+#include "Shader.hpp"
 
 extern Shader* g_hitboxShader;
 
@@ -24,15 +25,15 @@ bool Hitbox::checkCollision(const Hitbox& target) const {
 //     // _transformation = transformation;
 // }
 
-void Hitbox::init(HitboxData& data){
-    _min = data.min;
-    _max = data.max;
-    std::cout << "Min:\n";
-    printvec(_min);
-    std::cout << "Max:\n";
-    printvec(_max);
-    std::cout << std::endl;
-}
+// void Hitbox::init(HitboxData& data){
+//     _min = data.min;
+//     _max = data.max;
+//     // std::cout << "Min:\n";
+//     // printvec(_min);
+//     // std::cout << "Max:\n";
+//     // printvec(_max);
+//     // std::cout << std::endl;
+// }
 
 void Hitbox::setPosition(const glm::vec3& position, const glm::mat4& rotation){
     _position = position;

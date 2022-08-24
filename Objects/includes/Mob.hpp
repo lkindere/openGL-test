@@ -7,14 +7,22 @@ class Scene;
 class Mob : public Object
 {
 	public:
-		Mob(MeshData data, Scene* scene);
+		Mob(MeshData data, Scene* scene, int ID);
+        Mob(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
+        
         ~Mob();
         
         void animate();
         void damage(short dmg);
 
     private:
+        void drawHealth();
         void facePlayer();
+        bool checkDeath();
+
+    private:
+        float lastTick = 0;
+        float currentTick = 0;
 
     private:
         const short _maxHealth = 10;

@@ -22,6 +22,7 @@ class ArrayObject {
 	public:
 		void bind() const;
 		void unbind() const;
+        void destroy();
 
 	private:
 		GLuint			_VAO = -1;
