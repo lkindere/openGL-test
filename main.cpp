@@ -70,7 +70,7 @@ int main(void) {
     scene.loadObject(PLAYER, "Models/player.fbx");
     scene.player()->setWeapon(new Sword(importer("Models/sword.fbx"), &scene, -1));
     int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
-    int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
+    int floorID = scene.loadObject(STATIC, "Models/floor2.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)

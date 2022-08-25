@@ -94,11 +94,9 @@ bool Object::checkCollision(){
         if (hitbox().checkCollision(*this, *_scene->player()) == true){
             collisionPhysics(*_scene->player());
             collision = true;
-            if (collision){
-                Mob* mob = dynamic_cast<Mob*>(this);
-                if (mob != nullptr && !mob->animating())
-                    mob->animate(0, false);
-            }
+            Mob* mob = dynamic_cast<Mob*>(this);
+            if (mob != nullptr && !mob->animating())
+                mob->animate(0, false);
         }
     }
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
