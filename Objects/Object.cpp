@@ -3,17 +3,14 @@
 
 Object::Object(MeshData data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
-        _scene(scene), _ID(ID) {
-}
+        _scene(scene), _ID(ID) {}
 
 Object::Object(MeshData* data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
-        _scene(scene), _ID(ID) {
-}
+        _scene(scene), _ID(ID) {}
 
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
-    : _model(modelptr), _scene(scene), _ID(ID) {
-}
+    : _model(modelptr), _scene(scene), _ID(ID) {}
 
 void Object::setDefaultUniforms(){
     _uniforms.flags = _flags;
@@ -21,7 +18,7 @@ void Object::setDefaultUniforms(){
     _uniforms.add_uni("scale", _scale);
     _uniforms.add_uni("rotation", _rotation);
     _uniforms.add_uni("camPos", _scene->camera().matrix());
-    _uniforms.add_uni("BoneMatrices", _model->getMatrices());
+    _uniforms.add_uni("BoneMatrices", _model->generateMatrices(_mdata));
 }
 
 void Object::move(){
@@ -36,7 +33,32 @@ void Object::move(){
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
 }
 
-void Object::animate(){
+void Object::animate(int ID, bool loop){
+    _mdata.time = 0;
+    _mdata.anim = ID;
+    _mdata.loop = loop;
+    _animating = true;
+    _aDuration = _model->duration(ID);
+    _aStart = _scene->time();
+}
+
+void Object::animLoop(){
+    if (!_animating)
+        return ;
+    float elapsed = _scene->time() - _aStart;
+    _mdata.time = elapsed;
+    if (elapsed >= _aDuration){
+        _mdata.time = 0;
+        _mdata.anim = -1;
+        _mdata.loop = false;
+        _animating = false;
+        _aStart = 0;
+        _aDuration = 0;
+    }
+}
+
+void Object::loop(){
+    animLoop();
     draw();
 }
 
@@ -72,11 +94,11 @@ bool Object::checkCollision(){
         if (hitbox().checkCollision(*this, *_scene->player()) == true){
             collisionPhysics(*_scene->player());
             collision = true;
-            // if (collision){
-            //     Mob* mob = dynamic_cast<Mob*>(this);
-            //     if (mob != nullptr)
-            //         mob->_model->setAnim(0);
-            // }
+            if (collision){
+                Mob* mob = dynamic_cast<Mob*>(this);
+                if (mob != nullptr && !mob->animating())
+                    mob->animate(0, false);
+            }
         }
     }
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
@@ -93,6 +115,7 @@ bool Object::checkCollision(){
 int                 Object::ID() const { return _ID; }
 const std::string&  Object::name() const { return _name; }
 bool                Object::collide() const { return _collide; }
+bool                Object::animating() const { return _animating; }
 int                 Object::shader() const { return _shader; }
 int                 Object::flags() const { return _flags; }
 const glm::vec3&    Object::front() const { return _front; }

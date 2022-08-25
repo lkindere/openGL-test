@@ -2,13 +2,15 @@
 
 #include <iostream>
 
-ArrayObject::ArrayObject() : _nIndices(0) {}
+ArrayObject::ArrayObject(const MeshData& data, GLenum type){
+    init(data, type);
+}
 
 ArrayObject::~ArrayObject() {
     destroy();
 }
 
-void ArrayObject::init(const MeshData& data, GLenum type = GL_STATIC_DRAW){
+void ArrayObject::init(const MeshData& data, GLenum type){
     const std::vector<Vert>&            vertices = data.verts;
     const std::vector<unsigned int>&    indices = data.indices;
     //Array

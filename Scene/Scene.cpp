@@ -16,11 +16,12 @@ void Scene::checkRemovals(){
 }
 
 void Scene::animate(){
+    _currentTime = glfwGetTime();
     for (auto i = 0; i < _spawners.size(); ++i)
-        _spawners[i]->animate();
-    _player->animate();
+        _spawners[i]->loop();
+    _player->loop();
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
-        it->second->animate();
+        it->second->loop();
     checkRemovals();
 }
 
@@ -216,8 +217,16 @@ const Model* Scene::detail(int ID) const {
     return it->second;
 }
 
+float& Scene::time() {
+    return _currentTime;
+}
+
 float& Scene::gravity() {
     return _gravity;
+}
+
+float Scene::time() const {
+    return _currentTime;
 }
 
 float Scene::gravity() const {

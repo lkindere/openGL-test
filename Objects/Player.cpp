@@ -13,9 +13,8 @@ void Player::input() {
         return ;
     }
     if (glfwGetMouseButton(settings.window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-        if (_model->anim() != ATTACK_ANIMATION){
-            _model->setAnim(ATTACK_ANIMATION);
-            _model->setLoop(false);
+        if (_mdata.anim != ATTACK_ANIMATION){
+            animate(ATTACK_ANIMATION, false);
             attack();
         }
     }
@@ -41,6 +40,7 @@ void Player::input() {
 void Player::setWeapon(Weapon* wep){
     delete _weapon;
     _weapon = wep;
+    _attackInterval *= _weapon->speed();
 }
 
 void Player::attack(){
@@ -54,7 +54,7 @@ void Player::attack(){
     }
 }
 
-void Player::animate(){
+void Player::loop(){
     input();
     move();
     if (_scene->camera().mode() == first_person){
@@ -70,25 +70,26 @@ void Player::animate(){
     draw();
     if (_weapon){
         weaponTransformation();
-        _weapon->animate();
+        _weapon->loop();
     }
+    animLoop();
 }
 
 void Player::postTransformHands(){
     glm::mat4 limbUpL = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3((_scene->camera().pitch() + 30.0f) / 100, 0.0f, 0.0f)));
     glm::mat4 limbUpR = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(-(_scene->camera().pitch() + 30.0f) / 100, 0.0f, 0.0f)));
-    _model->findNode("ArmBot.L")->postTransform(limbUpL);
-    _model->findNode("ArmBot.R")->postTransform(limbUpR);
+    _mdata.postTransforms["ArmBot.L"] = limbUpL;
+    _mdata.postTransforms["ArmBot.R"] = limbUpR;
 
     glm::mat4 limbRotL = glm::rotate(glm::mat4(1.0f), glm::radians(-(_scene->camera().pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 limbRotR = glm::rotate(glm::mat4(1.0f), glm::radians((_scene->camera().pitch() + 30.0f) / 20), glm::vec3(0.0f, 0.0f, 1.0f));
-    _model->findNode("ArmTop.L")->postTransform(limbRotL);
-    _model->findNode("ArmTop.R")->postTransform(limbRotR);
+    _mdata.postTransforms["ArmTop.L"] = limbRotL;
+    _mdata.postTransforms["ArmTop.R"] = limbRotR;
 }
 
 void Player::weaponTransformation(){
     const NodeData* limb = _model->findNode("Palm.L");
-    const glm::mat4& transformation = _model->getBoneMatrix(limb->ID());
+    const glm::mat4& transformation = _uniforms.mat4.find("BoneMatrices")->second[limb->ID()];
     glm::mat4 rot = {
         transformation[0][0], transformation[0][1], transformation[0][2], 0.0f,
         transformation[1][0], transformation[1][1], transformation[1][2], 0.0f,
@@ -97,6 +98,7 @@ void Player::weaponTransformation(){
     };
     rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    // glm::mat4 rot = glm::mat4(1.0f);
     glm::vec3 limbpos = _position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * glm::inverse(_rotation));
     _weapon->setPosition(limbpos);
     _weapon->setDirection(_direction);

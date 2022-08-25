@@ -20,7 +20,7 @@ void Spawner::spawn(){
     _ID.push_back(ID);
 }
 
-void Spawner::animate(){
+void Spawner::loop(){
     static float lastTick;
     static float currentTick;
     float time = glfwGetTime();

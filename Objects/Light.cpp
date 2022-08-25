@@ -19,7 +19,7 @@ void Light::setDefaultUniforms(){
     _uniforms.add_uni("camPos", _scene->camera().matrix());
 }
 
-void Light::animate()
+void Light::loop()
 {
     for (auto i = 0; i < _scene->nShaders(); ++i){
         _scene->shader(i)->bind();

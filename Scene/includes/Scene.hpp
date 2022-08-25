@@ -72,8 +72,11 @@ class Scene
         const Spawner* spawner(int ID) const;
         const Shader* shader(int ID) const;
 
+        float& time();
         float& gravity();
+        float time() const;
         float gravity() const;
+
 
     public:
         unsigned int nObjects() const;
@@ -85,6 +88,9 @@ class Scene
         std::map<int, Object*>::iterator        oEnd();
         std::map<int, Object*>::const_iterator  oEnd() const;
 
+
+    private:
+        float _currentTime = 0.0f;
 
     private:
         float _gravity = 0.2f;

@@ -8,8 +8,9 @@
 
 class ArrayObject {
 	public:
-		ArrayObject();
+		ArrayObject(const MeshData& data, GLenum type = GL_STATIC_DRAW);
         ~ArrayObject();
+    private:
 		void init(const MeshData& data, GLenum type);
 
 	public:

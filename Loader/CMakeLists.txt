@@ -15,6 +15,14 @@ add_subdirectory(_external/assimp)
 
 add_definitions(-std=c++11)
 
+target_precompile_headers(${PROJECT_NAME}
+    PRIVATE includes/debug.hpp
+    PRIVATE includes/Structs.hpp
+    PRIVATE includes/Conversions.hpp
+    PRIVATE includes/ProcessMesh.hpp
+    PRIVATE includes/Importer.hpp
+)
+
 target_include_directories(${PROJECT_NAME}
 	PUBLIC includes
     PUBLIC _external

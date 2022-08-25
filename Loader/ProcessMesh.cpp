@@ -208,5 +208,6 @@ MeshData process_mesh(const aiScene* scene){
     data.timers = process_timers(scene);
     data.nodes = process_nodes(scene, mesh);
     data.hitbox = process_hitbox(scene);
+    data.nBones = mesh->mNumBones;
 	return data;
 }

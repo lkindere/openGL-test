@@ -47,8 +47,6 @@ struct TextureData
     unsigned char*  data = nullptr;
 };
 
-//Only used for importing
-
 struct AnimData
 {
     std::vector<KeyPosition>    positions;
@@ -62,7 +60,6 @@ struct BoneData
     glm::mat4                   offset;
     glm::vec3                   position;
     std::vector<AnimData>       animations;
-    std::unique_ptr<glm::mat4>  postTransform = nullptr;
 };
 
 struct NodeData
@@ -80,10 +77,6 @@ struct NodeData
         glm::vec3 position() const {
             assert(bone != nullptr);
             return bone->position;
-        }
-        void postTransform(const glm::mat4& transform) const {
-            assert(bone != nullptr);
-            bone->postTransform = std::unique_ptr<glm::mat4>(new glm::mat4(transform));
         }
 };
 
@@ -103,9 +96,10 @@ struct MeshData
 {
     std::vector<Vert>                   verts;
     std::vector<unsigned int>           indices;
-    NodeData                            nodes;
     std::vector<AnimTimers>             timers;
+    NodeData                            nodes;
     TextureData                         texture;
     HitboxData                          hitbox;
+    int                                 nBones;
 };
 

@@ -12,7 +12,7 @@ class Mob : public Object
         
         ~Mob();
         
-        void animate();
+        void loop();
         void damage(short dmg);
 
     private:

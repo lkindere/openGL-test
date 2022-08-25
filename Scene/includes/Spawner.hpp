@@ -31,7 +31,7 @@ class Spawner : public PositionGenerator
     public:
         Spawner(std::shared_ptr<Model> modelptr, Scene* scene);
         
-        void animate();
+        void loop();
         void spawn();
         void checkRemovals(const std::vector<int>& removals);
 

@@ -2,10 +2,19 @@ project(Animator)
 
 add_library(Animator
     ArrayObject.cpp
+    Animator.cpp
     Hitbox.cpp
+    Model.cpp
 )
 
 add_definitions(-std=c++11)
+
+target_precompile_headers(${PROJECT_NAME}
+    PRIVATE includes/ArrayObject.hpp
+    PRIVATE includes/Animator.hpp
+    PRIVATE includes/Hitbox.hpp
+    PRIVATE includes/Model.hpp
+)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC includes

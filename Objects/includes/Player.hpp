@@ -15,7 +15,7 @@ class Player : public Object
  
 		void setWeapon(Weapon* wep);
 
-        void animate();
+        void loop();
 
     private:
 		void input();
@@ -34,8 +34,10 @@ class Player : public Object
 		float _walk = 0.1;
 		float _run = 0.2;
 		float _jump = 0.5;
-        bool  _attacking = false;
 
+    private:
+        float _attackInterval = 1.0f;
+        
 	private:
 		glm::vec3 _collision = glm::vec3(0.0f); //Don't really need floats for this
 };

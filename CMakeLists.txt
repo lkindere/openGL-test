@@ -22,6 +22,12 @@ add_subdirectory(Objects)
 add_definitions(-std=c++11 -DDEBUG)
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
+target_precompile_headers(${PROJECT_NAME}
+    PRIVATE callbacks.hpp
+    PRIVATE debug.hpp
+    PRIVATE settings.hpp
+)
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC Loader/includes
     PUBLIC Scene/includes

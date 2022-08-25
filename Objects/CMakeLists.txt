@@ -10,6 +10,15 @@ add_library(Objects
 
 add_definitions(-std=c++11)
 
+target_precompile_headers(${PROJECT_NAME}
+    PRIVATE includes/Object.hpp
+    PRIVATE includes/Light.hpp
+    PRIVATE includes/Mob.hpp
+    PRIVATE includes/Player.hpp
+    PRIVATE includes/Sword.hpp
+    PRIVATE includes/Weapon.hpp
+)
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC includes
 	PUBLIC ../

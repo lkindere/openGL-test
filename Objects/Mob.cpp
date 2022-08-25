@@ -23,7 +23,7 @@ bool Mob::checkDeath(){
     if (_health > 0)
         return 0;
     _collide = false;
-    _model->setLoop(false);
+    // _model->setLoop(false);
     _flags |= deformOn;
     float time = glfwGetTime();
     if (lastTick != 0)
@@ -36,13 +36,14 @@ bool Mob::checkDeath(){
     return 1;
 }
 
-void Mob::animate(){
+void Mob::loop(){
     if (checkDeath())
         return ;
     facePlayer();
     move();
     draw();
     drawHealth();
+    animLoop();
 }
 
 void Mob::drawHealth(){

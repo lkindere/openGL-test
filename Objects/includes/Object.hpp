@@ -20,7 +20,9 @@ class Object
     public:
         void move();
         void draw();
-        virtual void animate();
+        virtual void animate(int ID, bool loop);
+        virtual void loop();
+        virtual void animLoop();
         virtual void damage(short dmg);
 
     protected:
@@ -31,20 +33,21 @@ class Object
         void collisionPhysics(Object& target);
 
     public:
-        int                 ID() const ;
-        const std::string&  name() const ;
-        bool                collide() const ;
-        int                 shader() const ;
+        int                 ID() const;
+        const std::string&  name() const;
+        bool                collide() const;
+        bool                animating() const;
+        int                 shader() const;
         int                 flags() const;
-        const glm::vec3&    front() const ;
-        const glm::vec3&    position() const ;
-        const glm::vec3&    direction() const ;
-        const glm::vec3&    velocity() const ;
-        const glm::vec3&    scale() const ;
-        const glm::mat4&    rotation() const ;
-        const Hitbox&       hitbox() const ;
+        const glm::vec3&    front() const;
+        const glm::vec3&    position() const;
+        const glm::vec3&    direction() const;
+        const glm::vec3&    velocity() const;
+        const glm::vec3&    scale() const;
+        const glm::mat4&    rotation() const;
+        const Hitbox&       hitbox() const;
 
-        const std::shared_ptr<Model>& model() const ;
+        const std::shared_ptr<Model>& model() const;
 
         void setName(const std::string& name);
         void setCollide(bool b);
@@ -76,17 +79,21 @@ class Object
         glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
-        int _shader = 0;
-        int _flags = 0;
+        int         _shader = 0;
+        int         _flags = 0;
 
     protected:
-        int             _ID;
-        std::string     _name;
-        bool            _collide = false;
+        int         _ID;
+        std::string _name;
+        bool        _animating = false;
+        float       _aStart = 0.0f;
+        float       _aDuration = 0.0f;
+        bool        _collide = false;
 
+    protected:
         Scene*      _scene = nullptr;
         Uniforms    _uniforms;
 
 		std::shared_ptr<Model>  _model;
-    
+        modelIN                 _mdata;
 };

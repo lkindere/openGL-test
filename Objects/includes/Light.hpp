@@ -9,7 +9,7 @@ class Light : public Object
         Light(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
 
     public:
-        void animate();
+        void loop();
 
     private:
         void setDefaultUniforms();
