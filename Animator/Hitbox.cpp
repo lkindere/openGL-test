@@ -5,8 +5,30 @@
 
 extern Shader* g_hitboxShader;
 
+glm::vec3 keepLowest(const glm::vec3& vec){
+    glm::vec3 ab = abs(vec);
+    if (ab.x < ab.y && ab.x < ab.z)
+        return glm::vec3(vec.x, 0.0f, 0.0f);
+    if (ab.y < ab.z)
+        return glm::vec3(0.0f, vec.y, 0.0f);
+    return (glm::vec3(0.0f, 0.0f, vec.z));
+}
+
 Hitbox::Hitbox(const HitboxData& data)
     : _min(data.min), _max(data.max) {}
+
+std::pair<glm::vec3, glm::vec3> Hitbox::findCollision(const glm::vec3& min, const glm::vec3& max, const glm::vec3& min2, const glm::vec3& max2) const{
+    glm::vec3 dir1;
+    for (auto i = 0; i < 3; ++i){
+        float distance1 = max[i] - min2[i];
+        float distance2 = max2[i] - min[i];
+        (distance1 < distance2) ?
+            dir1[i] = -distance1
+            : dir1[i] = distance2;
+    }
+    dir1 = keepLowest(dir1);
+    return std::make_pair(dir1, -dir1);
+}
 
 bool Hitbox::checkCollision(const Object& obj, const Object& target) const {
     glm::vec3 min = obj.position() + obj.velocity() + _min;
@@ -19,6 +41,7 @@ bool Hitbox::checkCollision(const Object& obj, const Object& target) const {
         return false;
     if (!(min.z <= max2.z && max.z >= min2.z))
         return false;
+    findCollision(min, max, min2, max2);
     return true;
 }
 
