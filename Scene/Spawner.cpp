@@ -27,11 +27,8 @@ void Spawner::loop(){
     if (lastTick != 0)
         currentTick += (time - lastTick);
     if (currentTick >= _interval){
-        spawn();
         currentTick = 0.0f;
-        _interval -= 1.0f;
-        if (_interval < 1.0f)
-            _interval = 1.0f;
+        spawn();
     }
     lastTick = time;
 }

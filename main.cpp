@@ -70,7 +70,7 @@ int main(void) {
     scene.loadObject(PLAYER, "Models/player.fbx");
     scene.player()->setWeapon(new Sword(importer("Models/sword.fbx"), &scene, -1));
     int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
-    int floorID = scene.loadObject(STATIC, "Models/floor2.fbx");
+    int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
     int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
     int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
     for (auto i = 0; i < scene.nObjects(); ++i)
@@ -86,12 +86,14 @@ int main(void) {
 
     scene.object(wallID)->setCollide(true);
     scene.object(wallID)->setWeight(1.0f);
+    scene.object(floorID)->setCollide(true);
+    scene.object(floorID)->setWeight(1.0f);
     scene.player()->setCollide(true);
 
     Spawner spawner(scene.object(mobID)->model(), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
-    // scene.addSpawner(&spawner);
+    scene.addSpawner(&spawner);
 
     int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     

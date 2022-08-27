@@ -37,7 +37,4 @@ class Player : public Object
 
     private:
         float _attackInterval = 1.0f;
-        
-	private:
-		glm::vec3 _collision = glm::vec3(0.0f); //Don't really need floats for this
 };

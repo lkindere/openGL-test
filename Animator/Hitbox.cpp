@@ -17,32 +17,34 @@ glm::vec3 keepLowest(const glm::vec3& vec){
 Hitbox::Hitbox(const HitboxData& data)
     : _min(data.min), _max(data.max) {}
 
-std::pair<glm::vec3, glm::vec3> Hitbox::findCollision(const glm::vec3& min, const glm::vec3& max, const glm::vec3& min2, const glm::vec3& max2) const{
+CollisionData Hitbox::findCollision(const glm::vec3& min, const glm::vec3& max, const glm::vec3& min2, const glm::vec3& max2) const{
+    CollisionData data;
+    data.hit = true;
     glm::vec3 dir1;
     for (auto i = 0; i < 3; ++i){
         float distance1 = max[i] - min2[i];
         float distance2 = max2[i] - min[i];
         (distance1 < distance2) ?
-            dir1[i] = -distance1
-            : dir1[i] = distance2;
+            dir1[i] = distance1
+            : dir1[i] = -distance2;
     }
-    dir1 = keepLowest(dir1);
-    return std::make_pair(dir1, -dir1);
+    data.distance1 = keepLowest(dir1);
+    data.distance2 = -data.distance1;
+    return data;
 }
 
-bool Hitbox::checkCollision(const Object& obj, const Object& target) const {
+CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) const {
     glm::vec3 min = obj.position() + obj.velocity() + _min;
     glm::vec3 max = obj.position() + obj.velocity() + _max;
     glm::vec3 min2 = target.position() + target.velocity() + target.hitbox()._min;
     glm::vec3 max2 = target.position() + target.velocity() + target.hitbox()._max;
     if (!(min.x <= max2.x && max.x >= min2.x))
-        return false;
+        return CollisionData();
     if (!(min.y <= max2.y && max.y >= min2.y))
-        return false;
+        return CollisionData();
     if (!(min.z <= max2.z && max.z >= min2.z))
-        return false;
-    findCollision(min, max, min2, max2);
-    return true;
+        return CollisionData();
+    return findCollision(min, max, min2, max2);
 }
 
 void Hitbox::draw(const Uniforms& uni) const{

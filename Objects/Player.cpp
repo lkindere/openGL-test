@@ -49,6 +49,7 @@ void Player::attack(){
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false)
             continue ;
+        //Fix this
         if (glm::distance(it->second->position(), _position) < _weapon->range())
             it->second->damage(_weapon->damage());
     }
@@ -98,7 +99,6 @@ void Player::weaponTransformation(){
     };
     rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    // glm::mat4 rot = glm::mat4(1.0f);
     glm::vec3 limbpos = _position + glm::vec3(transformation * glm::vec4(limb->position(), 1.0f) * glm::inverse(_rotation));
     _weapon->setPosition(limbpos);
     _weapon->setDirection(_direction);

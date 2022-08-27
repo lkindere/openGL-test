@@ -22,14 +22,9 @@ void Object::setDefaultUniforms(){
 }
 
 void Object::move(){
-    if (_position.y > 0.0f)
-        _velocity.y -= _scene->gravity() * _weight;
+    _velocity.y -= _scene->gravity() * _weight;
     checkCollision();
     _position += _velocity;
-    if (_position.y < 0.0f){
-        _position.y = 0.0f;
-        _velocity.y = 0.0f;   
-    }
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
 }
 
@@ -70,30 +65,20 @@ void Object::draw(){
     hitbox().draw(_uniforms);
 }
 
-void Object::collisionPhysics(Object& target){
+void Object::collisionPhysics(Object& target, CollisionData& data){
     if (glfwGetKey(settings.window(), GLFW_KEY_F) == GLFW_PRESS)
         return ;
-    float dot = glm::dot(_velocity, target._position - _position);
-    if (dot <= 0.0f)
-        return ;
-    _velocity = glm::mix(_velocity, glm::vec3(0.0f), target._weight);
-    target._velocity = glm::mix(target._velocity, glm::vec3(0.0f), _weight);
-    glm::vec3 temp = _velocity;
-    target._velocity = glm::mix(target._velocity, temp, 0.5);
-    if (!target.checkCollision())
-        _velocity = glm::mix(_velocity, target._velocity, 0.5);
-    else
-        _velocity = glm::vec3(0.0f);
+    target._velocity -= glm::mix(data.distance2, glm::vec3(0.0f), target._weight);
+    _velocity -= glm::mix(data.distance1, glm::vec3(0.0f), 1.0 - target._weight);
 }
 
-bool Object::checkCollision(){
+void Object::checkCollision(){
     if (_collide == false)
-        return false;
-    bool collision = false;
+        return ;
     if (_scene->player() != this){
-        if (hitbox().checkCollision(*this, *_scene->player()) == true){
-            collisionPhysics(*_scene->player());
-            collision = true;
+        CollisionData collision = hitbox().checkCollision(*this, *_scene->player());
+        if (collision.hit){
+            collisionPhysics(*_scene->player(), collision);
             Mob* mob = dynamic_cast<Mob*>(this);
             if (mob != nullptr && !mob->animating())
                 mob->animate(0, false);
@@ -102,12 +87,10 @@ bool Object::checkCollision(){
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false || it->second == this)
             continue ;
-        if (hitbox().checkCollision(*this, *it->second) == false)
-            continue ;
-        collisionPhysics(*it->second);
-        collision = true;
+        CollisionData collision = hitbox().checkCollision(*this, *it->second);
+        if (collision.hit)
+            collisionPhysics(*it->second, collision);
     }
-    return collision;
 }
 
 int                 Object::ID() const { return _ID; }

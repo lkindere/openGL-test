@@ -29,8 +29,8 @@ class Object
         virtual void setDefaultUniforms();
 
     private:
-        bool checkCollision();
-        void collisionPhysics(Object& target);
+        void checkCollision();
+        void collisionPhysics(Object& target, CollisionData& data);
 
     public:
         int                 ID() const;

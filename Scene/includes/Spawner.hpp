@@ -37,7 +37,7 @@ class Spawner : public PositionGenerator
 
     private:
         Scene*                  _scene;
-        float                   _interval = 5.0f;
+        float                   _interval = 0.2f;
         PositionGenerator       _generator;
         std::shared_ptr<Model>  _model;
         std::vector<int>        _ID;
