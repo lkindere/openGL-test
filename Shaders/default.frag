@@ -4,7 +4,7 @@
 const int hasTexture = 1;
 const int deformOn = 2;
 
-const vec4 ambient = vec4(0.3f, 0.3f, 0.3f, 1.0f);
+const vec4 ambient = vec4(0.15f, 0.15f, 0.15f, 1.0f);
 
 uniform int flags;
 uniform float uTime;

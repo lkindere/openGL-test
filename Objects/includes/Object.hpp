@@ -40,12 +40,14 @@ class Object
         int                 shader() const;
         int                 flags() const;
         const glm::vec3&    front() const;
-        const glm::vec3&    position() const;
         const glm::vec3&    direction() const;
+        const glm::vec3&    position() const;
         const glm::vec3&    velocity() const;
+        glm::vec3           finalpos() const;
         const glm::vec3&    scale() const;
         const glm::mat4&    rotation() const;
         const Hitbox&       hitbox() const;
+        Hitbox&             hitbox();
 
         const std::shared_ptr<Model>& model() const;
 

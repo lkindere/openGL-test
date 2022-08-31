@@ -13,6 +13,7 @@ void Scene::checkRemovals(){
         _objects.erase(it);
     }
     _removals.clear();
+    
 }
 
 void Scene::animate(){

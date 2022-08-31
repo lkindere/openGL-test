@@ -21,6 +21,10 @@ const NodeData* Model::findNode(const char* name) const{
 }
 
 
+Hitbox&                         Model::hitbox() {
+    return _hitbox;
+}
+
 const Hitbox&                   Model::hitbox() const {
     return _hitbox; 
 }

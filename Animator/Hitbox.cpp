@@ -5,62 +5,149 @@
 
 extern Shader* g_hitboxShader;
 
-glm::vec3 keepLowest(const glm::vec3& vec){
-    glm::vec3 ab = abs(vec);
-    if (ab.x < ab.y && ab.x < ab.z)
-        return glm::vec3(vec.x, 0.0f, 0.0f);
-    if (ab.y < ab.z)
-        return glm::vec3(0.0f, vec.y, 0.0f);
-    return (glm::vec3(0.0f, 0.0f, vec.z));
+Hitbox::Hitbox(const HitboxData& data)
+    : _vertices(data.vertices) {
+    if (data.vertices.size() == 0)
+        return ;
+    recalculate(data.vertices);
 }
 
-Hitbox::Hitbox(const HitboxData& data)
-    : _min(data.min), _max(data.max) {}
-
-CollisionData Hitbox::findCollision(const glm::vec3& min, const glm::vec3& max, const glm::vec3& min2, const glm::vec3& max2) const{
-    CollisionData data;
-    data.hit = true;
-    glm::vec3 dir1;
-    for (auto i = 0; i < 3; ++i){
-        float distance1 = max[i] - min2[i];
-        float distance2 = max2[i] - min[i];
-        (distance1 < distance2) ?
-            dir1[i] = distance1
-            : dir1[i] = -distance2;
+void Hitbox::recalculate(const std::vector<glm::vec3>& vertices){
+    if (vertices.size() == 0)
+        return ;
+    _flats.clear();
+    _normals.clear();
+    _minY = vertices[0].y;
+    _maxY = vertices[0].y;
+    for (auto i = 0; i < vertices.size(); ++i){
+        glm::vec2 flatvec = glm::vec2(vertices[i].x, vertices[i].z);
+        if (std::find(_flats.begin(), _flats.end(), flatvec) == _flats.end())
+            _flats.push_back(flatvec);
+        if (vertices[i].y < _minY)
+            _minY = vertices[i].y;
+        else if (vertices[i].y > _maxY)
+            _maxY = vertices[i].y;
     }
-    data.distance1 = keepLowest(dir1);
-    data.distance2 = -data.distance1;
+    for (auto i = 0; i < 2; ++i){
+        glm::vec2 norm = get2Dnormal(_flats[i], _flats[(i + 1) % _flats.size()]);
+        _normals.push_back(norm);
+    }
+}
+
+glm::vec2 Hitbox::get2Dnormal(const glm::vec2& p1, const glm::vec2& p2) const{
+    glm::vec2 normal = p1 - p2;
+    normal = glm::normalize(glm::vec2(-normal[1], normal[0]));
+    return normal;
+}
+
+glm::vec2 Hitbox::getMinMax(const glm::vec2& normal, const Object& obj) const{
+    std::vector<glm::vec2> flats(obj.hitbox()._flats);
+    glm::vec3 finalpos(obj.finalpos());
+    for (auto i = 0; i < flats.size(); ++i)
+        flats[i] += glm::vec2(finalpos.x, finalpos.z);
+    float dot = glm::dot(flats[0], normal);
+    glm::vec2 range(dot, dot);
+    for (auto i = 1; i < flats.size(); ++i){
+        dot = glm::dot(flats[i], normal);
+        if (dot < range[0])
+            range[0] = dot;
+        else if (dot > range[1])
+            range[1] = dot;
+    }
+    return range;
+}
+
+float Hitbox::getOverlap(const glm::vec2& minMax, const glm::vec2& tminMax) const{
+    if (minMax[0] > tminMax[1] || minMax[1] < tminMax[0])
+        return 0;
+    float distance1 = minMax[1] - tminMax[0];
+    float distance2 = tminMax[1] - minMax[0];
+    return glm::min(distance1, distance2);
+}
+
+CollisionData Hitbox::sat2D(const Object& obj, const Object& target) const{
+    std::string name;
+    int         id = 0;
+    CollisionData data;
+    data.overlap = 1E+37;
+    for (auto i = 0; i < _normals.size(); ++i){
+        glm::vec2 minMax = getMinMax(_normals[i], obj);
+        glm::vec2 tminMax = getMinMax(_normals[i], target);
+        float overlap = getOverlap(minMax, tminMax);
+        if (overlap == 0)
+            return CollisionData();
+        if (overlap < data.overlap){
+            data.overlap = overlap;
+            data.normal = glm::vec3(_normals[i][0], 0.0f, _normals[i][1]);
+        }
+    }
+    const std::vector<glm::vec2>& tnormals = target.hitbox()._normals;
+    for (auto i = 0; i < tnormals.size(); ++i){
+        glm::vec2 minMax = getMinMax(tnormals[i], obj);
+        glm::vec2 tminMax = getMinMax(tnormals[i], target);
+        float overlap = getOverlap(minMax, tminMax);
+        if (overlap == 0)
+            return CollisionData();
+        if (overlap < data.overlap){
+            data.overlap = overlap;
+            data.normal = glm::vec3(tnormals[i][0], 0.0f, tnormals[i][1]);
+        }
+    }
     return data;
 }
 
-CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) const {
-    glm::vec3 min = obj.position() + obj.velocity() + _min;
-    glm::vec3 max = obj.position() + obj.velocity() + _max;
-    glm::vec3 min2 = target.position() + target.velocity() + target.hitbox()._min;
-    glm::vec3 max2 = target.position() + target.velocity() + target.hitbox()._max;
-    if (!(min.x <= max2.x && max.x >= min2.x))
+CollisionData Hitbox::checkY(float finalY, float tfinalY, const Object& obj, const Object& target) const{
+    CollisionData data;
+    const Hitbox& targ = target.hitbox();
+    glm::vec2 minMaxY(finalY + _minY, finalY + _maxY);
+    glm::vec2 tminMaxY(tfinalY + targ._minY, tfinalY + targ._maxY);
+    data.overlap = getOverlap(minMaxY, tminMaxY);
+    if (data.overlap == 0)
         return CollisionData();
-    if (!(min.y <= max2.y && max.y >= min2.y))
-        return CollisionData();
-    if (!(min.z <= max2.z && max.z >= min2.z))
-        return CollisionData();
-    return findCollision(min, max, min2, max2);
+    data.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+    return data;
 }
 
-void Hitbox::draw(const Uniforms& uni) const{
-    glm::vec3 min = _rotation * _min;
-    glm::vec3 max = _rotation * _max;
-    std::vector<glm::vec3> vertices = {
-        glm::vec3(min.x, min.y, min.z),
-        glm::vec3(min.x, max.y, min.z),
-        glm::vec3(min.x, min.y, max.z),
-        glm::vec3(min.x, max.y, max.z),
+CollisionData Hitbox::checkDirection(const glm::vec3& finalpos, const glm::vec3& tfinalpos, CollisionData& data) const{
+    glm::vec2 direction(finalpos.x - tfinalpos.x, finalpos.z - tfinalpos.z);
+    if (glm::dot(direction, glm::vec2(data.normal.x, data.normal.z)) > 0.0f)
+        data.normal = -data.normal;
+    return data;
+}
 
-        glm::vec3(max.x, min.y, min.z),
-        glm::vec3(max.x, max.y, min.z),
-        glm::vec3(max.x, min.y, max.z),
-        glm::vec3(max.x, max.y, max.z),
-    };
+CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) const{
+    if (_flats.size() == 0 || target.hitbox()._flats.size() == 0)
+        return CollisionData();
+    glm::vec3 finalpos = obj.finalpos();
+    glm::vec3 tfinalpos = target.finalpos();
+    CollisionData Yaxis = checkY(finalpos.y, tfinalpos.y, obj, target);
+    if (Yaxis.overlap == 0)
+        return CollisionData();
+    CollisionData XZaxis = sat2D(obj, target);
+    if (XZaxis.overlap == 0)
+        return CollisionData();
+    if (Yaxis.overlap < XZaxis.overlap)
+        return checkDirection(finalpos, tfinalpos, Yaxis);
+    return checkDirection(finalpos, tfinalpos, XZaxis);
+}
+
+void Hitbox::setRotation(const glm::mat3& mat){
+    _rotation = mat;
+    if (_lastRot != _rotation){
+        std::vector<glm::vec3> vertices = _vertices;
+        _lastRot = _rotation;
+        for (auto i = 0; i < vertices.size(); ++i)
+            vertices[i] = vertices[i] * _rotation;
+        recalculate(vertices);
+    }
+}
+
+void Hitbox::draw(const Uniforms& uni){
+    if (_vertices.size() == 0)
+        return;
+    std::vector<glm::vec3> vertices(_vertices);
+    for (auto i = 0; i < vertices.size(); ++i)
+        vertices[i] = vertices[i] * _rotation;
     std::vector<GLuint> indices = {
         0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
         1, 0, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7,

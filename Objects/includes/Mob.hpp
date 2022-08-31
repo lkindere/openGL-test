@@ -29,5 +29,5 @@ class Mob : public Object
         
 		short _health = 10;
 		short _energy = 10;
-        float _speed = 0.10;
+        float _speed = 0.05;
 };

@@ -45,15 +45,6 @@ void Init() {
 #endif
 }
 
-// Mob* inputPath(){
-//     std::string str;
-//     std::cout << "Input file: " << std::endl;
-//     std::getline(std::cin, str);
-//     str = "Models/" + str;
-//     std::cout << "Loading: " << str << std::endl;
-//     return new Mob(importer(str.data()));
-// }
-
 #include "Spawner.hpp"
 
 Shader* g_hitboxShader;
@@ -78,22 +69,31 @@ int main(void) {
     scene.player()->setShader(defaultShader);
     scene.object(lightID)->setShader(lightShader);
 
-    scene.player()->setName("Player");
-    scene.object(mobID)->setName("Mob");
-    scene.object(wallID)->setPosition(5.0f, 0.0f, 5.0f);
-    scene.object(wallID)->setName("Wall");
-    scene.object(mobID)->setPosition(5.0f, 0.0f, 5.0f);
+    scene.player()->setCollide(true);
 
+    scene.object(mobID)->setPosition(-5.0f, 0.0f, -5.0f);
+
+    scene.object(wallID)->setPosition(10.0f, 0.0f, -10.0f);
     scene.object(wallID)->setCollide(true);
     scene.object(wallID)->setWeight(1.0f);
-    scene.object(floorID)->setCollide(true);
-    scene.object(floorID)->setWeight(1.0f);
-    scene.player()->setCollide(true);
+
+    int wallID2 = scene.loadInstance(STATIC, wallID);
+    scene.object(wallID2)->setPosition(10.0f, 0.0f, 10.0f);
+    scene.object(wallID2)->setCollide(true);
+    scene.object(wallID2)->setWeight(1.0f);
+    int wallID3 = scene.loadInstance(STATIC, wallID);
+    scene.object(wallID3)->setPosition(-10.0f, 0.0f, 10.0f);
+    scene.object(wallID3)->setCollide(true);
+    scene.object(wallID3)->setWeight(1.0f);
+    int wallID4 = scene.loadInstance(STATIC, wallID);
+    scene.object(wallID4)->setPosition(-10.0f, 0.0f, -10.0f);
+    scene.object(wallID4)->setCollide(true);
+    scene.object(wallID4)->setWeight(1.0f);
 
     Spawner spawner(scene.object(mobID)->model(), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
-    scene.addSpawner(&spawner);
+    // scene.addSpawner(&spawner);
 
     int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     
@@ -101,6 +101,14 @@ int main(void) {
     std::cout << "Shader: " << scene.nShaders() << std::endl;
 
     while (!glfwWindowShouldClose(settings.window())) {
+        glm::mat4 rot = glm::rotate(scene.object(wallID)->rotation(), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 rot2 = glm::rotate(scene.object(wallID2)->rotation(), glm::radians(1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 rot3 = glm::rotate(scene.object(wallID3)->rotation(), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 rot4 = glm::rotate(scene.object(wallID4)->rotation(), glm::radians(0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+        scene.object(wallID)->setRotation(rot);
+        scene.object(wallID2)->setRotation(rot2);
+        scene.object(wallID3)->setRotation(rot3);
+        scene.object(wallID4)->setRotation(rot4);
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.animate();

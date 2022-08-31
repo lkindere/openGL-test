@@ -18,6 +18,7 @@ class Model
         const NodeData*         findNode(const char* name) const;
         std::vector<glm::mat4>  generateMatrices(const modelIN& input);
 
+        Hitbox&                         hitbox();
         const Hitbox&                   hitbox() const;
         const std::vector<glm::mat4>&   matrices() const;
         float                           duration(int ID) const;

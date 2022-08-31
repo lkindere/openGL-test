@@ -88,6 +88,7 @@ struct AnimTimers
 
 struct HitboxData
 {
+    std::vector<glm::vec3> vertices;
     glm::vec3 min;
     glm::vec3 max;
 };

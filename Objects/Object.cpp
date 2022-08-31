@@ -26,6 +26,10 @@ void Object::move(){
     checkCollision();
     _position += _velocity;
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
+    if (_position.y < 1.0f){
+        _velocity.y = 0.0f;
+        _position.y = 1.0f;
+    }
 }
 
 void Object::animate(int ID, bool loop){
@@ -55,6 +59,7 @@ void Object::animLoop(){
 void Object::loop(){
     animLoop();
     draw();
+        // checkCollision(); // temp, remove
 }
 
 void Object::damage(short dmg) {}
@@ -62,14 +67,21 @@ void Object::damage(short dmg) {}
 void Object::draw(){
     setDefaultUniforms();
     _model->draw(*_scene->shader(_shader), _uniforms);
+    hitbox().setRotation(glm::inverse(_rotation));
     hitbox().draw(_uniforms);
 }
 
 void Object::collisionPhysics(Object& target, CollisionData& data){
     if (glfwGetKey(settings.window(), GLFW_KEY_F) == GLFW_PRESS)
         return ;
-    target._velocity -= glm::mix(data.distance2, glm::vec3(0.0f), target._weight);
-    _velocity -= glm::mix(data.distance1, glm::vec3(0.0f), 1.0 - target._weight);
+    printvec(data.normal);
+    std::cout << std::endl;
+    target._velocity -= glm::mix(data.overlap * -data.normal, glm::vec3(0.0f), target._weight);
+    _velocity -= glm::mix(data.overlap * data.normal, glm::vec3(0.0f), 1.00 - target._weight);
+    // _velocity = glm::vec3(0.0f);
+    
+    // target._velocity -= glm::mix(data.distance2, glm::vec3(0.0f), target._weight);
+    // _velocity -= glm::mix(data.distance1, glm::vec3(0.0f), 1.0 - target._weight);
 }
 
 void Object::checkCollision(){
@@ -77,7 +89,7 @@ void Object::checkCollision(){
         return ;
     if (_scene->player() != this){
         CollisionData collision = hitbox().checkCollision(*this, *_scene->player());
-        if (collision.hit){
+        if (collision.overlap != 0){
             collisionPhysics(*_scene->player(), collision);
             Mob* mob = dynamic_cast<Mob*>(this);
             if (mob != nullptr && !mob->animating())
@@ -88,7 +100,7 @@ void Object::checkCollision(){
         if (it->second->collide() == false || it->second == this)
             continue ;
         CollisionData collision = hitbox().checkCollision(*this, *it->second);
-        if (collision.hit)
+        if (collision.overlap != 0)
             collisionPhysics(*it->second, collision);
     }
 }
@@ -100,11 +112,13 @@ bool                Object::animating() const { return _animating; }
 int                 Object::shader() const { return _shader; }
 int                 Object::flags() const { return _flags; }
 const glm::vec3&    Object::front() const { return _front; }
-const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::direction() const { return _direction; }
+const glm::vec3&    Object::position() const { return _position; }
 const glm::vec3&    Object::velocity() const { return _velocity; }
+glm::vec3           Object::finalpos() const { return _position + _velocity; }
 const glm::vec3&    Object::scale() const { return _scale; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
+Hitbox&             Object::hitbox() { return _model->hitbox(); }
 const Hitbox&       Object::hitbox() const { return _model->hitbox(); }
 
 const std::shared_ptr<Model>&   Object::model() const { return _model; }
