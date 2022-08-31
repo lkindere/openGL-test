@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Hitbox.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"

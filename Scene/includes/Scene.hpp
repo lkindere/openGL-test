@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Enums.hpp"
 #include "Structs.hpp"
 #include "Object.hpp"
 #include "Camera.hpp"
@@ -13,20 +14,6 @@
 
 #include "debug.hpp"
 
-enum object_types
-{
-    STATIC,
-    LIGHT,
-    PLAYER,
-    MOB,
-    DETAIL,
-};
-
-enum shader_flags
-{
-    hasTexture = 1,
-    deformOn = 2,
-};
 
 class Scene
 {
@@ -35,8 +22,8 @@ class Scene
 
         void animate();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
-        int loadObject(object_types type, const char* path);
-        int loadInstance(object_types type, int modelID);
+        int loadObject(object_type type, const char* path);
+        int loadInstance(object_type type, int modelID);
         void animate() const;
     
     public:

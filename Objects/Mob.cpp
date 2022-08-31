@@ -9,12 +9,14 @@ glm::vec3 noY(const glm::vec3& vec){
 
 Mob::Mob(MeshData data, Scene* scene, int ID)
     : Object(&data, scene, ID) {
+    _type = MOB;
     _collide = true;
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
 Mob::Mob(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {
+    _type = MOB;
     _collide = true;
     setPosition(1.0f, 0.0f, 1.0f);
 }

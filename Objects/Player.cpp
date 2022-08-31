@@ -2,10 +2,14 @@
 #include "Scene.hpp"
 
 Player::Player(MeshData data, Scene* scene, int ID)
-    : Object(&data, scene, ID) {}
+    : Object(&data, scene, ID) {
+    _type = PLAYER;
+}
 
 Player::Player(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
-    : Object(modelptr, scene, ID) {}
+    : Object(modelptr, scene, ID) {
+    _type = PLAYER;
+}
 
 void Player::input() {
     if (_scene->camera().mode() == detached){

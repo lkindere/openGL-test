@@ -109,6 +109,10 @@ int main(void) {
         scene.object(wallID2)->setRotation(rot2);
         scene.object(wallID3)->setRotation(rot3);
         scene.object(wallID4)->setRotation(rot4);
+        scene.object(wallID)->setName("wall");
+                scene.object(wallID2)->setName("wall2");
+                        scene.object(wallID3)->setName("wall3");
+                                scene.object(wallID4)->setName("wall4");
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.animate();

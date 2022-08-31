@@ -32,7 +32,7 @@ int Scene::loadShader(const char* vert, const char* frag, const char* geo){
 }
 
 //Loads an object and returns object ID
-int Scene::loadObject(object_types type, const char* path){
+int Scene::loadObject(object_type type, const char* path){
     switch(type){
         case PLAYER:
             assert(!_player);
@@ -51,7 +51,7 @@ int Scene::loadObject(object_types type, const char* path){
     }
 }
 
-int Scene::loadInstance(object_types type, int modelID){
+int Scene::loadInstance(object_type type, int modelID){
     switch(type){
         case LIGHT:
             return (loadLightInstance(modelID));

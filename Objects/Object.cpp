@@ -59,7 +59,7 @@ void Object::animLoop(){
 void Object::loop(){
     animLoop();
     draw();
-        // checkCollision(); // temp, remove
+    checkCollision();
 }
 
 void Object::damage(short dmg) {}
@@ -74,18 +74,12 @@ void Object::draw(){
 void Object::collisionPhysics(Object& target, CollisionData& data){
     if (glfwGetKey(settings.window(), GLFW_KEY_F) == GLFW_PRESS)
         return ;
-    printvec(data.normal);
-    std::cout << std::endl;
     target._velocity -= glm::mix(data.overlap * -data.normal, glm::vec3(0.0f), target._weight);
     _velocity -= glm::mix(data.overlap * data.normal, glm::vec3(0.0f), 1.00 - target._weight);
-    // _velocity = glm::vec3(0.0f);
-    
-    // target._velocity -= glm::mix(data.distance2, glm::vec3(0.0f), target._weight);
-    // _velocity -= glm::mix(data.distance1, glm::vec3(0.0f), 1.0 - target._weight);
 }
 
 void Object::checkCollision(){
-    if (_collide == false)
+    if (_collide == false || _type == STATIC)
         return ;
     if (_scene->player() != this){
         CollisionData collision = hitbox().checkCollision(*this, *_scene->player());
@@ -99,6 +93,8 @@ void Object::checkCollision(){
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false || it->second == this)
             continue ;
+        //Temporary, only need to recalculate for instanced objects, add flags INSTANCED/COLLIDE/ETC
+        it->second->hitbox().setRotation(glm::inverse(it->second->_rotation));
         CollisionData collision = hitbox().checkCollision(*this, *it->second);
         if (collision.overlap != 0)
             collisionPhysics(*it->second, collision);
@@ -107,6 +103,7 @@ void Object::checkCollision(){
 
 int                 Object::ID() const { return _ID; }
 const std::string&  Object::name() const { return _name; }
+object_type         Object::type() const { return _type; }
 bool                Object::collide() const { return _collide; }
 bool                Object::animating() const { return _animating; }
 int                 Object::shader() const { return _shader; }
@@ -126,6 +123,10 @@ const std::shared_ptr<Model>&   Object::model() const { return _model; }
 
 void Object::setName(const std::string& name){
     _name = name;
+}
+
+void Object::setType(object_type type){
+    _type = type;
 }
 
 void    Object::setCollide(bool b){

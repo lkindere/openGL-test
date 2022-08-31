@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "Enums.hpp"
 #include "Model.hpp"
 #include "Hitbox.hpp"
 
@@ -35,6 +36,7 @@ class Object
     public:
         int                 ID() const;
         const std::string&  name() const;
+        object_type         type() const;
         bool                collide() const;
         bool                animating() const;
         int                 shader() const;
@@ -52,6 +54,7 @@ class Object
         const std::shared_ptr<Model>& model() const;
 
         void setName(const std::string& name);
+        void setType(object_type type);
         void setCollide(bool b);
         void setShader(int ID);
         void setFlags(int flags);
@@ -87,6 +90,7 @@ class Object
     protected:
         int         _ID;
         std::string _name;
+        object_type _type = STATIC;
         bool        _animating = false;
         float       _aStart = 0.0f;
         float       _aDuration = 0.0f;
