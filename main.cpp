@@ -93,7 +93,7 @@ int main(void) {
     Spawner spawner(scene.object(mobID)->model(), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
-    // scene.addSpawner(&spawner);
+    scene.addSpawner(&spawner);
 
     int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     

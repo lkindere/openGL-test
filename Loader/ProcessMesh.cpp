@@ -180,13 +180,11 @@ HitboxData process_hitbox(const aiScene* scene){
     const aiMesh* mesh = scene->mMeshes[1];
     HitboxData data;
     data.vertices.reserve(mesh->mNumVertices);
-    std::cout << "N vertices: " << mesh->mNumVertices << std::endl;
     for (auto i = 0; i < mesh->mNumVertices; ++i){
         if (std::find(data.vertices.begin(), data.vertices.end(),
             toGLvec(mesh->mVertices[i])) == data.vertices.end())
                 data.vertices.push_back(toGLvec(mesh->mVertices[i]));
     }
-    std::cout << "Size: " << data.vertices.size() << std::endl;
     return data;
 }
 

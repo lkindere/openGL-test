@@ -26,9 +26,9 @@ void Object::move(){
     checkCollision();
     _position += _velocity;
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
-    if (_position.y < 1.0f){
+    if (_position.y < 0.0f){
         _velocity.y = 0.0f;
-        _position.y = 1.0f;
+        _position.y = 0.0f;
     }
 }
 
@@ -60,6 +60,7 @@ void Object::loop(){
     animLoop();
     draw();
     checkCollision();
+    _newRotation = false;
 }
 
 void Object::damage(short dmg) {}
@@ -177,6 +178,7 @@ void    Object::setScale(float x, float y, float z) {
 
 void    Object::setRotation(const glm::mat4& mat){
     _rotation = mat;
+    _newRotation = true;
 }
 
 void    Object::setVelocity(const glm::vec3& vec){

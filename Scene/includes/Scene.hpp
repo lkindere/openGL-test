@@ -13,7 +13,8 @@
 #include "Spawner.hpp"
 
 #include "debug.hpp"
-
+#include <array>
+#include <list>
 
 class Scene
 {

@@ -15,21 +15,22 @@ Hitbox::Hitbox(const HitboxData& data)
 }
 
 void Hitbox::recalculate(const std::vector<glm::vec3>& vertices){
-    if (vertices.size() == 0)
-        return ;
     _flats.clear();
     _normals.clear();
     _minY = vertices[0].y;
     _maxY = vertices[0].y;
     for (auto i = 0; i < vertices.size(); ++i){
         glm::vec2 flatvec = glm::vec2(vertices[i].x, vertices[i].z);
-        if (std::find(_flats.begin(), _flats.end(), flatvec) == _flats.end())
+        if (std::find(_flats.begin(), _flats.end(), flatvec) == _flats.end()){
             _flats.push_back(flatvec);
-        if (vertices[i].y < _minY)
-            _minY = vertices[i].y;
-        else if (vertices[i].y > _maxY)
-            _maxY = vertices[i].y;
+            if (vertices[i].y < _minY)
+                _minY = vertices[i].y;
+            else if (vertices[i].y > _maxY)
+                _maxY = vertices[i].y;
+        }
     }
+    for (auto i = 0; i < _flats.size(); ++i)
+        _flats[i] = _flats[i] * _rot;
     for (auto i = 0; i < 2; ++i){
         glm::vec2 norm = get2Dnormal(_flats[i], _flats[(i + 1) % _flats.size()]);
         _normals.push_back(norm);
@@ -118,13 +119,14 @@ CollisionData Hitbox::checkDirection(const glm::vec3& finalpos, const glm::vec3&
 }
 
 CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) const{
-    if (_flats.size() == 0 || target.hitbox()._flats.size() == 0)
+    if (_vertices.size() == 0)
         return CollisionData();
     glm::vec3 finalpos = obj.finalpos();
     glm::vec3 tfinalpos = target.finalpos();
     CollisionData Yaxis = checkY(finalpos.y, tfinalpos.y, obj, target);
     if (Yaxis.overlap == 0)
         return CollisionData();
+
     CollisionData XZaxis = sat2D(obj, target);
     if (XZaxis.overlap == 0)
         return CollisionData();
@@ -133,23 +135,27 @@ CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) co
     return checkDirection(finalpos, tfinalpos, XZaxis);
 }
 
-void Hitbox::setRotation(const glm::mat3& mat){
-    _rotation = mat;
-    if (_lastRot != _rotation){
-        std::vector<glm::vec3> vertices = _vertices;
-        _lastRot = _rotation;
-        for (auto i = 0; i < vertices.size(); ++i)
-            vertices[i] = vertices[i] * _rotation;
-        recalculate(vertices);
-    }
+void Hitbox::setRotation(const glm::mat4& mat){
+    if (_vertices.size() == 0)
+        return;
+    _rot = {
+        mat[0].x, mat[0].z,
+        mat[2].x, mat[2].z,
+    };
+    recalculate(_vertices);
 }
 
 void Hitbox::draw(const Uniforms& uni){
     if (_vertices.size() == 0)
         return;
     std::vector<glm::vec3> vertices(_vertices);
+    glm::mat3 rot3d = {
+        _rot[0][0], 0.0f, _rot[0][1],
+        0.0f,       1.0f,       0.0f,
+        _rot[1][0], 0.0f, _rot[1][1],
+    };
     for (auto i = 0; i < vertices.size(); ++i)
-        vertices[i] = vertices[i] * _rotation;
+        vertices[i] = vertices[i] * rot3d;
     std::vector<GLuint> indices = {
         0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
         1, 0, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7,

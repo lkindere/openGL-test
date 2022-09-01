@@ -16,7 +16,7 @@ class Hitbox
     public:
         Hitbox(const HitboxData& data);
         void draw(const Uniforms& uni);
-        void setRotation(const glm::mat3& mat);
+        void setRotation(const glm::mat4& mat);
         CollisionData checkCollision(const Object& obj, const Object& target) const;
     
     private:
@@ -29,11 +29,10 @@ class Hitbox
         float           getOverlap(const glm::vec2& minMax, const glm::vec2& tminMax) const;
     
     private:
+        std::vector<glm::vec3>  _vertices;
         float                   _minY;
         float                   _maxY;
-        std::vector<glm::vec3>  _vertices;
         std::vector<glm::vec2>  _flats;
         std::vector<glm::vec2>  _normals;
-        glm::mat3               _lastRot = glm::mat3(1.0f);
-        glm::mat3               _rotation = glm::mat3(1.0f);
+        glm::mat2               _rot = glm::mat2(1.0f);
 };

@@ -97,6 +97,7 @@ class Object
 
     protected:
         bool        _animating = false;
+        bool        _newRotation = false;
         float       _aStart = 0.0f;
         float       _aDuration = 0.0f;
 
