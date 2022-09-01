@@ -38,9 +38,13 @@ class Object
         const std::string&  name() const;
         object_type         type() const;
         bool                collide() const;
+        bool                isInstanced() const;
+        bool                isStatic() const;
         bool                animating() const;
+
         int                 shader() const;
         int                 flags() const;
+
         const glm::vec3&    front() const;
         const glm::vec3&    direction() const;
         const glm::vec3&    position() const;
@@ -51,13 +55,16 @@ class Object
         const Hitbox&       hitbox() const;
         Hitbox&             hitbox();
 
+
         const std::shared_ptr<Model>& model() const;
 
         void setName(const std::string& name);
         void setType(object_type type);
         void setCollide(bool b);
+
         void setShader(int ID);
         void setFlags(int flags);
+
         void setFront(const glm::vec3& vec);
         void setFront(float x, float y, float z);
         void setPosition(const glm::vec3& vec);
@@ -84,22 +91,18 @@ class Object
         glm::vec3   _velocity = glm::vec3(0.0f);
         
     protected:
+        Uniforms    _uniforms;
         int         _shader = 0;
         int         _flags = 0;
 
     protected:
-        int         _ID;
-        std::string _name;
-        object_type _type = STATIC;
         bool        _animating = false;
         float       _aStart = 0.0f;
         float       _aDuration = 0.0f;
-        bool        _collide = false;
 
     protected:
-        Scene*      _scene = nullptr;
-        Uniforms    _uniforms;
-
+        object_info             _info;
+        Scene*                  _scene = nullptr;
 		std::shared_ptr<Model>  _model;
         modelIN                 _mdata;
 };

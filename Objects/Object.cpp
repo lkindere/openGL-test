@@ -3,14 +3,14 @@
 
 Object::Object(MeshData data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
-        _scene(scene), _ID(ID) {}
+        _scene(scene), _info(ID) {}
 
 Object::Object(MeshData* data, Scene* scene, int ID)
     : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
-        _scene(scene), _ID(ID) {}
+        _scene(scene), _info(ID) {}
 
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
-    : _model(modelptr), _scene(scene), _ID(ID) {}
+    : _model(modelptr), _scene(scene), _info(ID) {}
 
 void Object::setDefaultUniforms(){
     _uniforms.flags = _flags;
@@ -79,7 +79,7 @@ void Object::collisionPhysics(Object& target, CollisionData& data){
 }
 
 void Object::checkCollision(){
-    if (_collide == false || _type == STATIC)
+    if (_info.collide() == false || _info.type() == STATIC)
         return ;
     if (_scene->player() != this){
         CollisionData collision = hitbox().checkCollision(*this, *_scene->player());
@@ -93,18 +93,20 @@ void Object::checkCollision(){
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false || it->second == this)
             continue ;
-        //Temporary, only need to recalculate for instanced objects, add flags INSTANCED/COLLIDE/ETC
-        it->second->hitbox().setRotation(glm::inverse(it->second->_rotation));
+        if (it->second->isInstanced())
+            it->second->hitbox().setRotation(glm::inverse(it->second->_rotation));
         CollisionData collision = hitbox().checkCollision(*this, *it->second);
         if (collision.overlap != 0)
             collisionPhysics(*it->second, collision);
     }
 }
 
-int                 Object::ID() const { return _ID; }
-const std::string&  Object::name() const { return _name; }
-object_type         Object::type() const { return _type; }
-bool                Object::collide() const { return _collide; }
+int                 Object::ID() const { return _info.ID(); }
+const std::string&  Object::name() const { return _info.name(); }
+object_type         Object::type() const { return _info.type(); }
+bool                Object::collide() const { return _info.collide(); }
+bool                Object::isInstanced() const { return _model.use_count() > 1; }
+bool                Object::isStatic() const { return _info.type() == STATIC; }
 bool                Object::animating() const { return _animating; }
 int                 Object::shader() const { return _shader; }
 int                 Object::flags() const { return _flags; }
@@ -121,16 +123,16 @@ const Hitbox&       Object::hitbox() const { return _model->hitbox(); }
 const std::shared_ptr<Model>&   Object::model() const { return _model; }
 
 
-void Object::setName(const std::string& name){
-    _name = name;
+void    Object::setName(const std::string& name){
+    _info.setName(name);
 }
 
-void Object::setType(object_type type){
-    _type = type;
+void    Object::setType(object_type type){
+    _info.setType(type);
 }
 
 void    Object::setCollide(bool b){
-    _collide = b;
+    _info.setCollide(b);
 }
 
 void    Object::setShader(int ID){
@@ -165,27 +167,27 @@ void    Object::setDirection(float x, float y, float z){
     _direction.x = x; _direction.y = y; _direction.z = z;
 }
 
-void Object::setScale(const glm::vec3& vec) {
+void    Object::setScale(const glm::vec3& vec) {
     _scale = vec;
 }
 
-void Object::setScale(float x, float y, float z) {
+void    Object::setScale(float x, float y, float z) {
     _scale.x = x; _scale.y = y; _scale.z = z;
 }
 
-void Object::setRotation(const glm::mat4& mat){
+void    Object::setRotation(const glm::mat4& mat){
     _rotation = mat;
 }
 
-void Object::setVelocity(const glm::vec3& vec){
+void    Object::setVelocity(const glm::vec3& vec){
     _velocity = vec;
 }
 
-void Object::setVelocity(float x, float y, float z){
+void    Object::setVelocity(float x, float y, float z){
     _velocity.x = x; _velocity.y = y; _velocity.z = z;
 }
 
-void Object::setWeight(float x){
+void    Object::setWeight(float x){
     _weight = x;
 }
 

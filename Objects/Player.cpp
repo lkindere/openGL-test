@@ -3,12 +3,12 @@
 
 Player::Player(MeshData data, Scene* scene, int ID)
     : Object(&data, scene, ID) {
-    _type = PLAYER;
+    _info.setType(PLAYER);
 }
 
 Player::Player(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {
-    _type = PLAYER;
+    _info.setType(PLAYER);
 }
 
 void Player::input() {

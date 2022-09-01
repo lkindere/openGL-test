@@ -9,22 +9,22 @@ glm::vec3 noY(const glm::vec3& vec){
 
 Mob::Mob(MeshData data, Scene* scene, int ID)
     : Object(&data, scene, ID) {
-    _type = MOB;
-    _collide = true;
+    _info.setType(MOB);
+    _info.setCollide(true);
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
 Mob::Mob(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {
-    _type = MOB;
-    _collide = true;
+    _info.setType(MOB);
+    _info.setCollide(true);
     setPosition(1.0f, 0.0f, 1.0f);
 }
 
 bool Mob::checkDeath(){
     if (_health > 0)
         return 0;
-    _collide = false;
+    setCollide(false);
     // _model->setLoop(false);
     _flags |= deformOn;
     float time = glfwGetTime();
@@ -34,7 +34,7 @@ bool Mob::checkDeath(){
     _uniforms.add_uni("uTime", currentTick);
     draw();
     if (currentTick > 1.0f)
-        _scene->removeObject(_ID);
+        _scene->removeObject(ID());
     return 1;
 }
 
