@@ -1,10 +1,7 @@
 #pragma once
 
-#include <vector>
-
+#include "main.hpp"
 #include <glad/gl.h>
-
-#include "Structs.hpp"
 
 class ArrayObject {
 	public:

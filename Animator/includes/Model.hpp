@@ -1,9 +1,7 @@
 #pragma once
 
-#include <glad/gl.h>
-#include <glm/gtc/type_ptr.hpp>
+#include "main.hpp"
 
-#include "Structs.hpp"
 #include "Shader.hpp"
 #include "Animator.hpp"
 #include "ArrayObject.hpp"
@@ -26,5 +24,4 @@ class Model
 		ArrayObject             _VAO;
 		Animator                _animator;
         std::vector<glm::vec3>  _hitboxBase;
-        // Hitbox      _hitbox;
 };

@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "Spawner.hpp"
 #include "Scene.hpp"
 

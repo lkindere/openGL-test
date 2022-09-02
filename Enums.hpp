@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include "main.hpp"
 
 enum object_type
 {

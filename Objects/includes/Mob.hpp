@@ -13,6 +13,7 @@ class Mob : public Object
         ~Mob();
         
         void loop();
+        void update();
         void damage(short dmg);
 
     private:

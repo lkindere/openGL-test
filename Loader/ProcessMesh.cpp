@@ -1,5 +1,5 @@
 #include "ProcessMesh.hpp"
-#include "debug.hpp"
+#include "ldebug.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

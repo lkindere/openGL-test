@@ -23,6 +23,7 @@ add_definitions(-std=c++11 -DDEBUG)
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 target_precompile_headers(${PROJECT_NAME}
+    PUBLIC main.hpp
     PRIVATE callbacks.hpp
     PRIVATE debug.hpp
     PRIVATE settings.hpp

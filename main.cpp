@@ -70,8 +70,10 @@ int main(void) {
     scene.object(lightID)->setShader(lightShader);
 
     scene.player()->setCollide(true);
+    scene.player()->setName("Player");
 
     scene.object(mobID)->setPosition(-5.0f, 0.0f, -5.0f);
+    scene.object(mobID)->setName("Mob");
 
     scene.object(wallID)->setPosition(10.0f, 0.0f, -10.0f);
     scene.object(wallID)->setCollide(true);

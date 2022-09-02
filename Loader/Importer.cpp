@@ -1,6 +1,6 @@
 #include "ProcessMesh.hpp"
 #include "Importer.hpp"
-#include "debug.hpp"
+#include "ldebug.hpp"
 
 MeshData process_scene(const aiScene* scene){
     // if (scene->mNumMeshes != 1)

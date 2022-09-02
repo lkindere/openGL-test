@@ -11,6 +11,7 @@ add_library(Scene
 add_definitions(-std=c++11)
 
 target_precompile_headers(${PROJECT_NAME}
+    PUBLIC ../main.hpp
     PRIVATE includes/Camera.hpp
     PRIVATE includes/Scene.hpp
     PRIVATE includes/Shader.hpp

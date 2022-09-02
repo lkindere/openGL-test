@@ -1,9 +1,5 @@
 #include "Shader.hpp"
 
-#ifdef DEBUG
-#include <iostream>
-#endif
-
 GLuint Shader::compileShader(shader_type type, const char* path){
     std::ifstream input(path);
     std::stringstream sstream;

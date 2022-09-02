@@ -11,6 +11,7 @@ add_library(Objects
 add_definitions(-std=c++11)
 
 target_precompile_headers(${PROJECT_NAME}
+    PUBLIC ../main.hpp
     PRIVATE includes/Object.hpp
     PRIVATE includes/Light.hpp
     PRIVATE includes/Mob.hpp

@@ -61,6 +61,10 @@ void Player::attack(){
 
 void Player::loop(){
     input();
+    applyGravity();
+}
+
+void Player::update(){
     move();
     if (_scene->camera().mode() == first_person){
         _scene->camera().setPosition(_position + glm::vec3(0.0f, 2.0f, 0.0f) + (_direction * glm::vec3(0.1f, 0.0f, 0.1f)));
@@ -76,6 +80,7 @@ void Player::loop(){
     if (_weapon){
         weaponTransformation();
         _weapon->loop();
+        _weapon->draw();
     }
     animLoop();
 }

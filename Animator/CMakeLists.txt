@@ -10,6 +10,7 @@ add_library(Animator
 add_definitions(-std=c++11)
 
 target_precompile_headers(${PROJECT_NAME}
+    PUBLIC ../main.hpp
     PRIVATE includes/ArrayObject.hpp
     PRIVATE includes/Animator.hpp
     PRIVATE includes/Hitbox.hpp

@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 #include "Importer.hpp"
-#include "Octree.hpp"
+#include "Quadtree.hpp"
 
 Scene::Scene() {}
 
@@ -20,22 +20,28 @@ void Scene::collisions(){
     lst.push_back(_player);
     _player->recalculateHitbox();
     for (auto it = _objects.begin(); it != _objects.end(); ++it){
+        if (it->second->collide() == false)
+            continue;
         lst.push_back(it->second);
         it->second->recalculateHitbox();
     }
-    // BoundingBox box(glm::vec3(-50.0f, -10.0f, -50.0f), glm::vec3(50.0f, 10.0f, 50.0f));
-    // Octree tree(box, lst, this);
-    // tree.build();
+    BoundingBox2D box(glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, 50.0f));
+    Quadtree tree(box, lst, this);
+    tree.build();
+    tree.checkCollisions();
 }
 
 void Scene::animate(){
     _currentTime = glfwGetTime();
-    collisions();
     for (auto i = 0; i < _spawners.size(); ++i)
         _spawners[i]->loop();
     _player->loop();
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
         it->second->loop();
+    collisions();
+    _player->update();
+    for (auto it = _objects.begin(); it != _objects.end(); ++it)
+        it->second->update();
     checkRemovals();
 }
 
@@ -44,7 +50,6 @@ int Scene::loadShader(const char* vert, const char* frag, const char* geo){
     return _shaders.size() - 1;
 }
 
-//Loads an object and returns object ID
 int Scene::loadObject(object_type type, const char* path){
     switch(type){
         case PLAYER:

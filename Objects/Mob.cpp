@@ -1,7 +1,5 @@
 #include "Mob.hpp"
 #include "Scene.hpp"
-#include <glm/gtx/vector_angle.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 glm::vec3 noY(const glm::vec3& vec){
     return glm::vec3(vec.x, 0.0f, vec.z);
@@ -25,7 +23,6 @@ bool Mob::checkDeath(){
     if (_health > 0)
         return 0;
     setCollide(false);
-    // _model->setLoop(false);
     _flags |= deformOn;
     float time = glfwGetTime();
     if (lastTick != 0)
@@ -42,10 +39,14 @@ void Mob::loop(){
     if (checkDeath())
         return ;
     facePlayer();
+    applyGravity();
+}
+
+void Mob::update(){
+    animLoop();
     move();
     draw();
     drawHealth();
-    animLoop();
 }
 
 void Mob::drawHealth(){

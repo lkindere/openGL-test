@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Enums.hpp"
-#include "Structs.hpp"
+#include "main.hpp"
+
 #include "Object.hpp"
 #include "Camera.hpp"
 #include "Shader.hpp"
@@ -11,10 +11,6 @@
 #include "Light.hpp"
 
 #include "Spawner.hpp"
-
-#include "debug.hpp"
-#include <array>
-#include <list>
 
 class Scene
 {
@@ -82,7 +78,7 @@ class Scene
         float _currentTime = 0.0f;
 
     private:
-        float _gravity = 0.2f;
+        float _gravity = 0.1f;
 
     private:
         Camera                  _camera;

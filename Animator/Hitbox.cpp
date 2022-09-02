@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "Hitbox.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
@@ -15,8 +13,8 @@ void Hitbox::recalculate(const std::vector<glm::vec3>& base, const glm::mat3& ro
     _vertices.clear();
     _flats.clear();
     _normals.clear();
-    _min = glm::vec3(1E-37);
-    _max = glm::vec3(1E+37);
+    _min = glm::vec3(1E+37);
+    _max = glm::vec3(1E-37);
     for (auto i = 0; i < base.size(); ++i){
         _vertices.push_back(base[i] * rotation);
         glm::vec2 flatvec = glm::vec2(_vertices[i].x, _vertices[i].z);

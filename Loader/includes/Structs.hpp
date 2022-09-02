@@ -1,15 +1,6 @@
 #pragma once
 
-#include <map>
-#include <vector>
-#include <string>
-#include <memory>
-
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/gtc/quaternion.hpp>
-
-#include <iostream>
+#include "main.hpp"
 
 struct KeyPosition
 {

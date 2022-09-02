@@ -1,13 +1,12 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include "main.hpp"
 
 #include <assimp/vector3.h>
 #include <assimp/color4.h>
 #include <assimp/matrix4x4.h>
 #include <assimp/quaternion.h>
+
 
 glm::quat toGLquat(const aiQuaternion& aiQuat);
 glm::vec3 toGLvec(const aiVector3D& aiVec);

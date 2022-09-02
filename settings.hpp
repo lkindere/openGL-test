@@ -1,15 +1,9 @@
 #pragma once
 
-#include <iostream>
-
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include "main.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-// class Player;
 
 class Settings
 {

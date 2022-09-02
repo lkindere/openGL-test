@@ -1,17 +1,12 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
+#include "main.hpp"
+#include "Conversions.hpp"
 
 #include <assimp/scene.h>
 #include <assimp/mesh.h>
 #include <assimp/anim.h>
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-
-#include "Structs.hpp"
-#include "Conversions.hpp"
 
 void print_vec(const glm::ivec3& vec, bool sp = true);
 void print_vec(const glm::vec3& vec, bool sp = true);

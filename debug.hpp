@@ -1,7 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include "Structs.hpp"
+#include "main.hpp"
 
 void printvec(const glm::vec3& vec);
 void printvec(const glm::vec4& vec);

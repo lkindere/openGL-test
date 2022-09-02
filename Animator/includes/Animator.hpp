@@ -1,12 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
-
-#include <GLFW/glfw3.h>
-#include <glm/gtx/quaternion.hpp>
-
-#include "Structs.hpp"
+#include "main.hpp"
 
 struct modelIN
 {

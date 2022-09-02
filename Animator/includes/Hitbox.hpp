@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Structs.hpp"
+#include "main.hpp"
 
 struct Uniforms;
 class Object;
@@ -17,7 +17,7 @@ class Hitbox
         Hitbox();
         void draw(const Uniforms& uni);
         CollisionData   checkCollision(Object& obj, Object& target);
-        void            recalculate(const std::vector<glm::vec3>& vertices, const glm::mat3& rotation);
+        void            recalculate(const std::vector<glm::vec3>& base, const glm::mat3& rotation);
     
     private:
         void            getNormals();
@@ -26,6 +26,10 @@ class Hitbox
         CollisionData   checkDirection(const glm::vec3& finalpos, const glm::vec3& tfinalpos, CollisionData& data) const;
         glm::vec2       getMinMax(const glm::vec2& normal, const Object& obj) const;
         float           getOverlap(const glm::vec2& minMax, const glm::vec2& tminMax) const;
+
+    public:
+        const glm::vec3& min() const { return _min; }
+        const glm::vec3& max() const { return _max; }
     
     private:
         std::vector<glm::vec3>  _vertices;

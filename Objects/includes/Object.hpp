@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
+#include "main.hpp"
 
-#include "Enums.hpp"
 #include "Model.hpp"
 #include "Hitbox.hpp"
 
@@ -19,19 +18,22 @@ class Object
         virtual ~Object();
 
     public:
-        void move();
         void draw();
+        virtual void move();
         virtual void animate(int ID, bool loop);
         virtual void loop();
+        virtual void update();
         virtual void animLoop();
         virtual void damage(short dmg);
         void recalculateHitbox();
+        void checkCollision(Object& target);
 
     protected:
-        virtual void setDefaultUniforms();
+        virtual void    setDefaultUniforms();
+        void            applyGravity();
 
     private:
-        void checkCollision();
+        // void checkCollision();
         void collisionPhysics(Object& target, CollisionData& data);
 
     public:
@@ -55,6 +57,9 @@ class Object
         const glm::mat4&    rotation() const;
         const Hitbox&       hitbox() const;
         Hitbox&             hitbox();
+
+        glm::vec3           HBmin() const;
+        glm::vec3           HBmax() const;
 
 
         const std::shared_ptr<Model>& model() const;

@@ -1,4 +1,4 @@
-#include "debug.hpp"
+#include "ldebug.hpp"
 
 void print_vec(const glm::ivec3& vec, bool sp){
 	std::cout << "X: " << vec.x << " Y: "

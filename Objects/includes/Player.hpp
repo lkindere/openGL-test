@@ -16,6 +16,7 @@ class Player : public Object
 		void setWeapon(Weapon* wep);
 
         void loop();
+        void update();
 
     private:
 		void input();

@@ -1,12 +1,6 @@
 #include "Conversions.hpp"
 
-#include <iostream>
-
 glm::quat toGLquat(const aiQuaternion& aiQuat){
-    // std::cout << "AI quat: " << "W: " << aiQuat.w << " X: " << aiQuat.x << " Y: " << aiQuat.y << " Z: " << aiQuat.z << std::endl;
-    // glm::quat glquat(aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z);
-    // glquat = normalize(glquat);
-    // std::cout << "GL quat: " << "W: " << glquat.w << " X: " << glquat.x << " Y: " << glquat.y << " Z: " << glquat.z << std::endl;
 	return glm::quat(aiQuat.w, aiQuat.x, aiQuat.y, aiQuat.z);
 }
 

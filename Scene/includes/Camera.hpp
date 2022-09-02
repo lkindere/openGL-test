@@ -1,8 +1,6 @@
 #pragma once
 
-#include <glm/gtx/vector_angle.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+#include "main.hpp"
 #include "settings.hpp"
 
 extern Settings settings;

@@ -1,7 +1,5 @@
 #include "ArrayObject.hpp"
 
-#include <iostream>
-
 ArrayObject::ArrayObject(const MeshData& data, GLenum type){
     init(data, type);
 }
