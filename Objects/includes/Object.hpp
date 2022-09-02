@@ -25,6 +25,7 @@ class Object
         virtual void loop();
         virtual void animLoop();
         virtual void damage(short dmg);
+        void recalculateHitbox();
 
     protected:
         virtual void setDefaultUniforms();
@@ -104,6 +105,8 @@ class Object
     protected:
         object_info             _info;
         Scene*                  _scene = nullptr;
+        
+        Hitbox                  _hitbox;
 		std::shared_ptr<Model>  _model;
         modelIN                 _mdata;
 };

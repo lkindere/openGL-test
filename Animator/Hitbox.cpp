@@ -7,40 +7,35 @@
 
 extern Shader* g_hitboxShader;
 
-Hitbox::Hitbox(const HitboxData& data)
-    : _vertices(data.vertices) {
-    if (data.vertices.size() == 0)
-        return ;
-    recalculate(data.vertices);
-}
+Hitbox::Hitbox() {}
 
-void Hitbox::recalculate(const std::vector<glm::vec3>& vertices){
+void Hitbox::recalculate(const std::vector<glm::vec3>& base, const glm::mat3& rotation){
+    if (base.size() == 0)
+        return;
+    _vertices.clear();
     _flats.clear();
     _normals.clear();
-    _minY = vertices[0].y;
-    _maxY = vertices[0].y;
-    for (auto i = 0; i < vertices.size(); ++i){
-        glm::vec2 flatvec = glm::vec2(vertices[i].x, vertices[i].z);
+    _min = glm::vec3(1E-37);
+    _max = glm::vec3(1E+37);
+    for (auto i = 0; i < base.size(); ++i){
+        _vertices.push_back(base[i] * rotation);
+        glm::vec2 flatvec = glm::vec2(_vertices[i].x, _vertices[i].z);
         if (std::find(_flats.begin(), _flats.end(), flatvec) == _flats.end()){
             _flats.push_back(flatvec);
-            if (vertices[i].y < _minY)
-                _minY = vertices[i].y;
-            else if (vertices[i].y > _maxY)
-                _maxY = vertices[i].y;
+            if (_vertices[i].x < _min.x)
+                _min.x = _vertices[i].x;
+            else if (_vertices[i].x > _max.x)
+                _max.x = _vertices[i].x;
+            if (_vertices[i].y < _min.y)
+                _min.y = _vertices[i].y;
+            else if (_vertices[i].y > _max.y)
+                _max.y = _vertices[i].y;
+            if (_vertices[i].z < _min.z)
+                _min.z = _vertices[i].z;
+            else if (_vertices[i].z > _max.z)
+                _max.z = _vertices[i].z;
         }
     }
-    for (auto i = 0; i < _flats.size(); ++i)
-        _flats[i] = _flats[i] * _rot;
-    for (auto i = 0; i < 2; ++i){
-        glm::vec2 norm = get2Dnormal(_flats[i], _flats[(i + 1) % _flats.size()]);
-        _normals.push_back(norm);
-    }
-}
-
-glm::vec2 Hitbox::get2Dnormal(const glm::vec2& p1, const glm::vec2& p2) const{
-    glm::vec2 normal = p1 - p2;
-    normal = glm::normalize(glm::vec2(-normal[1], normal[0]));
-    return normal;
 }
 
 glm::vec2 Hitbox::getMinMax(const glm::vec2& normal, const Object& obj) const{
@@ -68,11 +63,20 @@ float Hitbox::getOverlap(const glm::vec2& minMax, const glm::vec2& tminMax) cons
     return glm::min(distance1, distance2);
 }
 
-CollisionData Hitbox::sat2D(const Object& obj, const Object& target) const{
-    std::string name;
-    int         id = 0;
+void Hitbox::getNormals(){
+    for (auto i = 0; i < 2; ++i){
+        glm::vec2 normal = _flats[i] - _flats[i + 1]; //Will need to modulo back to 0 if iterating all
+        _normals.push_back(glm::normalize(glm::vec2(-normal[1], normal[0])));
+    }
+}
+
+CollisionData Hitbox::sat2D(Object& obj, Object& target){
     CollisionData data;
     data.overlap = 1E+37;
+    if (_normals.size() == 0)
+        getNormals();
+    if (target.hitbox()._normals.size() == 0)
+        target.hitbox().getNormals();
     for (auto i = 0; i < _normals.size(); ++i){
         glm::vec2 minMax = getMinMax(_normals[i], obj);
         glm::vec2 tminMax = getMinMax(_normals[i], target);
@@ -84,7 +88,7 @@ CollisionData Hitbox::sat2D(const Object& obj, const Object& target) const{
             data.normal = glm::vec3(_normals[i][0], 0.0f, _normals[i][1]);
         }
     }
-    const std::vector<glm::vec2>& tnormals = target.hitbox()._normals;
+    std::vector<glm::vec2> tnormals(target.hitbox()._normals);
     for (auto i = 0; i < tnormals.size(); ++i){
         glm::vec2 minMax = getMinMax(tnormals[i], obj);
         glm::vec2 tminMax = getMinMax(tnormals[i], target);
@@ -102,12 +106,12 @@ CollisionData Hitbox::sat2D(const Object& obj, const Object& target) const{
 CollisionData Hitbox::checkY(float finalY, float tfinalY, const Object& obj, const Object& target) const{
     CollisionData data;
     const Hitbox& targ = target.hitbox();
-    glm::vec2 minMaxY(finalY + _minY, finalY + _maxY);
-    glm::vec2 tminMaxY(tfinalY + targ._minY, tfinalY + targ._maxY);
+    glm::vec2 minMaxY(finalY + _min.y, finalY + _max.y);
+    glm::vec2 tminMaxY(tfinalY + targ._min.y, tfinalY + targ._max.y);
     data.overlap = getOverlap(minMaxY, tminMaxY);
     if (data.overlap == 0)
         return CollisionData();
-    data.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+    data.normal = glm::vec3(0.0f, 1.0f, 0.0f);  //Probably bs, test with vertical collisions later
     return data;
 }
 
@@ -118,15 +122,14 @@ CollisionData Hitbox::checkDirection(const glm::vec3& finalpos, const glm::vec3&
     return data;
 }
 
-CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) const{
-    if (_vertices.size() == 0)
+CollisionData Hitbox::checkCollision(Object& obj, Object& target){
+    if (_vertices.size() == 0 || target.hitbox()._vertices.size() == 0)
         return CollisionData();
     glm::vec3 finalpos = obj.finalpos();
     glm::vec3 tfinalpos = target.finalpos();
     CollisionData Yaxis = checkY(finalpos.y, tfinalpos.y, obj, target);
     if (Yaxis.overlap == 0)
         return CollisionData();
-
     CollisionData XZaxis = sat2D(obj, target);
     if (XZaxis.overlap == 0)
         return CollisionData();
@@ -135,27 +138,9 @@ CollisionData Hitbox::checkCollision(const Object& obj, const Object& target) co
     return checkDirection(finalpos, tfinalpos, XZaxis);
 }
 
-void Hitbox::setRotation(const glm::mat4& mat){
-    if (_vertices.size() == 0)
-        return;
-    _rot = {
-        mat[0].x, mat[0].z,
-        mat[2].x, mat[2].z,
-    };
-    recalculate(_vertices);
-}
-
 void Hitbox::draw(const Uniforms& uni){
     if (_vertices.size() == 0)
         return;
-    std::vector<glm::vec3> vertices(_vertices);
-    glm::mat3 rot3d = {
-        _rot[0][0], 0.0f, _rot[0][1],
-        0.0f,       1.0f,       0.0f,
-        _rot[1][0], 0.0f, _rot[1][1],
-    };
-    for (auto i = 0; i < vertices.size(); ++i)
-        vertices[i] = vertices[i] * rot3d;
     std::vector<GLuint> indices = {
         0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
         1, 0, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7,
@@ -177,7 +162,7 @@ void Hitbox::draw(const Uniforms& uni){
     GLuint VerticeBuffer;
 	glGenBuffers(1, &VerticeBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, VerticeBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(glm::vec3), _vertices.data(), GL_STREAM_DRAW);
 
 	GLuint IndiceBuffer;
 	glGenBuffers(1, &IndiceBuffer);

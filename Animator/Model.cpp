@@ -1,7 +1,8 @@
 #include "Model.hpp"
 
 Model::Model(MeshData data, GLenum drawtype)
-    : _VAO(data, drawtype), _animator(data), _hitbox(data.hitbox) {}
+    : _VAO(data, drawtype), _animator(data),
+        _hitboxBase(std::move(data.hitbox.vertices)) {}
 
 void Model::draw(const Shader& shader, Uniforms uniforms){  
     if (_VAO.hasTexture())
@@ -20,13 +21,8 @@ const NodeData* Model::findNode(const char* name) const{
     return _animator.findNode(name);
 }
 
-
-Hitbox&                         Model::hitbox() {
-    return _hitbox;
-}
-
-const Hitbox&                   Model::hitbox() const {
-    return _hitbox; 
+const std::vector<glm::vec3>&   Model::hitboxBase() const {
+    return _hitboxBase;
 }
 
 const std::vector<glm::mat4>&   Model::matrices() const {

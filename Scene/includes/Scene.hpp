@@ -22,6 +22,7 @@ class Scene
         Scene();
 
         void animate();
+        void collisions();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
         int loadObject(object_type type, const char* path);
         int loadInstance(object_type type, int modelID);

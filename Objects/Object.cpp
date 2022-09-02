@@ -12,6 +12,10 @@ Object::Object(MeshData* data, Scene* scene, int ID)
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : _model(modelptr), _scene(scene), _info(ID) {}
 
+void Object::recalculateHitbox(){
+    _hitbox.recalculate(_model->hitboxBase(), glm::inverse(_rotation));
+}
+
 void Object::setDefaultUniforms(){
     _uniforms.flags = _flags;
     _uniforms.add_uni("pos", _position);
@@ -23,6 +27,7 @@ void Object::setDefaultUniforms(){
 
 void Object::move(){
     _velocity.y -= _scene->gravity() * _weight;
+    // recalculateHitbox();
     checkCollision();
     _position += _velocity;
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
@@ -68,8 +73,7 @@ void Object::damage(short dmg) {}
 void Object::draw(){
     setDefaultUniforms();
     _model->draw(*_scene->shader(_shader), _uniforms);
-    hitbox().setRotation(glm::inverse(_rotation));
-    hitbox().draw(_uniforms);
+    _hitbox.draw(_uniforms);
 }
 
 void Object::collisionPhysics(Object& target, CollisionData& data){
@@ -94,8 +98,6 @@ void Object::checkCollision(){
     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
         if (it->second->collide() == false || it->second == this)
             continue ;
-        if (it->second->isInstanced())
-            it->second->hitbox().setRotation(glm::inverse(it->second->_rotation));
         CollisionData collision = hitbox().checkCollision(*this, *it->second);
         if (collision.overlap != 0)
             collisionPhysics(*it->second, collision);
@@ -118,8 +120,8 @@ const glm::vec3&    Object::velocity() const { return _velocity; }
 glm::vec3           Object::finalpos() const { return _position + _velocity; }
 const glm::vec3&    Object::scale() const { return _scale; }
 const glm::mat4&    Object::rotation() const { return _rotation; }
-Hitbox&             Object::hitbox() { return _model->hitbox(); }
-const Hitbox&       Object::hitbox() const { return _model->hitbox(); }
+Hitbox&             Object::hitbox() { return _hitbox; }
+const Hitbox&       Object::hitbox() const { return _hitbox; }
 
 const std::shared_ptr<Model>&   Object::model() const { return _model; }
 

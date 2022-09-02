@@ -18,13 +18,13 @@ class Model
         const NodeData*         findNode(const char* name) const;
         std::vector<glm::mat4>  generateMatrices(const modelIN& input);
 
-        Hitbox&                         hitbox();
-        const Hitbox&                   hitbox() const;
+        const std::vector<glm::vec3>&   hitboxBase() const;
         const std::vector<glm::mat4>&   matrices() const;
         float                           duration(int ID) const;
 
 	private:
-		ArrayObject _VAO;
-		Animator	_animator;
-        Hitbox      _hitbox;
+		ArrayObject             _VAO;
+		Animator                _animator;
+        std::vector<glm::vec3>  _hitboxBase;
+        // Hitbox      _hitbox;
 };
