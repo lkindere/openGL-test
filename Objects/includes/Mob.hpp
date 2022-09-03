@@ -7,7 +7,7 @@ class Scene;
 class Mob : public Object
 {
 	public:
-		Mob(MeshData data, Scene* scene, int ID);
+		// Mob(MeshData data, Scene* scene, int ID);
         Mob(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
         
         ~Mob();

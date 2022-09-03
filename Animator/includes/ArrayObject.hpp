@@ -13,11 +13,13 @@ class ArrayObject {
 	public:
         bool            hasTexture() const;
 		unsigned short  nIndices() const;
+        int             instances() const;
     
     private:
         void initTexture(const TextureData& texture);
 
 	public:
+        void updateInstances(const std::vector<glm::vec3>& positions, const std::vector<glm::mat4>& rotations);
 		void bind() const;
 		void unbind() const;
         void destroy();
@@ -25,5 +27,6 @@ class ArrayObject {
 	private:
 		GLuint			_VAO = -1;
         GLuint          _texture = -1;
+        int             _instances = -1;
 		unsigned short	_nIndices = 0;
 };

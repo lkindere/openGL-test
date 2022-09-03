@@ -58,46 +58,51 @@ int main(void) {
     g_hitboxShader = scene.shader(hitboxShader);
     
     scene.camera().updateProjection();
-    scene.loadObject(PLAYER, "Models/player.fbx");
-    scene.player()->setWeapon(new Sword(importer("Models/sword.fbx"), &scene, -1));
-    int lightID = scene.loadObject(LIGHT, "Models/light.fbx");
-    int floorID = scene.loadObject(STATIC, "Models/floor.fbx");
-    int wallID = scene.loadObject(STATIC, "Models/wall.fbx");
-    int mobID = scene.loadObject(MOB, "Models/enemy.fbx");
-    for (auto i = 0; i < scene.nObjects(); ++i)
-        scene.object(i)->setShader(defaultShader);
+    int player_model = scene.loadModel("Models/player.fbx");
+    int floor_model = scene.loadModel("Models/floor.fbx");
+    int mob_model = scene.loadModel("Models/enemy.fbx");
+    int light_model = scene.loadModel("Models/light.fbx");
+    int sword_model = scene.loadModel("Models/sword.fbx");
+    int wall_model = scene.loadModel("Models/wall.fbx");
+
+    int lightID = scene.loadInstance(LIGHT, light_model);
+    scene.loadInstance(PLAYER, player_model);
+    scene.loadInstance(STATIC, floor_model);
+    scene.loadInstance(MOB, mob_model);
+
+    scene.player()->setWeapon(new Sword(scene.model(sword_model), &scene, -1));
+
+    for (auto it = scene.oBegin(); it != scene.oEnd(); ++it)
+        (*it).second->setShader(defaultShader);
     scene.player()->setShader(defaultShader);
     scene.object(lightID)->setShader(lightShader);
 
     scene.player()->setCollide(true);
     scene.player()->setName("Player");
 
-    scene.object(mobID)->setPosition(-5.0f, 0.0f, -5.0f);
-    scene.object(mobID)->setName("Mob");
-
+    int wallID = scene.loadInstance(STATIC, wall_model);
     scene.object(wallID)->setPosition(10.0f, 0.0f, -10.0f);
     scene.object(wallID)->setCollide(true);
     scene.object(wallID)->setWeight(1.0f);
-
-    int wallID2 = scene.loadInstance(STATIC, wallID);
+    int wallID2 = scene.loadInstance(STATIC, wall_model);
     scene.object(wallID2)->setPosition(10.0f, 0.0f, 10.0f);
     scene.object(wallID2)->setCollide(true);
     scene.object(wallID2)->setWeight(1.0f);
-    int wallID3 = scene.loadInstance(STATIC, wallID);
+    int wallID3 = scene.loadInstance(STATIC, wall_model);
     scene.object(wallID3)->setPosition(-10.0f, 0.0f, 10.0f);
     scene.object(wallID3)->setCollide(true);
     scene.object(wallID3)->setWeight(1.0f);
-    int wallID4 = scene.loadInstance(STATIC, wallID);
+    int wallID4 = scene.loadInstance(STATIC, wall_model);
     scene.object(wallID4)->setPosition(-10.0f, 0.0f, -10.0f);
     scene.object(wallID4)->setCollide(true);
     scene.object(wallID4)->setWeight(1.0f);
 
-    Spawner spawner(scene.object(mobID)->model(), &scene);
+    Spawner spawner(scene.model(mob_model), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
     scene.addSpawner(&spawner);
 
-    int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
+    // int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     
     std::cout << "Objects: " << scene.nObjects() << std::endl;
     std::cout << "Shader: " << scene.nShaders() << std::endl;
@@ -111,10 +116,6 @@ int main(void) {
         scene.object(wallID2)->setRotation(rot2);
         scene.object(wallID3)->setRotation(rot3);
         scene.object(wallID4)->setRotation(rot4);
-        scene.object(wallID)->setName("wall");
-                scene.object(wallID2)->setName("wall2");
-                        scene.object(wallID3)->setName("wall3");
-                                scene.object(wallID4)->setName("wall4");
         glClearColor(0, 0, 0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene.animate();

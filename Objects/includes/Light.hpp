@@ -5,7 +5,7 @@
 class Light : public Object
 {
 	public:
-		Light(MeshData data, Scene* scene, int ID);
+		// Light(MeshData data, Scene* scene, int ID);
         Light(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
 
     public:

@@ -7,6 +7,9 @@ layout (location = 3) in vec2 aTextures;
 layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
+layout (location = 6) in vec3 instancePos;
+layout (location = 7) in mat4 instanceRot;
+
 //Flags
 // const int hasTexture = 1;
 const int deformOn = 2;

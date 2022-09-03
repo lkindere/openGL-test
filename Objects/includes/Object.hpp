@@ -11,8 +11,8 @@ class Object
 {
 	public:
         //Unique instancing
-		Object(MeshData data, Scene* scene, int ID);
-        Object(MeshData* data, Scene* scene, int ID);
+		// Object(MeshData data, Scene* scene, int ID);
+        // Object(MeshData* data, Scene* scene, int ID);
         // Shared model instancing
         Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
         virtual ~Object();

@@ -1,7 +1,7 @@
 #include "Model.hpp"
 
-Model::Model(MeshData data, GLenum drawtype)
-    : _VAO(data, drawtype), _animator(data),
+Model::Model(MeshData data, int ID, GLenum drawtype)
+    : _VAO(data, drawtype), _animator(data), _ID(ID),
         _hitboxBase(std::move(data.hitbox.vertices)) {}
 
 void Model::draw(const Shader& shader, Uniforms uniforms){  
@@ -11,7 +11,9 @@ void Model::draw(const Shader& shader, Uniforms uniforms){
     shader.bind();
     shader.update(uniforms);
 
-    glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
+    (_VAO.instances() > 1) ?
+        glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _VAO.instances())
+        : glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
 
     shader.unbind();
     _VAO.unbind();

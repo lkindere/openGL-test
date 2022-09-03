@@ -20,7 +20,7 @@ class Scene
         void animate();
         void collisions();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
-        int loadObject(object_type type, const char* path);
+        int loadModel(const char* path);
         int loadInstance(object_type type, int modelID);
         void animate() const;
     
@@ -32,10 +32,11 @@ class Scene
 
     private:
         void checkRemovals();
-        int loadLight(const char* path);
-        int loadStatic(const char* path);
-        int loadMob(const char* path);
-        int loadDetail(const char* path);
+        // int loadLight(const char* path);
+        // int loadStatic(const char* path);
+        // int loadMob(const char* path);
+        // int loadDetail(const char* path);
+        int loadPlayerInstance(int modelID);
         int loadLightInstance(int modelID);
         int loadStaticInstance(int modelID);
         int loadMobInstance(int modelID);
@@ -47,15 +48,15 @@ class Scene
         Camera& camera();
         Player* player();
         Object* object(int ID);
-        Model* detail(int ID);
+        // Model* detail(int ID);
         Spawner* spawner(int ID);
         Shader* shader(int ID);
         const Camera& camera() const;
         const Player* player() const;
         const Object* object(int ID) const;
-        const Model* detail(int ID) const;
         const Spawner* spawner(int ID) const;
         const Shader* shader(int ID) const;
+        const std::shared_ptr<Model>& model(int ID) const;
 
         float& time();
         float& gravity();
@@ -81,11 +82,11 @@ class Scene
         float _gravity = 0.1f;
 
     private:
-        Camera                  _camera;
-        Player*                 _player = nullptr;
-        std::map<int, Object*>  _objects;
-        std::map<int, Model*>   _details;
-        std::map<int, Spawner*> _spawners;
-        std::vector<Shader>     _shaders;
-        std::vector<int>        _removals;
+        Camera                                  _camera;
+        Player*                                 _player = nullptr;
+        std::map<int, std::shared_ptr<Model> >  _models;
+        std::map<int, Spawner*>                 _spawners;
+        std::map<int, Object*>                  _objects;
+        std::vector<Shader>                     _shaders;
+        std::vector<int>                        _removals;
 };

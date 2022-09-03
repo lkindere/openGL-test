@@ -50,27 +50,18 @@ int Scene::loadShader(const char* vert, const char* frag, const char* geo){
     return _shaders.size() - 1;
 }
 
-int Scene::loadObject(object_type type, const char* path){
-    switch(type){
-        case PLAYER:
-            assert(!_player);
-            _player = new Player(importer(path), this);
-            return -1;
-        case LIGHT:
-            return (loadLight(path));
-        case STATIC:
-            return (loadStatic(path));
-        case MOB:
-            return (loadMob(path));
-        case DETAIL:
-            return (loadDetail(path));
-        default:
-            assert(0);
-    }
+int Scene::loadModel(const char* path){
+    int ID = 0;
+    if (_models.size() != 0)
+        ID = _models.rbegin()->first + 1;
+    _models.insert(std::make_pair(ID, std::shared_ptr<Model>(new Model(importer(path), ID))));
+    return ID;
 }
 
 int Scene::loadInstance(object_type type, int modelID){
     switch(type){
+        case PLAYER:
+            return (loadPlayerInstance(modelID));
         case LIGHT:
             return (loadLightInstance(modelID));
         case STATIC:
@@ -82,59 +73,41 @@ int Scene::loadInstance(object_type type, int modelID){
     }
 }
 
-int Scene::loadLight(const char* path){
-    int ID = 0;
-    if (_objects.size() != 0)
-        ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Light(importer(path), this, ID)));
-    return ID;
-}
-
-int Scene::loadStatic(const char* path){
-    int ID = 0;
-    if (_objects.size() != 0)
-        ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Object(importer(path), this, ID)));
-    return ID;
-}
-
-int Scene::loadMob(const char* path){
-    int ID = 0;
-    if (_objects.size() != 0)
-        ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Mob(importer(path), this, ID)));
-    return ID;
-}
-
-int Scene::loadDetail(const char* path){
-    int ID = 0;
-    if (_details.size() != 0)
-        ID = _details.rbegin()->first + 1;
-    _details.insert(std::make_pair(ID, new Model(importer(path))));
-    return ID;
+int Scene::loadPlayerInstance(int modelID){
+    auto it = _models.find(modelID);
+    assert(it != _models.end());
+    assert(!_player);
+    _player = new Player(it->second, this);
+    return -1;
 }
 
 int Scene::loadLightInstance(int modelID){
-    auto it = _objects.find(modelID);
-    assert(it != _objects.end());
-    int ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Light(it->second->model(), this, ID)));
+    auto it = _models.find(modelID);
+    assert(it != _models.end());
+    int ID = 0;
+    if (_objects.size() != 0)
+        ID = _objects.rbegin()->first + 1;
+    _objects.insert(std::make_pair(ID, new Light(it->second, this, ID)));
     return ID;
 }
 
 int Scene::loadStaticInstance(int modelID){
-    auto it = _objects.find(modelID);
-    assert(it != _objects.end());
-    int ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Object(it->second->model(), this, ID)));
+    auto it = _models.find(modelID);
+    assert(it != _models.end());
+    int ID = 0;
+    if (_objects.size() != 0)
+        ID = _objects.rbegin()->first + 1;
+    _objects.insert(std::make_pair(ID, new Object(it->second, this, ID)));
     return ID;
 }
 
 int Scene::loadMobInstance(int modelID){
-    auto it = _objects.find(modelID);
-    assert(it != _objects.end());
-    int ID = _objects.rbegin()->first + 1;
-    _objects.insert(std::make_pair(ID, new Mob(it->second->model(), this, ID)));
+    auto it = _models.find(modelID);
+    assert(it != _models.end());
+    int ID = 0;
+    if (_objects.size() != 0)
+        ID = (_objects.rbegin()->first) + 1;
+    auto ret = _objects.insert(std::make_pair(ID, new Mob(it->second, this, ID)));
     return ID;
 }
 
@@ -182,10 +155,11 @@ Object* Scene::object(int ID){
     return it->second;
 }
 
-Model* Scene::detail(int ID) {
-    auto it = _details.find(ID);
-    if (it == _details.end())
-        return nullptr;
+const std::shared_ptr<Model>& Scene::model(int ID) const{
+    auto it = _models.find(ID);
+    assert(it != _models.end());
+    // if (it == _models.end())
+    //     return nullptr;
     return it->second;
 }
 
@@ -229,12 +203,12 @@ const Shader* Scene::shader(int ID) const {
     return &_shaders[ID];
 }
 
-const Model* Scene::detail(int ID) const {
-    auto it = _details.find(ID);
-    if (it == _details.end())
-        return nullptr;
-    return it->second;
-}
+// const Model* Scene::detail(int ID) const {
+//     auto it = _details.find(ID);
+//     if (it == _details.end())
+//         return nullptr;
+//     return it->second;
+// }
 
 float& Scene::time() {
     return _currentTime;

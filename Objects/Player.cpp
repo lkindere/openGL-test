@@ -1,10 +1,10 @@
 #include "Player.hpp"
 #include "Scene.hpp"
 
-Player::Player(MeshData data, Scene* scene, int ID)
-    : Object(&data, scene, ID) {
-    _info.setType(PLAYER);
-}
+// Player::Player(MeshData data, Scene* scene, int ID)
+//     : Object(&data, scene, ID) {
+//     _info.setType(PLAYER);
+// }
 
 Player::Player(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {

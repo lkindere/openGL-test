@@ -1,13 +1,13 @@
 #include "Object.hpp"
 #include "Scene.hpp"
 
-Object::Object(MeshData data, Scene* scene, int ID)
-    : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
-        _scene(scene), _info(ID) {}
+// Object::Object(MeshData data, Scene* scene, int ID)
+//     : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
+//         _scene(scene), _info(ID) {}
 
-Object::Object(MeshData* data, Scene* scene, int ID)
-    : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
-        _scene(scene), _info(ID) {}
+// Object::Object(MeshData* data, Scene* scene, int ID)
+//     : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
+//         _scene(scene), _info(ID) {}
 
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : _model(modelptr), _scene(scene), _info(ID) {}

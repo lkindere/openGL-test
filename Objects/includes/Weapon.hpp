@@ -7,8 +7,8 @@ class Scene;
 class Weapon : public Object
 {
 	public:
-		Weapon(MeshData* data, Scene* scene, int ID, short damage, float range, float speed)
-            : Object(data, scene, ID), _damage(damage), _range(range), _speed(speed) {}
+		// Weapon(MeshData* data, Scene* scene, int ID, short damage, float range, float speed)
+        //     : Object(data, scene, ID), _damage(damage), _range(range), _speed(speed) {}
         //Looks ridiculous with stat initialization
         Weapon(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID, short damage, float range, float speed)
             : Object(modelptr, scene, ID), _damage(damage), _range(range), _speed(speed) {}
