@@ -13,6 +13,8 @@ class Model
         Model(MeshData data, int ID, GLenum drawtype = GL_STATIC_DRAW);
 
 		void                    draw(const Shader& shader, Uniforms uniforms = Uniforms());
+        void                    buffer(const InstanceData& instance);
+        void                    clearBuffer();
         const NodeData*         findNode(const char* name) const;
         std::vector<glm::mat4>  generateMatrices(const modelIN& input);
 
@@ -23,8 +25,9 @@ class Model
         int                             ID() const { return _ID; }
 
 	private:
-        int                     _ID;
-		ArrayObject             _VAO;
-		Animator                _animator;
-        std::vector<glm::vec3>  _hitboxBase;
+        int                         _ID;
+		ArrayObject                 _VAO;
+        std::vector<InstanceData>   _instances;
+		Animator                    _animator;
+        std::vector<glm::vec3>      _hitboxBase;
 };

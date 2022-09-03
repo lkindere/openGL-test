@@ -137,10 +137,10 @@ class Quadtree
                 if (it != _objects.end())
                     _objects.erase(it);
             }
-#ifdef DRAW_HITBOXES
+// #ifdef DRAW_HITBOXES
             for (auto i = 0; i < 4; ++i)
                 draw_box(_scene, glm::vec3(quadrants[i]._min.x, 0.0f, quadrants[i]._min.y), glm::vec3(quadrants[i]._max.x, 5.0f, quadrants[i]._max.y));
-#endif
+// #endif
         }
 
         void checkCollisions(){

@@ -53,30 +53,33 @@ void ArrayObject::init(const MeshData& data, GLenum type){
     initTexture(data.texture);
 }
 
-void ArrayObject::updateInstances(const std::vector<glm::vec3>& positions, const std::vector<glm::mat4>& rotations){
-    bind();
-    unsigned int PositionBuffer;
-    glGenBuffers(1, &PositionBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, PositionBuffer);
-    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(6);
-    glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *)0);
-    glVertexAttribDivisor(6, 1);
+void ArrayObject::updateInstances(const std::vector<InstanceData>& instances){
+	// glBindVertexArray(_VAO);
+    glDeleteBuffers(1, &_instanceBuffer);
+    glGenBuffers(1, &_instanceBuffer);
+    // glBindBuffer(GL_ARRAY_BUFFER, _instanceBuffer);
+    // std::cout << "Instance Buffer: " << _instanceBuffer << std::endl;
+    // glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(InstanceData), instances.data(), GL_STATIC_DRAW);
+    // //Pos
+    // glEnableVertexAttribArray(6);
+	// std::cout << glGetError() << std::endl;
+    // glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void *)0);
+    // glVertexAttribDivisor(6, 1);
+    // //Rot line1
+    // glEnableVertexAttribArray(7);
+    // glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void *)(3 * sizeof(float)));
+    // glVertexAttribDivisor(7, 1);
+    // //Rot line2
+    // glEnableVertexAttribArray(8);
+    // glVertexAttribPointer(8, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void *)(6 * sizeof(float)));
+    // glVertexAttribDivisor(8, 1);
+    // //Rot line3
+    // glEnableVertexAttribArray(9);
+    // glVertexAttribPointer(9, 3, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void *)(9 * sizeof(float)));
+    // glVertexAttribDivisor(9, 1);
 
-    unsigned int RotationBuffer;
-    glGenBuffers(1, &RotationBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, RotationBuffer);
-    glBufferData(GL_ARRAY_BUFFER, rotations.size() * sizeof(glm::mat4), rotations.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(7);
-    glVertexAttribPointer(7, 16, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)0);
-    glVertexAttribDivisor(7, 1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &PositionBuffer);
-    glDeleteBuffers(1, &RotationBuffer);
-    _instances = positions.size();
+    // glDeleteBuffers(1, &_instanceBuffer);
+	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void ArrayObject::initTexture(const TextureData& texture){
@@ -90,7 +93,6 @@ void ArrayObject::initTexture(const TextureData& texture){
 
 bool           ArrayObject::hasTexture() const { return _texture != -1; }
 unsigned short ArrayObject::nIndices() const { return _nIndices; }
-int            ArrayObject::instances() const { return _instances; }
 
 void ArrayObject::bind() const {
     glBindVertexArray(_VAO);

@@ -53,6 +53,7 @@ int main(void) {
     Init();
     Scene scene;
     int defaultShader = scene.loadShader("Shaders/default.vert", "Shaders/default.frag", "Shaders/default.geom");
+    std::cout << "DEFAULT SHADER ID: " << defaultShader << std::endl;
     int lightShader = scene.loadShader("Shaders/light.vert", "Shaders/light.frag");
     int hitboxShader = scene.loadShader("Shaders/hitbox.vert", "Shaders/hitbox.frag");
     g_hitboxShader = scene.shader(hitboxShader);
@@ -68,6 +69,7 @@ int main(void) {
     int lightID = scene.loadInstance(LIGHT, light_model);
     scene.loadInstance(PLAYER, player_model);
     scene.loadInstance(STATIC, floor_model);
+    scene.loadInstance(MOB, mob_model);
     scene.loadInstance(MOB, mob_model);
 
     scene.player()->setWeapon(new Sword(scene.model(sword_model), &scene, -1));
@@ -100,7 +102,7 @@ int main(void) {
     Spawner spawner(scene.model(mob_model), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
-    scene.addSpawner(&spawner);
+    // scene.addSpawner(&spawner);
 
     // int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     

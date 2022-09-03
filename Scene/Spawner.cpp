@@ -1,7 +1,7 @@
 #include "Spawner.hpp"
 #include "Scene.hpp"
 
-Spawner::Spawner(std::shared_ptr<Model> modelptr, Scene* scene)
+Spawner::Spawner(const std::shared_ptr<Model>& modelptr, Scene* scene)
     : _model(modelptr), _scene(scene) {}
 
 void Spawner::checkRemovals(const std::vector<int>& removals){

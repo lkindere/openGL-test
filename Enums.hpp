@@ -15,6 +15,7 @@ enum shader_flags
 {
     hasTexture = 1,
     deformOn = 2,
+    isInstanced = 4,
 };
 
 struct object_info

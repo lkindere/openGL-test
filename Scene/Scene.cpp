@@ -33,6 +33,8 @@ void Scene::collisions(){
 
 void Scene::animate(){
     _currentTime = glfwGetTime();
+    for (auto it = _models.begin(); it != _models.end(); ++it)
+        it->second->clearBuffer();
     for (auto i = 0; i < _spawners.size(); ++i)
         _spawners[i]->loop();
     _player->loop();
@@ -42,6 +44,10 @@ void Scene::animate(){
     _player->update();
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
         it->second->update();
+    Uniforms uni;
+    uni.add_uni("camPos", _camera.position());
+    for (auto it = _models.begin(); it != _models.end(); ++it)
+        it->second->draw(_shaders[0]); //Fix
     checkRemovals();
 }
 

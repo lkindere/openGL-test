@@ -9,14 +9,28 @@ void Model::draw(const Shader& shader, Uniforms uniforms){
         uniforms.flags |= hasTextures;
     _VAO.bind();
     shader.bind();
+    if (_instances.size() > 1)
+        uniforms.flags |= isInstanced;
     shader.update(uniforms);
 
-    (_VAO.instances() > 1) ?
-        glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _VAO.instances())
-        : glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
+    if (_instances.size() > 1){
+        std::cout << "Drawing instanced\n";
+        _VAO.updateInstances(_instances);
+        // glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _instances.size());
+    }
+    else
+        glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
 
     shader.unbind();
     _VAO.unbind();
+}
+
+void Model::buffer(const InstanceData& instance){
+    _instances.push_back(instance);
+}
+
+void Model::clearBuffer(){
+    _instances.clear();
 }
 
 const NodeData* Model::findNode(const char* name) const{

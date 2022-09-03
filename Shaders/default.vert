@@ -8,11 +8,14 @@ layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
 layout (location = 6) in vec3 instancePos;
-layout (location = 7) in mat4 instanceRot;
+layout (location = 7) in vec3 instanceR1;
+layout (location = 8) in vec3 instanceR2;
+layout (location = 9) in vec3 instanceR3;
 
 //Flags
 // const int hasTexture = 1;
 const int deformOn = 2;
+const int isInstanced = 4;
 
 const int MAX_BONES = 30;
 uniform mat4 BoneMatrices[MAX_BONES];
@@ -43,12 +46,20 @@ mat4 check_bones(){
 
 void main()
 {
-    vec4 normal = check_bones() * vec4(aNorm, 0.0);
-	vec4 model = check_bones() * vec4(aModel, 1.0);
+    vec4 model = vec4(aModel, 1.0);
+    vec4 normal = vec4(aNorm, 0.0);
+    if ((flags & isInstanced) == 0){
+        normal = check_bones() * vec4(aNorm, 0.0);
+        model = check_bones() * vec4(aModel, 1.0);
 
-
-	model = rotation * model * vec4(scale, 1.0f);
-	model.xyz += pos.xyz;
+        model = rotation * model;
+        model.xyz += pos.xyz;
+    }
+    else{
+        // mat4 instanceRot = mat4(vec4(instanceR1, 0.0), vec4(instanceR2, 0.0), vec4(instanceR3, 0.0), vec4(vec3(0.0), 1.0));
+        // model =  instanceRot * model;
+        model.xyz += instancePos.xyz;
+    }
 
     gl_Position = camPos * model;
 

@@ -45,7 +45,14 @@ void Mob::loop(){
 void Mob::update(){
     animLoop();
     move();
-    draw();
+    InstanceData data;
+    glm::mat3 rot = _rotation;
+    data.position = _position;
+    data.rotL1 = rot[0];
+    data.rotL2 = rot[1];
+    data.rotL3 = rot[2];
+    _model->buffer(data);
+    // draw();
     drawHealth();
 }
 
