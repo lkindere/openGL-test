@@ -36,7 +36,7 @@ void Shader::bind() const {
 
 //Exports provided uniforms to shader or defaults if not specified
 void Shader::update(const Uniforms& uniforms) const {
-    glUniform1i(glGetUniformLocation(_ID, "flags"), uniforms.flags);
+    // glUniform1i(glGetUniformLocation(_ID, "flags"), uniforms.flags);
     for (auto it = uniforms.f1.begin(); it != uniforms.f1.end(); ++it)
 		glUniform1f(glGetUniformLocation(_ID, it->first), it->second);
 	for (auto it = uniforms.vec3.begin(); it != uniforms.vec3.end(); ++it)

@@ -1,11 +1,6 @@
 #include "Player.hpp"
 #include "Scene.hpp"
 
-// Player::Player(MeshData data, Scene* scene, int ID)
-//     : Object(&data, scene, ID) {
-//     _info.setType(PLAYER);
-// }
-
 Player::Player(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : Object(modelptr, scene, ID) {
     _info.setType(PLAYER);
@@ -76,13 +71,20 @@ void Player::update(){
         _rotation = glm::inverse(glm::rotate(glm::mat4(1.0f), glm::radians(_scene->camera().yaw()), glm::vec3(0.0f, 1.0f, 0.0f)));
         postTransformHands();
     }
-    draw();
-    if (_weapon){
-        weaponTransformation();
-        _weapon->loop();
-        _weapon->draw();
-    }
     animLoop();
+    InstanceData data;
+    data.position = _position;
+    data.rotL1 = _rotation[0];
+    data.rotL2 = _rotation[1];
+    data.rotL3 = _rotation[2];
+    _model->buffer(data, _mdata);
+    // draw();
+    if (_weapon){
+        // weaponTransformation();
+        _weapon->update();
+        // _weapon->loop();
+        // _weapon->draw();
+    }
 }
 
 void Player::postTransformHands(){

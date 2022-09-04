@@ -4,7 +4,7 @@
 
 Animator::Animator(MeshData& data)
     : _timers(std::move(data.timers)), _nodes(std::move(data.nodes)),
-        _matrices(data.nBones, glm::mat4(1.0f)){
+        _matrices(MAX_BONES, glm::mat4(1.0f)){
     calculateBase(_nodes, glm::mat4(1.0f));
 }
 

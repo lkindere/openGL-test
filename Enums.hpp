@@ -11,12 +11,17 @@ enum object_type
     DETAIL,
 };
 
-enum shader_flags
+enum model_flags
 {
-    hasTexture = 1,
-    deformOn = 2,
-    isInstanced = 4,
+    hasTextures = 1,
+    hasBones = 2,
 };
+
+// enum shader_flags
+// {
+//     deformOn = 2,
+//     isInstanced = 4,
+// };
 
 struct object_info
 {

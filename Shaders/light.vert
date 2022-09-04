@@ -7,14 +7,15 @@ layout (location = 3) in vec2 aTextures;
 layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
+//Instance
+layout (location = 6) in vec3 iPos;
+
 uniform mat4 camPos;
-uniform vec3 pos;
-uniform vec3 scale;
 
 out vec2 _texCoords;
 
 void main()
 {
-	gl_Position = camPos * vec4(pos + aModel * scale, 1.0);
+	gl_Position = camPos * vec4(iPos + aModel, 1.0);
     _texCoords = aTextures;
 }

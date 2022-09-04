@@ -2,12 +2,6 @@
 
 #include "main.hpp"
 
-enum flags
-{
-    hasTextures = 1 << 0,
-    hasBones = 1 << 1,
-};
-
 struct Uniforms {
     int                                             flags = 0;
     std::map<const char*, float>                    f1;

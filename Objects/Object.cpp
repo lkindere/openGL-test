@@ -1,28 +1,11 @@
 #include "Object.hpp"
 #include "Scene.hpp"
 
-// Object::Object(MeshData data, Scene* scene, int ID)
-//     : _model(std::shared_ptr<Model>(new Model(std::move(data)))),
-//         _scene(scene), _info(ID) {}
-
-// Object::Object(MeshData* data, Scene* scene, int ID)
-//     : _model(std::shared_ptr<Model>(new Model(std::move(*data)))),
-//         _scene(scene), _info(ID) {}
-
 Object::Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID)
     : _model(modelptr), _scene(scene), _info(ID) {}
 
 void Object::recalculateHitbox(){
     _hitbox.recalculate(_model->hitboxBase(), glm::inverse(_rotation));
-}
-
-void Object::setDefaultUniforms(){
-    _uniforms.flags = _flags;
-    _uniforms.add_uni("pos", _position);
-    _uniforms.add_uni("scale", _scale);
-    _uniforms.add_uni("rotation", _rotation);
-    _uniforms.add_uni("camPos", _scene->camera().matrix());
-    _uniforms.add_uni("BoneMatrices", _model->generateMatrices(_mdata));
 }
 
 void Object::applyGravity(){
@@ -64,23 +47,21 @@ void Object::animLoop(){
 
 void Object::loop(){
     applyGravity();
-    // checkCollision();
     _newRotation = false;
 }
 
 void Object::update(){
     animLoop();
     move();
-    draw();
+    InstanceData data;
+    data.position = _position;
+    data.rotL1 = _rotation[0];
+    data.rotL2 = _rotation[1];
+    data.rotL3 = _rotation[2];
+    _model->buffer(data, _mdata);
 }
 
 void Object::damage(short dmg) {}
-
-void Object::draw(){
-    setDefaultUniforms();
-    _model->draw(*_scene->shader(_shader), _uniforms);
-    // _hitbox.draw(_uniforms);
-}
 
 void Object::collisionPhysics(Object& target, CollisionData& data){
     if (glfwGetKey(settings.window(), GLFW_KEY_F) == GLFW_PRESS)
@@ -96,27 +77,6 @@ void Object::checkCollision(Object& target){
     if (collision.overlap != 0)
         collisionPhysics(target, collision);
 }
-
-// void Object::checkCollision(){
-//     if (_info.collide() == false || _info.type() == STATIC)
-//         return ;
-//     if (_scene->player() != this){
-//         CollisionData collision = hitbox().checkCollision(*this, *_scene->player());
-//         if (collision.overlap != 0){
-//             collisionPhysics(*_scene->player(), collision);
-//             Mob* mob = dynamic_cast<Mob*>(this);
-//             if (mob != nullptr && !mob->animating())
-//                 mob->animate(0, false);
-//         }
-//     }
-//     for (auto it = _scene->oBegin(); it != _scene->oEnd(); ++it){
-//         if (it->second->collide() == false || it->second == this)
-//             continue ;
-//         CollisionData collision = hitbox().checkCollision(*this, *it->second);
-//         if (collision.overlap != 0)
-//             collisionPhysics(*it->second, collision);
-//     }
-// }
 
 int                 Object::ID() const { return _info.ID(); }
 const std::string&  Object::name() const { return _info.name(); }

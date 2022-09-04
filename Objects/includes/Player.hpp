@@ -10,7 +10,6 @@ class Scene;
 class Player : public Object
 {
 	public:
-		// Player(MeshData data, Scene* scene, int ID = -1);
         Player(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID = -1);
  
 		void setWeapon(Weapon* wep);
@@ -22,7 +21,6 @@ class Player : public Object
 		void input();
         void attack();
         void postTransformHands();
-
         void weaponTransformation();
 
 	private:

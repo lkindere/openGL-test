@@ -20,7 +20,7 @@ class Scene
         void animate();
         void collisions();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
-        int loadModel(const char* path);
+        int loadModel(const char* path, int shader);
         int loadInstance(object_type type, int modelID);
         void animate() const;
     
@@ -32,10 +32,6 @@ class Scene
 
     private:
         void checkRemovals();
-        // int loadLight(const char* path);
-        // int loadStatic(const char* path);
-        // int loadMob(const char* path);
-        // int loadDetail(const char* path);
         int loadPlayerInstance(int modelID);
         int loadLightInstance(int modelID);
         int loadStaticInstance(int modelID);

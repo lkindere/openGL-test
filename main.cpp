@@ -59,12 +59,12 @@ int main(void) {
     g_hitboxShader = scene.shader(hitboxShader);
     
     scene.camera().updateProjection();
-    int player_model = scene.loadModel("Models/player.fbx");
-    int floor_model = scene.loadModel("Models/floor.fbx");
-    int mob_model = scene.loadModel("Models/enemy.fbx");
-    int light_model = scene.loadModel("Models/light.fbx");
-    int sword_model = scene.loadModel("Models/sword.fbx");
-    int wall_model = scene.loadModel("Models/wall.fbx");
+    int player_model = scene.loadModel("Models/player.fbx", defaultShader);
+    int floor_model = scene.loadModel("Models/floor2.fbx", defaultShader);
+    int mob_model = scene.loadModel("Models/enemy.fbx", defaultShader);
+    int light_model = scene.loadModel("Models/light.fbx", lightShader);
+    int sword_model = scene.loadModel("Models/sword.fbx", defaultShader);
+    int wall_model = scene.loadModel("Models/wall.fbx", defaultShader);
 
     int lightID = scene.loadInstance(LIGHT, light_model);
     scene.loadInstance(PLAYER, player_model);
@@ -102,7 +102,7 @@ int main(void) {
     Spawner spawner(scene.model(mob_model), &scene);
     spawner.setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
     spawner.setRange(glm::vec3(-20.0f, -5.0f, -20.0f), glm::vec3(20.0f, 5.0f, 20.0f));
-    // scene.addSpawner(&spawner);
+    scene.addSpawner(&spawner);
 
     // int barID = scene.loadObject(DETAIL, "Models/bar.fbx");
     

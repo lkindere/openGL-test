@@ -10,15 +10,11 @@ class Scene;
 class Object
 {
 	public:
-        //Unique instancing
-		// Object(MeshData data, Scene* scene, int ID);
-        // Object(MeshData* data, Scene* scene, int ID);
-        // Shared model instancing
         Object(const std::shared_ptr<Model>& modelptr, Scene* scene, int ID);
         virtual ~Object();
 
     public:
-        void draw();
+
         virtual void move();
         virtual void animate(int ID, bool loop);
         virtual void loop();
@@ -29,11 +25,7 @@ class Object
         void checkCollision(Object& target);
 
     protected:
-        virtual void    setDefaultUniforms();
-        void            applyGravity();
-
-    private:
-        // void checkCollision();
+        void applyGravity();
         void collisionPhysics(Object& target, CollisionData& data);
 
     public:

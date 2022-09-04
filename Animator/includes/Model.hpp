@@ -7,13 +7,15 @@
 #include "ArrayObject.hpp"
 #include "Hitbox.hpp"
 
+class Scene;
+
 class Model
 {
 	public:
-        Model(MeshData data, int ID, GLenum drawtype = GL_STATIC_DRAW);
+        Model(MeshData data, int ID, int shader, Scene* scene);
 
-		void                    draw(const Shader& shader, Uniforms uniforms = Uniforms());
-        void                    buffer(const InstanceData& instance);
+		void                    draw(Uniforms uniforms = Uniforms());
+        void                    buffer(const InstanceData& instance, const modelIN& in);
         void                    clearBuffer();
         const NodeData*         findNode(const char* name) const;
         std::vector<glm::mat4>  generateMatrices(const modelIN& input);
@@ -23,11 +25,19 @@ class Model
         float                           duration(int ID) const;
 
         int                             ID() const { return _ID; }
+        int                             shader() const { return _shaderID; }
+        void                            setShader(int shader) { _shaderID = shader; }
 
 	private:
-        int                         _ID;
-		ArrayObject                 _VAO;
-        std::vector<InstanceData>   _instances;
-		Animator                    _animator;
-        std::vector<glm::vec3>      _hitboxBase;
+        Scene*                          _scene;
+        int                             _ID;
+        int                             _shaderID;
+
+        int                             _flags = 0;
+		ArrayObject                     _VAO;
+		Animator                        _animator;
+        std::vector<InstanceData>       _instances;
+        std::vector<InstanceBoneData>   _instanceBones;
+        std::vector<glm::vec3>          _hitboxBase;
+
 };

@@ -1,8 +1,8 @@
 #version 330 core
 
-const int hasTexture = 1;
+const int hasTextures = 1;
 
-uniform int flags;
+uniform int modelFlags;
 uniform vec4 lightColor;
 uniform sampler2D image;
 
@@ -13,7 +13,7 @@ in vec2 _texCoords;
 void main()
 {
     vec4 texColor = vec4(1.0f);
-    if ((flags & hasTexture) != 0)
+    if ((modelFlags & hasTextures) != 0)
         texColor = texture(image, _texCoords);
 	FragColor = lightColor * texColor;
 }

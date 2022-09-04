@@ -1,36 +1,42 @@
 #include "Model.hpp"
+#include "Scene.hpp"
 
-Model::Model(MeshData data, int ID, GLenum drawtype)
-    : _VAO(data, drawtype), _animator(data), _ID(ID),
-        _hitboxBase(std::move(data.hitbox.vertices)) {}
+Model::Model(MeshData data, int ID, int shader, Scene* scene)
+    : _VAO(data), _animator(data), _ID(ID), _shaderID(shader),
+        _scene(scene), _hitboxBase(std::move(data.hitbox.vertices)) {
+    if (data.texture.data != nullptr)
+        _flags |= hasTextures;
+    if (data.nBones != 0)
+        _flags |= hasBones;
+}
 
-void Model::draw(const Shader& shader, Uniforms uniforms){  
-    if (_VAO.hasTexture())
-        uniforms.flags |= hasTextures;
+void Model::draw(Uniforms uniforms){  
     _VAO.bind();
-    shader.bind();
-    if (_instances.size() > 1)
-        uniforms.flags |= isInstanced;
-    shader.update(uniforms);
+    const Shader* shader = _scene->shader(_shaderID);
+    shader->bind();
+    shader->update(uniforms);
+    glUniform1i(glGetUniformLocation(shader->ID(), "modelFlags"), _flags);
+    glUniform1i(glGetUniformLocation(shader->ID(), "boneTransforms"), 1);
+    
+    std::cout << "Drawing instanced, size:" << _instances.size() << std::endl;
+    _VAO.updateInstances(_instances, _instanceBones);
+    // glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
+    glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _instances.size());
+    _VAO.deleteInstanceBuffer();
 
-    if (_instances.size() > 1){
-        std::cout << "Drawing instanced\n";
-        _VAO.updateInstances(_instances);
-        // glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _instances.size());
-    }
-    else
-        glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
-
-    shader.unbind();
+    shader->unbind();
     _VAO.unbind();
 }
 
-void Model::buffer(const InstanceData& instance){
+void Model::buffer(const InstanceData& instance, const modelIN& in){
     _instances.push_back(instance);
+    if (_flags & hasBones)
+        _instanceBones.push_back(InstanceBoneData(generateMatrices(in)));
 }
 
 void Model::clearBuffer(){
     _instances.clear();
+    _instanceBones.clear();
 }
 
 const NodeData* Model::findNode(const char* name) const{

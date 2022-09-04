@@ -45,9 +45,9 @@ void Scene::animate(){
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
         it->second->update();
     Uniforms uni;
-    uni.add_uni("camPos", _camera.position());
+    uni.add_uni("camPos", _camera.matrix());
     for (auto it = _models.begin(); it != _models.end(); ++it)
-        it->second->draw(_shaders[0]); //Fix
+        it->second->draw(uni); //Fix
     checkRemovals();
 }
 
@@ -56,11 +56,11 @@ int Scene::loadShader(const char* vert, const char* frag, const char* geo){
     return _shaders.size() - 1;
 }
 
-int Scene::loadModel(const char* path){
+int Scene::loadModel(const char* path, int shaderID){
     int ID = 0;
     if (_models.size() != 0)
         ID = _models.rbegin()->first + 1;
-    _models.insert(std::make_pair(ID, std::shared_ptr<Model>(new Model(importer(path), ID))));
+    _models.insert(std::make_pair(ID, std::shared_ptr<Model>(new Model(importer(path), ID, shaderID, this))));
     return ID;
 }
 
