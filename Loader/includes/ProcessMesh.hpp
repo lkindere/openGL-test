@@ -1,11 +1,17 @@
 #pragma once
 
 #include "main.hpp"
-#include "Conversions.hpp"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-#include <assimp/mesh.h>
+class aiScene;
 
 MeshData process_mesh(const aiScene* scene);
+
+struct image_data
+{
+    char* data;
+    int x;
+    int y;
+    int channels;
+};
+
+image_data loadImage(const char* path);

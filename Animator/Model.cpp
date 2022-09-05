@@ -20,7 +20,6 @@ void Model::draw(Uniforms uniforms){
     
     std::cout << "Drawing instanced, size:" << _instances.size() << std::endl;
     _VAO.updateInstances(_instances, _instanceBones);
-    // glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
     glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _instances.size());
     _VAO.deleteInstanceBuffer();
 

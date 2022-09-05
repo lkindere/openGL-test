@@ -6,6 +6,7 @@ add_library(Scene
 	Shader.cpp
     Uniforms.cpp
     Spawner.cpp
+    Terrain.cpp
 )
 
 add_definitions(-std=c++11)
@@ -25,7 +26,6 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ../Loader/includes
     PUBLIC ../Objects/includes
     PUBLIC ../Animator/includes
-    PUBLIC ../Physics/includes
 	PUBLIC ../_external/glfw/include
 	PUBLIC ../_external/glfw/deps
 	PUBLIC ../_external/glm

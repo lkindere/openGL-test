@@ -14,7 +14,6 @@ class Object
         virtual ~Object();
 
     public:
-
         virtual void move();
         virtual void animate(int ID, bool loop);
         virtual void loop();

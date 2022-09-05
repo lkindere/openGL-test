@@ -8,7 +8,7 @@ add_library(${PROJECT_NAME}
     Importer.cpp
     Conversions.cpp
     ProcessMesh.cpp
-    debug.cpp
+    ldebug.cpp
 )
 
 add_subdirectory(_external/assimp)

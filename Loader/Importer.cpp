@@ -2,6 +2,9 @@
 #include "Importer.hpp"
 #include "ldebug.hpp"
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
 MeshData process_scene(const aiScene* scene){
     // if (scene->mNumMeshes != 1)
     //     throw(std::runtime_error("Number of meshes != 1"));

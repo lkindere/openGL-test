@@ -7,7 +7,6 @@
 #include <assimp/matrix4x4.h>
 #include <assimp/quaternion.h>
 
-
 glm::quat toGLquat(const aiQuaternion& aiQuat);
 glm::vec3 toGLvec(const aiVector3D& aiVec);
 glm::vec4 toGLvec(const aiColor4D& aiCol);

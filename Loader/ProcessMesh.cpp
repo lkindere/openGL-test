@@ -4,6 +4,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "Conversions.hpp"
+#include <assimp/scene.h>
+#include <assimp/mesh.h>
+
 static std::vector<unsigned int> process_indices(const aiMesh* mesh){
 	std::vector<unsigned int>	indices;
 	indices.reserve(mesh->mNumFaces * 3);
@@ -171,6 +175,14 @@ TextureData process_textures(const aiScene* scene){
     }
     data.data = stbi_load_from_memory((unsigned char*)scene->mTextures[0]->pcData, scene->mTextures[0]->mWidth,
         &data.width, &data.height, &data.channels, 0);
+    return data;
+}
+
+image_data loadImage(const char* path)
+{
+    std::cout << "Loading image:" << path << std::endl;
+    image_data data;
+    data.data = (char*)stbi_load(path, &data.x, &data.y, &data.channels, 0);
     return data;
 }
 

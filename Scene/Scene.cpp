@@ -64,6 +64,11 @@ int Scene::loadModel(const char* path, int shaderID){
     return ID;
 }
 
+int Scene::loadTerrain(const char* path, int shader){
+    _terrains.push_back(Terrain(importer(path), _terrains.size(), shader, this));
+    return _terrains.size() - 1;
+}
+
 int Scene::loadInstance(object_type type, int modelID){
     switch(type){
         case PLAYER:

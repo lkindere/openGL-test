@@ -6,6 +6,7 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 
+#include "Terrain.hpp"
 #include "Player.hpp"
 #include "Mob.hpp"
 #include "Light.hpp"
@@ -21,6 +22,7 @@ class Scene
         void collisions();
         int loadShader(const char* vert, const char* frag, const char* geo = nullptr);
         int loadModel(const char* path, int shader);
+        int loadTerrain(const char* path, int shader);
         int loadInstance(object_type type, int modelID);
         void animate() const;
     
@@ -83,6 +85,7 @@ class Scene
         std::map<int, std::shared_ptr<Model> >  _models;
         std::map<int, Spawner*>                 _spawners;
         std::map<int, Object*>                  _objects;
+        std::vector<Terrain>                    _terrains;
         std::vector<Shader>                     _shaders;
         std::vector<int>                        _removals;
 };

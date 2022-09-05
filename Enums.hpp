@@ -4,6 +4,7 @@
 
 enum object_type
 {
+    TERRAIN,
     STATIC,
     LIGHT,
     PLAYER,
