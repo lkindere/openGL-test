@@ -46,8 +46,12 @@ void Scene::animate(){
         it->second->update();
     Uniforms uni;
     uni.add_uni("camPos", _camera.matrix());
+
+
+
     for (auto it = _models.begin(); it != _models.end(); ++it)
         it->second->draw(uni); //Fix
+    _terrains[0].draw(uni);
     checkRemovals();
 }
 
@@ -64,8 +68,8 @@ int Scene::loadModel(const char* path, int shaderID){
     return ID;
 }
 
-int Scene::loadTerrain(const char* path, int shader){
-    _terrains.push_back(Terrain(importer(path), _terrains.size(), shader, this));
+int Scene::loadTerrain(const char* path, int shaderID){
+    _terrains.push_back(Terrain(importer(path), _terrains.size(), shaderID, this));
     return _terrains.size() - 1;
 }
 

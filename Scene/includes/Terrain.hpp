@@ -9,15 +9,18 @@ class Terrain
 {
     public:
         Terrain(MeshData data, int ID, int shader, Scene* scene);
+        void draw(Uniforms uni);
 
     public:
 
     private:
-        char*                               _heightmap;
-        int                                 _width;
-        int                                 _height;
         Scene*                              _scene;
         int                                 _ID;
         int                                 _shaderID;
+
         ArrayObject                         _VAO;
+        char*                               _heightmap;
+        int                                 _width;
+        int                                 _height;
+        float                               _interpolant;
 };
