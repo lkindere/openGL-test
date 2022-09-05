@@ -1,8 +1,11 @@
 #version 330 core
 
-//Flags
+//instanceFlags
+const int deformOn = 1;
+
+// modelFlags
 const int hasTextures = 1;
-const int deformOn = 2;
+// const int hasBones = 2;
 
 const vec4 ambient = vec4(0.15f, 0.15f, 0.15f, 1.0f);
 
@@ -18,6 +21,8 @@ in data
     vec3 normal;
     vec4 color;
     vec2 texCoords;
+    float iTime;
+    flat int iFlags;
 } data_in;
 
 out vec4 FragColor;
@@ -37,9 +42,9 @@ void main()
     
 	FragColor = color * lightColor * diffuse + ambient * texColor;
 
-    // if ((flags & deformOn) != 0){
-    //     FragColor.r += uTime / 3;
-    //     FragColor.a -= uTime;
-    // }
+    if ((data_in.iFlags & deformOn) != 0){
+        FragColor.r += data_in.iTime / 3;
+        FragColor.a -= data_in.iTime;
+    }
 
 }

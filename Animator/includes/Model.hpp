@@ -9,13 +9,21 @@
 
 class Scene;
 
+struct BufferData
+{
+    const std::vector<glm::mat4>&   bones;
+    int                             firstInsertion = -1;
+    BufferData(const std::vector<glm::mat4>& vec, int first)
+        : bones(vec), firstInsertion(first) {}
+};
+
 class Model
 {
 	public:
         Model(MeshData data, int ID, int shader, Scene* scene);
 
 		void                    draw(Uniforms uniforms = Uniforms());
-        void                    buffer(const InstanceData& instance, const modelIN& in);
+        BufferData              buffer(const InstanceData& instance, const modelIN& in);
         void                    clearBuffer();
         const NodeData*         findNode(const char* name) const;
         std::vector<glm::mat4>  generateMatrices(const modelIN& input);
@@ -37,7 +45,7 @@ class Model
 		ArrayObject                     _VAO;
 		Animator                        _animator;
         std::vector<InstanceData>       _instances;
-        std::vector<InstanceBoneData>   _instanceBones;
+        std::vector<glm::mat4>          _instanceBones;
         std::vector<glm::vec3>          _hitboxBase;
 
 };

@@ -79,7 +79,7 @@ void ArrayObject::generateBoneBuffer(){
 }
 
 void ArrayObject::updateInstances(const std::vector<InstanceData>& instances,
-                                    const std::vector<InstanceBoneData>& bones){
+                                    const std::vector<glm::mat4>& bones){
     glGenBuffers(1, &_instanceBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _instanceBuffer);
     glBufferData(GL_ARRAY_BUFFER, instances.size() * sizeof(InstanceData), instances.data(), GL_STATIC_DRAW);
@@ -105,7 +105,7 @@ void ArrayObject::updateInstances(const std::vector<InstanceData>& instances,
     glVertexAttribDivisor(10, 1);
     //Flags
     glEnableVertexAttribArray(11);
-    glVertexAttribPointer(11, 1, GL_INT, GL_FALSE, sizeof(InstanceData), (void *)(13 * sizeof(float)));
+    glVertexAttribIPointer(11, 1, GL_INT, sizeof(InstanceData), (void *)(13 * sizeof(float)));
     glVertexAttribDivisor(11, 1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -113,21 +113,14 @@ void ArrayObject::updateInstances(const std::vector<InstanceData>& instances,
     if (bones.size() != 0){
         if (_boneBuffer == -1)
             generateBoneBuffer();
-        std::cout << "Bones size: " << bones.size() << std::endl;
-        for (auto i = 0; i < bones.size(); ++i){
-            std::cout << "Bone " << i << " size: " << bones[i].matrices.size() << std::endl;
-        }
-        std::cout << "Bone buffer: " << _boneBuffer << std::endl;
         glBindBuffer(GL_TEXTURE_BUFFER, _boneBuffer);
-        for (auto i = 0; i < bones.size(); ++i){
-            glBufferSubData(GL_TEXTURE_BUFFER, i * sizeof(glm::mat4) * MAX_BONES, bones[i].matrices.size() * sizeof(glm::mat4), bones[i].matrices.data());
-
-        }
+        glBufferSubData(GL_TEXTURE_BUFFER, 0, bones.size() * sizeof(glm::mat4), bones.data());
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_BUFFER, _boneTexture);
 
-        glBindBuffer(GL_TEXTURE_BUFFER, 0);
+     
+       glBindBuffer(GL_TEXTURE_BUFFER, 0);
     }
 }
 

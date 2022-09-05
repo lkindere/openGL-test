@@ -21,7 +21,7 @@ class Player : public Object
 		void input();
         void attack();
         void postTransformHands();
-        void weaponTransformation();
+        void weaponTransformation(const BufferData& matrices);
 
 	private:
 		Weapon* _weapon = nullptr;

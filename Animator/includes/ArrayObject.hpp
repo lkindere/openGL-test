@@ -15,14 +15,6 @@ struct InstanceData
     float     time = 0;
     int       flags = 0;
 };
-
-struct InstanceBoneData
-{
-    std::vector<glm::mat4> matrices;
-    InstanceBoneData(std::vector<glm::mat4> mats)
-        : matrices(std::move(mats)) {}
-};
-
 class ArrayObject {
 	public:
 		ArrayObject(const MeshData& data);
@@ -39,7 +31,7 @@ class ArrayObject {
 
 	public:
         void updateInstances(const std::vector<InstanceData>& instances,
-            const std::vector<InstanceBoneData>& bones = std::vector<InstanceBoneData>());
+            const std::vector<glm::mat4>& bones = std::vector<glm::mat4>());
         void deleteInstanceBuffer();
 		void bind() const;
 		void unbind() const;

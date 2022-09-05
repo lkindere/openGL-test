@@ -28,10 +28,14 @@ void Model::draw(Uniforms uniforms){
     _VAO.unbind();
 }
 
-void Model::buffer(const InstanceData& instance, const modelIN& in){
+BufferData Model::buffer(const InstanceData& instance, const modelIN& in){
     _instances.push_back(instance);
-    if (_flags & hasBones)
-        _instanceBones.push_back(InstanceBoneData(generateMatrices(in)));
+    if (_flags & hasBones){
+        std::vector<glm::mat4> newBones(generateMatrices(in));
+        auto it = _instanceBones.insert(_instanceBones.end(), newBones.begin(), newBones.end());
+        return BufferData(_instanceBones, it - _instanceBones.begin());
+    }
+    return BufferData(_instanceBones, -1);
 }
 
 void Model::clearBuffer(){

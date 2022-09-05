@@ -77,13 +77,10 @@ void Player::update(){
     data.rotL1 = _rotation[0];
     data.rotL2 = _rotation[1];
     data.rotL3 = _rotation[2];
-    _model->buffer(data, _mdata);
-    // draw();
+    BufferData matrices(_model->buffer(data, _mdata));
     if (_weapon){
-        // weaponTransformation();
+        weaponTransformation(matrices);
         _weapon->update();
-        // _weapon->loop();
-        // _weapon->draw();
     }
 }
 
@@ -99,9 +96,9 @@ void Player::postTransformHands(){
     _mdata.postTransforms["ArmTop.R"] = limbRotR;
 }
 
-void Player::weaponTransformation(){
+void Player::weaponTransformation(const BufferData& matrices){
     const NodeData* limb = _model->findNode("Palm.L");
-    const glm::mat4& transformation = _uniforms.mat4.find("BoneMatrices")->second[limb->ID()];
+    const glm::mat4& transformation = matrices.bones[matrices.firstInsertion + limb->ID()];
     glm::mat4 rot = {
         transformation[0][0], transformation[0][1], transformation[0][2], 0.0f,
         transformation[1][0], transformation[1][1], transformation[1][2], 0.0f,

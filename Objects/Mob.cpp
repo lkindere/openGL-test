@@ -16,12 +16,11 @@ bool Mob::checkDeath(){
     if (_health > 0)
         return 0;
     setCollide(false);
-    // _flags |= deformOn;
+    _flags |= deformOn;
     float time = glfwGetTime();
     if (lastTick != 0)
         currentTick += (time - lastTick);
     lastTick = time;
-    _uniforms.add_uni("uTime", currentTick);
     if (currentTick > 1.0f)
         _scene->removeObject(ID());
     return 1;
@@ -42,6 +41,8 @@ void Mob::update(){
     data.rotL1 = _rotation[0];
     data.rotL2 = _rotation[1];
     data.rotL3 = _rotation[2];
+    data.time = currentTick;
+    data.flags = _flags;
     _model->buffer(data, _mdata);
     drawHealth();
 }

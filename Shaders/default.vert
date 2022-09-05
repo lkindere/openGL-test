@@ -8,7 +8,7 @@ layout (location = 3) in vec2 aTextures;
 layout (location = 4) in ivec3 aBones;
 layout (location = 5) in vec3 aWeights;
 
-//Instance
+//instance
 layout (location = 6) in vec3 iPos;
 layout (location = 7) in vec3 iR1;
 layout (location = 8) in vec3 iR2;
@@ -21,7 +21,7 @@ layout (location = 13) in vec4 iBM2;
 layout (location = 14) in vec4 iBM3;
 layout (location = 15) in vec4 iBM4;
 
-//InstanceFlags
+//instanceFlags
 const int deformOn = 1;
 
 // modelFlags
@@ -29,7 +29,7 @@ const int deformOn = 1;
 const int hasBones = 2;
 
 const int MAX_BONES = 30;
-const int MAX_INSTANCES = 1000;
+const int MAX_iANCES = 1000;
 
 uniform int modelFlags;
 uniform mat4 camPos;
@@ -41,6 +41,8 @@ out data
     vec3 normal;
     vec4 color;
     vec2 texCoords;
+    float iTime;
+    flat int iFlags;
 } data_out;
 
 mat4 fetch_matrix(int boneID){
@@ -84,4 +86,6 @@ void main()
 	data_out.normal = normal.xyz;
 	data_out.color = aColor;
     data_out.texCoords = aTextures;
+    data_out.iTime = iTime;
+    data_out.iFlags = iFlags;
 }

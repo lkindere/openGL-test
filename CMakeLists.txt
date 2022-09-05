@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.23.2)
 project(test)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+set(CMAKE_CXX_FLAGS "-O2")
 
 add_executable(${PROJECT_NAME}
 	main.cpp
@@ -19,7 +20,7 @@ add_subdirectory(Scene)
 add_subdirectory(Animator)
 add_subdirectory(Objects)
 
-add_definitions(-std=c++11 -DDEBUG)
+add_definitions(-std=c++11)
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 target_precompile_headers(${PROJECT_NAME}

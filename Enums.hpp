@@ -17,11 +17,10 @@ enum model_flags
     hasBones = 2,
 };
 
-// enum shader_flags
-// {
-//     deformOn = 2,
-//     isInstanced = 4,
-// };
+enum instance_flags
+{
+    deformOn = 1
+};
 
 struct object_info
 {
