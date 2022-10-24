@@ -18,8 +18,9 @@ void Model::draw(Uniforms uniforms){
     glUniform1i(glGetUniformLocation(shader->ID(), "modelFlags"), _flags);
     glUniform1i(glGetUniformLocation(shader->ID(), "boneTransforms"), 1);
     
-    std::cout << "Drawing instanced, size:" << _instances.size() << std::endl;
+    // std::cout << "Drawing instanced, size:" << _instances.size() << std::endl;
     _VAO.updateInstances(_instances, _instanceBones);
+    // glDrawElements(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0);
     glDrawElementsInstanced(GL_TRIANGLES, _VAO.nIndices(), GL_UNSIGNED_INT, (void*)0, _instances.size());
     _VAO.deleteInstanceBuffer();
 

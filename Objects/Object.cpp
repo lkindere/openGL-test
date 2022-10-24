@@ -15,9 +15,10 @@ void Object::applyGravity(){
 void Object::move(){
     _position += _velocity;
     _velocity = glm::mix(_velocity, glm::vec3(0.0f, _velocity.y, 0.0f), _weight);
-    if (_position.y < 0.0f){
+    // _scene->terrain(0)->height(_position);
+    if (_position.y < 10.0f){
         _velocity.y = 0.0f;
-        _position.y = 0.0f;
+        _position.y = 10.0f;
     }
 }
 

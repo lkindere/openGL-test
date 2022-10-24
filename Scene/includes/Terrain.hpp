@@ -12,6 +12,7 @@ class Terrain
         void draw(Uniforms uni);
 
     public:
+        float height(const glm::vec3& pos) const;
 
     private:
         Scene*                              _scene;

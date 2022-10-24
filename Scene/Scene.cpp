@@ -33,6 +33,9 @@ void Scene::collisions(){
 
 void Scene::animate(){
     _currentTime = glfwGetTime();
+    Uniforms uni;
+    uni.add_uni("camPos", _camera.matrix());
+    // std::cout << "Terrains size: " << _terrains.size() << std::endl;
     for (auto it = _models.begin(); it != _models.end(); ++it)
         it->second->clearBuffer();
     for (auto i = 0; i < _spawners.size(); ++i)
@@ -44,14 +47,12 @@ void Scene::animate(){
     _player->update();
     for (auto it = _objects.begin(); it != _objects.end(); ++it)
         it->second->update();
-    Uniforms uni;
-    uni.add_uni("camPos", _camera.matrix());
 
 
 
     for (auto it = _models.begin(); it != _models.end(); ++it)
-        it->second->draw(uni); //Fix
-    _terrains[0].draw(uni);
+        it->second->draw(uni);
+    _terrains[0]->draw(uni);
     checkRemovals();
 }
 
@@ -69,7 +70,7 @@ int Scene::loadModel(const char* path, int shaderID){
 }
 
 int Scene::loadTerrain(const char* path, int shaderID){
-    _terrains.push_back(Terrain(importer(path), _terrains.size(), shaderID, this));
+    _terrains.push_back(new Terrain(importer(path), _terrains.size(), shaderID, this));
     return _terrains.size() - 1;
 }
 
@@ -217,6 +218,11 @@ const Shader* Scene::shader(int ID) const {
     assert(ID < _shaders.size() && ID >= 0);
     return &_shaders[ID];
 }
+
+// const Terrain* Scene::terrain(int ID) const {
+//     assert(ID < _terrains.size() && ID >= 0);
+//     return &_terrains[ID];
+// }
 
 // const Model* Scene::detail(int ID) const {
 //     auto it = _details.find(ID);

@@ -52,6 +52,7 @@ class Scene
         const Camera& camera() const;
         const Player* player() const;
         const Object* object(int ID) const;
+        const Terrain* terrain(int ID) const;
         const Spawner* spawner(int ID) const;
         const Shader* shader(int ID) const;
         const std::shared_ptr<Model>& model(int ID) const;
@@ -85,7 +86,7 @@ class Scene
         std::map<int, std::shared_ptr<Model> >  _models;
         std::map<int, Spawner*>                 _spawners;
         std::map<int, Object*>                  _objects;
-        std::vector<Terrain>                    _terrains;
+        std::vector<Terrain*>                   _terrains;
         std::vector<Shader>                     _shaders;
         std::vector<int>                        _removals;
 };

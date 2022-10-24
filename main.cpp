@@ -61,17 +61,20 @@ int main(void) {
     scene.camera().updateProjection();
     int player_model = scene.loadModel("Models/player.fbx", defaultShader);
 
-    int floor = scene.loadTerrain("Models/floor.fbx", defaultShader);
-    // int floor_model = scene.loadModel("Models/floor.fbx", defaultShader, TERRAIN);
 
+    // int floor_model = scene.loadModel("Models/LIGHT.fbx", defaultShader);
+    // scene.loadInstance(STATIC, floor_model);
+
+    
     int mob_model = scene.loadModel("Models/enemy.fbx", defaultShader);
     int light_model = scene.loadModel("Models/light.fbx", lightShader);
     int sword_model = scene.loadModel("Models/sword.fbx", defaultShader);
     int wall_model = scene.loadModel("Models/wall.fbx", defaultShader);
 
+    int floor = scene.loadTerrain("Models/height.fbx", defaultShader);
+
     int lightID = scene.loadInstance(LIGHT, light_model);
     scene.loadInstance(PLAYER, player_model);
-    // scene.loadInstance(TERRAIN, floor_model);
     scene.loadInstance(MOB, mob_model);
     scene.loadInstance(MOB, mob_model);
 

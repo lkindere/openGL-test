@@ -11,8 +11,12 @@ ArrayObject::~ArrayObject() {
 void ArrayObject::init(const MeshData& data){
     const std::vector<Vert>&            vertices = data.verts;
     const std::vector<unsigned int>&    indices = data.indices;
+
+    std::cout << "VAO verts: " << data.verts.size() << std::endl;
+    std::cout << "VAO indices: " << data.indices.size() << std::endl;
     //Array
 	glGenVertexArrays(1, &_VAO);
+    std::cout << "Gen ret: " << _VAO << std::endl;
 	glBindVertexArray(_VAO);
 	//Vertices
 	GLuint VerticeBuffer;
@@ -133,6 +137,7 @@ bool           ArrayObject::hasTexture() const { return _texture != -1; }
 unsigned short ArrayObject::nIndices() const { return _nIndices; }
 
 void ArrayObject::bind() const {
+    std::cout << "Binding: " << _VAO << '\n' << std::endl;
     glBindVertexArray(_VAO);
     if (_texture != -1)
         glBindTexture(GL_TEXTURE_2D, _texture);
